@@ -1,0 +1,261 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-jakarta);
+  --font-hindi: var(--font-mukta);
+  --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --font-heading: var(--font-sans);
+  --color-brand-ink: var(--brand-ink);
+  --color-brand-ink-2: var(--brand-ink-2);
+  --color-brand-ink-3: var(--brand-ink-3);
+  --color-brand-gold: var(--brand-gold);
+  --color-brand-gold-light: var(--brand-gold-light);
+  --color-brand-gold-deep: var(--brand-gold-deep);
+  --color-brand-purple: var(--brand-purple);
+  --color-brand-purple-dark: var(--brand-purple-dark);
+  --color-brand-cream: var(--brand-cream);
+  --color-glass: var(--glass);
+  --color-well: var(--well);
+  --color-gold-ink: var(--gold-ink);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  color-scheme: light;
+
+  /* Fixed brand palette — identical in both themes. Use these only where a
+     literal colour is intended (e.g. dark text on a gold button). */
+  --brand-ink: #100a06;
+  --brand-ink-2: #150d08;
+  --brand-ink-3: #0a0605;
+  --brand-gold: #f2a63b;
+  --brand-gold-light: #ffd08a;
+  --brand-gold-deep: #c9701a;
+  --brand-purple: #6c6be0;
+  --brand-purple-dark: #2a1b4a;
+  --brand-cream: #fbf4ea;
+
+  /* Theme-dependent roles (light) */
+  --glass: #4a3524;
+  --glass-hi: rgba(255, 255, 255, 0.9);
+  --glass-shadow: rgba(74, 53, 36, 0.18);
+  --well: #8a7a68;
+  --gold-ink: #a35c07;
+  --glow-gold: 26%;
+  --glow-purple: 12%;
+
+  --background: #faf6ef;
+  --foreground: #1f150d;
+  --card: #fffdf9;
+  --card-foreground: #1f150d;
+  --popover: #fffdf9;
+  --popover-foreground: #1f150d;
+  --primary: #b4640c;
+  --primary-foreground: #fffaf2;
+  --secondary: #f2e9dc;
+  --secondary-foreground: #1f150d;
+  --muted: #f2e9dc;
+  --muted-foreground: #6b5a48;
+  --accent: #ebe9ff;
+  --accent-foreground: #2a1b4a;
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: #e6dbcb;
+  --input: #e6dbcb;
+  --ring: var(--brand-gold-deep);
+  --chart-1: #d98613;
+  --chart-2: #6c6be0;
+  --chart-3: #c9701a;
+  --chart-4: #2a1b4a;
+  --chart-5: #8a7a68;
+  --radius: 0.625rem;
+  --sidebar: #fffdf9;
+  --sidebar-foreground: #1f150d;
+  --sidebar-primary: #b4640c;
+  --sidebar-primary-foreground: #fffaf2;
+  --sidebar-accent: #f2e9dc;
+  --sidebar-accent-foreground: #1f150d;
+  --sidebar-border: #e6dbcb;
+  --sidebar-ring: var(--brand-gold-deep);
+}
+
+.dark {
+  color-scheme: dark;
+
+  --glass: #ffffff;
+  --glass-hi: rgba(255, 255, 255, 0.18);
+  --glass-shadow: rgba(0, 0, 0, 0.85);
+  --well: #000000;
+  --gold-ink: var(--brand-gold-light);
+  --glow-gold: 22%;
+  --glow-purple: 18%;
+
+  --background: var(--brand-ink);
+  --foreground: var(--brand-cream);
+  --card: color-mix(in oklab, white 8%, transparent);
+  --card-foreground: var(--brand-cream);
+  --popover: var(--brand-ink-2);
+  --popover-foreground: var(--brand-cream);
+  --primary: var(--brand-gold);
+  --primary-foreground: var(--brand-ink);
+  --secondary: color-mix(in oklab, white 10%, transparent);
+  --secondary-foreground: var(--brand-cream);
+  --muted: color-mix(in oklab, white 8%, transparent);
+  --muted-foreground: color-mix(in oklab, var(--brand-cream) 55%, transparent);
+  --accent: var(--brand-purple);
+  --accent-foreground: var(--brand-cream);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: color-mix(in oklab, white 12%, transparent);
+  --input: color-mix(in oklab, white 14%, transparent);
+  --ring: var(--brand-gold);
+  --chart-1: var(--brand-gold);
+  --chart-2: var(--brand-purple);
+  --chart-3: var(--brand-gold-light);
+  --chart-4: var(--brand-purple-dark);
+  --chart-5: var(--brand-gold-deep);
+  --sidebar: var(--brand-ink-2);
+  --sidebar-foreground: var(--brand-cream);
+  --sidebar-primary: var(--brand-gold);
+  --sidebar-primary-foreground: var(--brand-ink);
+  --sidebar-accent: color-mix(in oklab, white 10%, transparent);
+  --sidebar-accent-foreground: var(--brand-cream);
+  --sidebar-border: color-mix(in oklab, white 10%, transparent);
+  --sidebar-ring: var(--brand-gold);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    background-image:
+      radial-gradient(90% 60% at 72% -12%, color-mix(in oklab, var(--brand-gold) var(--glow-gold), transparent) 0%, transparent 60%),
+      radial-gradient(70% 50% at 10% 6%, color-mix(in oklab, var(--brand-purple) var(--glow-purple), transparent) 0%, transparent 62%);
+    background-attachment: fixed;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+[lang="hi"] {
+  font-family: var(--font-hindi), var(--font-sans);
+}
+
+.font-hindi {
+  font-family: var(--font-hindi), var(--font-sans);
+}
+
+.instrument-serif {
+  /* Instrument Serif carries no Devanagari, so Mukta sits next in the stack and
+     picks up those glyphs per-character rather than dropping to a system serif. */
+  font-family: var(--font-instrument), var(--font-mukta), ui-serif, Georgia, serif;
+  font-weight: 400;
+  /* The display face runs optically large next to Jakarta — pull the tracking
+     in so headline mixes of the two sit on the same rhythm. */
+  letter-spacing: -0.01em;
+}
+
+/* Devanagari has no italic; synthetic obliquing it just smears the glyphs. */
+[lang="hi"] .instrument-serif {
+  font-style: normal;
+  letter-spacing: normal;
+}
+
+@layer components {
+  .liquid-glass {
+    background: rgba(255, 255, 255, 0.01);
+    background-blend-mode: luminosity;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: none;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .liquid-glass::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.4px;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.45) 0%,
+      rgba(255, 255, 255, 0.15) 20%,
+      rgba(255, 255, 255, 0) 40%,
+      rgba(255, 255, 255, 0) 60%,
+      rgba(255, 255, 255, 0.15) 80%,
+      rgba(255, 255, 255, 0.45) 100%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}
+
+@keyframes floatSlow {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -18px, 0); }
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50% { opacity: 0.9; transform: scale(1.06); }
+}
+
+@keyframes marquee {
+  to { transform: translateX(-50%); }
+}
+
+.animate-float-slow {
+  animation: floatSlow 7s ease-in-out infinite;
+}
+
+.animate-glow-pulse {
+  animation: glowPulse 7s ease-in-out infinite;
+}

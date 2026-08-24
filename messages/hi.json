@@ -1,0 +1,175 @@
+{
+  "nav": {
+    "home": "होम",
+    "about": "परिचय",
+    "programs": "कार्यक्रम",
+    "gallery": "गैलरी",
+    "courses": "कोर्स",
+    "playground": "प्लेग्राउंड",
+    "festivals": "उत्सव",
+    "dashboard": "डैशबोर्ड",
+    "profile": "प्रोफ़ाइल",
+    "join": "फोरम से जुड़ें",
+    "sign_in": "साइन इन",
+    "theme_light": "लाइट मोड",
+    "theme_dark": "डार्क मोड"
+  },
+  "home": {
+    "eyebrow": "रविवार युवा उत्सव · हर सप्ताह, शाम 5:30 बजे",
+    "heading_line1": "अपना",
+    "heading_line2": "सर्वश्रेष्ठ रूप",
+    "heading_line3": "एक साथ पाएं।",
+    "body": "पटना के विद्यार्थियों का भक्ति-योग समुदाय — कीर्तन, गीता अध्ययन, सेवा और उत्सव। कोई ड्रेस कोड नहीं, कोई शुल्क नहीं, बस ईमानदार सवाल और अच्छा संग।",
+    "body_hi": "A community of students in Patna practising bhakti-yoga — kirtan, Gita study, seva and festivals.",
+    "cta_primary": "रविवार सत्र से जुड़ें →",
+    "cta_secondary": "कीर्तन देखें ↓",
+    "hero_video_line": "शांति शोर का अभाव नहीं —",
+    "hero_video_line_accent": "यह जानना है कि सुनना क्या है।",
+    "hero_video_card_eyebrow": "हमारा दृष्टिकोण",
+    "hero_video_card_body": "हम पहले ही दिन कुछ मान लेने को नहीं कहते। हम साथ कीर्तन करते हैं, साथ गीता पढ़ते हैं, और बाकी काम ईमानदार सवाल कर देते हैं।",
+    "hero_video_cta": "और जानें",
+    "about_preview_caption": "गीता अध्ययन · हर सप्ताह",
+    "stat_members_value": "1,200+",
+    "stat_members_label": "युवा सदस्य",
+    "stat_chapters_value": "18",
+    "stat_chapters_label": "कैंपस शाखाएं",
+    "stat_festivals_value": "52",
+    "stat_festivals_label": "वार्षिक उत्सव",
+    "about_preview_title": "हम <em>कौन हैं</em>",
+    "about_preview_body": "IYF पटना विद्यार्थियों और युवा पेशेवरों का परिवार है जो कीर्तन, सेवा और ईमानदार बातचीत के माध्यम से भगवद्गीता की शिक्षाओं को समझते हैं — कोई ड्रेस कोड नहीं, कोई शुल्क नहीं।",
+    "about_preview_cta": "समुदाय से मिलें",
+    "programs_preview_title": "साप्ताहिक <em>कार्यक्रम</em>",
+    "programs_preview_cta": "सभी कार्यक्रम देखें",
+    "festival_banner_eyebrow": "अभी चल रहा है",
+    "festival_banner_cta": "उत्सव कार्यक्रम देखें",
+    "join_cta_title": "अपना समुदाय <em>खोजने</em> के लिए तैयार हैं?",
+    "join_cta_body": "जैसे हैं वैसे आइए, हर रविवार, शाम 5:30 बजे। पहली बार आने के लिए पंजीकरण आवश्यक नहीं।",
+    "join_cta_button": "फोरम से जुड़ें"
+  },
+  "about": {
+    "eyebrow": "IYF पटना के बारे में",
+    "title": "एक कैंपस-व्यापी भक्ति समुदाय",
+    "body": "इस्कॉन यूथ फोरम पटना शहर भर के महाविद्यालयों के विद्यार्थियों को साप्ताहिक कीर्तन, भगवद्गीता अध्ययन मंडल, सेवा परियोजनाओं और उत्सवों में एक साथ लाता है। हमने कक्षा के बाद मिलने वाले कुछ विद्यार्थियों के साथ शुरुआत की — आज हम अठारह कैंपस शाखाओं के साथ मजबूत हैं।",
+    "body_hi": "ISKCON Youth Forum Patna brings together students from colleges across the city for weekly kirtan, Gita study circles, seva projects and festivals.",
+    "members_title": "इसके पीछे के लोग",
+    "members_subtitle": "किसी चेहरे पर होवर करें और उनसे मिलें"
+  },
+  "programs": {
+    "eyebrow": "साप्ताहिक कार्यक्रम",
+    "title": "हर सप्ताह साथ अभ्यास करें",
+    "subtitle": "कभी भी आइए — किसी पूर्व अनुभव की आवश्यकता नहीं, सब कुछ उपलब्ध कराया जाता है।",
+    "join_button": "जुड़ें",
+    "closed_button": "पंजीकरण बंद",
+    "empty": "नए कार्यक्रम जल्द ही आ रहे हैं — फिर देखें।",
+    "modal_title": "{title} से जुड़ें",
+    "form_name": "पूरा नाम",
+    "form_email": "ईमेल",
+    "form_phone": "फ़ोन नंबर",
+    "form_note": "क्या आप हमें कुछ बताना चाहेंगे? (वैकल्पिक)",
+    "form_submit": "मेरी जगह पक्की करें",
+    "form_submitting": "भेजा जा रहा है…",
+    "success_title": "आप जुड़ गए!",
+    "success_body": "हमने आपकी जगह सुरक्षित कर ली है और पुष्टिकरण भेज दिया है।",
+    "error_body": "कुछ गलत हो गया — कृपया पुनः प्रयास करें।"
+  },
+  "courses": {
+    "eyebrow": "कोर्स",
+    "title": "अपनी गति से गहराई में जाएं",
+    "subtitle": "शास्त्र, दर्शन और अभ्यास के संरचित अध्ययन ट्रैक।",
+    "join_button": "जुड़ें",
+    "empty": "नए कोर्स जल्द ही आ रहे हैं — फिर देखें।"
+  },
+  "gallery": {
+    "eyebrow": "गैलरी",
+    "title": "समुदाय के पल",
+    "empty": "तस्वीरें जल्द आ रही हैं।"
+  },
+  "playground": {
+    "eyebrow": "प्लेग्राउंड",
+    "title": "साधना के उपकरण",
+    "subtitle": "Tools for your sadhana",
+    "coming_soon": "जल्द आ रहा है",
+    "japa": {
+      "title": "जप गणक",
+      "title_hi": "Japa Counter",
+      "subtitle": "अपनी माला गिनने के लिए टैप करें — ऑफ़लाइन भी काम करता है।",
+      "rounds_today": "आज का जप",
+      "rounds": "माला",
+      "tap_hint": "माला जपने के लिए स्पर्श करें",
+      "tap_hint_hi": "Tap the bead to count",
+      "streak": "दिन की लगातार गिनती",
+      "reset": "नई माला"
+    },
+    "kirtan": {
+      "title": "कीर्तन संग्रह",
+      "title_hi": "Kirtan Library",
+      "subtitle": "हमारे रविवार सत्रों और उत्सवों की रिकॉर्डिंग।",
+      "empty": "ट्रैक अपलोड किए जा रहे हैं — फिर देखें।"
+    },
+    "quiz": {
+      "title": "गीता प्रश्नोत्तरी",
+      "title_hi": "Gita Quiz",
+      "subtitle": "अध्याय दर अध्याय अपना ज्ञान परखें।",
+      "start": "प्रश्नोत्तरी शुरू करें",
+      "next": "अगला प्रश्न",
+      "submit": "मेरा स्कोर देखें",
+      "score": "आपका स्कोर",
+      "retry": "फिर से कोशिश करें",
+      "empty": "नए प्रश्न जल्द आ रहे हैं।"
+    },
+    "calendar": {
+      "title": "वैष्णव पंचांग",
+      "title_hi": "Spiritual Calendar",
+      "subtitle": "एकादशी और उत्सव तिथियां।",
+      "notice": "यह पंचांग एक सत्यापित वैष्णव स्रोत से जोड़ा जा रहा है — यहां दी गई तिथियां अस्थायी हैं।"
+    }
+  },
+  "festivals": {
+    "eyebrow": "उत्सव",
+    "title": "हमारे साथ उत्सव मनाएं",
+    "current_badge": "अभी मनाया जा रहा है",
+    "schedule_title": "पूरा कार्यक्रम",
+    "other_title": "साल भर",
+    "empty": "उत्सव तिथियां अंतिम रूप दी जा रही हैं — फिर देखें।"
+  },
+  "dashboard": {
+    "title": "आपका डैशबोर्ड",
+    "tabs_quiz": "प्रश्नोत्तरी स्कोर",
+    "tabs_registrations": "कार्यक्रम और कोर्स",
+    "tabs_japa": "जप आंकड़े",
+    "empty_quiz": "आपने अभी तक कोई प्रश्नोत्तरी नहीं दी है।",
+    "empty_registrations": "आप अभी तक किसी कार्यक्रम या कोर्स से नहीं जुड़े हैं।",
+    "status_joined": "जुड़ गए",
+    "status_attended": "उपस्थित",
+    "status_missed": "अनुपस्थित"
+  },
+  "admin": {
+    "flags_title": "फ़ीचर फ़्लैग्स",
+    "flags_subtitle": "बिना डिप्लॉय किए फ़ीचर तुरंत टॉगल करें।",
+    "flag_key": "कुंजी",
+    "flag_status": "स्थिति",
+    "flag_scope": "स्कोप",
+    "flag_updated": "आख़िरी अपडेट"
+  },
+  "auth": {
+    "sign_in": "साइन इन करें",
+    "sign_up": "साइन अप करें",
+    "sign_out": "साइन आउट करें"
+  },
+  "common": {
+    "loading": "लोड हो रहा है…",
+    "error": "कुछ गलत हो गया।",
+    "save": "सहेजें",
+    "cancel": "रद्द करें",
+    "close": "बंद करें",
+    "language": "भाषा"
+  },
+  "pwa": {
+    "install_title": "IYF पटना इंस्टॉल करें",
+    "install_body": "तेज़, ऑफ़लाइन-सुलभ पहुंच के लिए इसे होम स्क्रीन पर जोड़ें।",
+    "install_cta": "इंस्टॉल करें",
+    "install_dismiss": "अभी नहीं",
+    "offline_title": "आप ऑफ़लाइन हैं",
+    "offline_body": "कुछ पेजों के लिए कनेक्शन चाहिए। आपका जप गणक और गीता प्रश्नोत्तरी अब भी काम करते हैं — वापस ऑनलाइन आने पर सब कुछ सिंक हो जाएगा।"
+  }
+}

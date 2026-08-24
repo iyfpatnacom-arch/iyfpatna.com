@@ -1,0 +1,175 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "programs": "Programs",
+    "gallery": "Gallery",
+    "courses": "Courses",
+    "playground": "Playground",
+    "festivals": "Festivals",
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "join": "Join the Forum",
+    "sign_in": "Sign in",
+    "theme_light": "Light mode",
+    "theme_dark": "Dark mode"
+  },
+  "home": {
+    "eyebrow": "Sunday Youth Fest · every week, 5:30 PM",
+    "heading_line1": "Find your",
+    "heading_line2": "highest self,",
+    "heading_line3": "together.",
+    "body": "A community of students in Patna practising bhakti-yoga — kirtan, Gita study, seva and festivals. No dress code, no fees, just honest questions and good association.",
+    "body_hi": "पटना के विद्यार्थियों का भक्ति-योग समुदाय — कीर्तन, गीता अध्ययन, सेवा और उत्सव।",
+    "cta_primary": "Join a Sunday session →",
+    "cta_secondary": "Watch the kirtan ↓",
+    "hero_video_line": "Stillness isn't the absence of noise —",
+    "hero_video_line_accent": "it's knowing what to listen to.",
+    "hero_video_card_eyebrow": "Our approach",
+    "hero_video_card_body": "We don't ask you to believe anything on day one. We chant together, read the Gita together, and let honest questions do the rest.",
+    "hero_video_cta": "Explore more",
+    "about_preview_caption": "Gita study · every week",
+    "stat_members_value": "1,200+",
+    "stat_members_label": "youth members",
+    "stat_chapters_value": "18",
+    "stat_chapters_label": "campus chapters",
+    "stat_festivals_value": "52",
+    "stat_festivals_label": "festivals a year",
+    "about_preview_title": "Who <em>we are</em>",
+    "about_preview_body": "IYF Patna is a family of students and young professionals exploring the wisdom of the Bhagavad Gita through kirtan, seva and honest conversation — no dress code, no fees.",
+    "about_preview_cta": "Meet the community",
+    "programs_preview_title": "Weekly <em>programs</em>",
+    "programs_preview_cta": "See all programs",
+    "festival_banner_eyebrow": "Happening now",
+    "festival_banner_cta": "View festival schedule",
+    "join_cta_title": "Ready to find <em>your people?</em>",
+    "join_cta_body": "Come as you are, every Sunday, 5:30 PM. No registration needed for your first visit.",
+    "join_cta_button": "Join the Forum"
+  },
+  "about": {
+    "eyebrow": "About IYF Patna",
+    "title": "A campus-wide bhakti community",
+    "body": "ISKCON Youth Forum Patna brings together students from colleges across the city for weekly kirtan, Bhagavad Gita study circles, seva projects and festivals. We started as a handful of students meeting after class — today we're eighteen campus chapters strong, and growing every semester.",
+    "body_hi": "इस्कॉन यूथ फोरम पटना शहर भर के महाविद्यालयों के विद्यार्थियों को साप्ताहिक कीर्तन, भगवद्गीता अध्ययन मंडल, सेवा परियोजनाओं और उत्सवों में एक साथ लाता है।",
+    "members_title": "The people behind it",
+    "members_subtitle": "Hover a face to meet them"
+  },
+  "programs": {
+    "eyebrow": "Weekly Programs",
+    "title": "Practice together, every week",
+    "subtitle": "Drop in anytime — no prior experience needed, everything is provided.",
+    "join_button": "Join",
+    "closed_button": "Registrations closed",
+    "empty": "New programs are being scheduled — check back soon.",
+    "modal_title": "Join {title}",
+    "form_name": "Full name",
+    "form_email": "Email",
+    "form_phone": "Phone number",
+    "form_note": "Anything you'd like us to know? (optional)",
+    "form_submit": "Confirm my spot",
+    "form_submitting": "Submitting…",
+    "success_title": "You're in!",
+    "success_body": "We've saved your spot and sent a confirmation.",
+    "error_body": "Something went wrong — please try again."
+  },
+  "courses": {
+    "eyebrow": "Courses",
+    "title": "Go deeper, at your own pace",
+    "subtitle": "Structured study tracks through scripture, philosophy and practice.",
+    "join_button": "Join",
+    "empty": "New courses are being scheduled — check back soon."
+  },
+  "gallery": {
+    "eyebrow": "Gallery",
+    "title": "Moments from the community",
+    "empty": "Photos are on their way."
+  },
+  "playground": {
+    "eyebrow": "Playground",
+    "title": "Tools for your sadhana",
+    "subtitle": "साधना के उपकरण",
+    "coming_soon": "Coming soon",
+    "japa": {
+      "title": "Japa Counter",
+      "title_hi": "जप गणक",
+      "subtitle": "Tap to count your rounds — works offline.",
+      "rounds_today": "Today's japa",
+      "rounds": "rounds",
+      "tap_hint": "Tap the bead to count",
+      "tap_hint_hi": "माला जपने के लिए स्पर्श करें",
+      "streak": "day streak",
+      "reset": "New round"
+    },
+    "kirtan": {
+      "title": "Kirtan Library",
+      "title_hi": "कीर्तन संग्रह",
+      "subtitle": "Recordings from our Sunday sessions and festivals.",
+      "empty": "Tracks are being uploaded — check back soon."
+    },
+    "quiz": {
+      "title": "Gita Quiz",
+      "title_hi": "गीता प्रश्नोत्तरी",
+      "subtitle": "Test what you've learned, chapter by chapter.",
+      "start": "Start quiz",
+      "next": "Next question",
+      "submit": "See my score",
+      "score": "Your score",
+      "retry": "Try again",
+      "empty": "New questions are on their way."
+    },
+    "calendar": {
+      "title": "Spiritual Calendar",
+      "title_hi": "वैष्णव पंचांग",
+      "subtitle": "Ekadashi and festival dates.",
+      "notice": "This calendar is being connected to a verified Vaishnava panchang source — dates shown here are provisional."
+    }
+  },
+  "festivals": {
+    "eyebrow": "Festivals",
+    "title": "Celebrate with us",
+    "current_badge": "Now celebrating",
+    "schedule_title": "Full schedule",
+    "other_title": "Through the year",
+    "empty": "Festival dates are being finalised — check back soon."
+  },
+  "dashboard": {
+    "title": "Your dashboard",
+    "tabs_quiz": "Quiz scores",
+    "tabs_registrations": "Programs & courses",
+    "tabs_japa": "Japa stats",
+    "empty_quiz": "You haven't taken a quiz yet.",
+    "empty_registrations": "You haven't joined a program or course yet.",
+    "status_joined": "Joined",
+    "status_attended": "Attended",
+    "status_missed": "Missed"
+  },
+  "admin": {
+    "flags_title": "Feature flags",
+    "flags_subtitle": "Toggle features live, no deploy needed.",
+    "flag_key": "Key",
+    "flag_status": "Status",
+    "flag_scope": "Scope",
+    "flag_updated": "Last updated"
+  },
+  "auth": {
+    "sign_in": "Sign in",
+    "sign_up": "Sign up",
+    "sign_out": "Sign out"
+  },
+  "common": {
+    "loading": "Loading…",
+    "error": "Something went wrong.",
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "language": "Language"
+  },
+  "pwa": {
+    "install_title": "Install IYF Patna",
+    "install_body": "Add this to your home screen for quick, offline-friendly access.",
+    "install_cta": "Install",
+    "install_dismiss": "Not now",
+    "offline_title": "You're offline",
+    "offline_body": "Some pages need a connection. Your Japa Counter and Gita Quiz still work — everything will sync once you're back online."
+  }
+}
