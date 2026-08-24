@@ -1,5 +1,6 @@
 export async function register() {
   if (process.env.NEXT_RUNTIME !== "nodejs") return;
+  if (process.env.NODE_ENV === "production") return; // never auto-seed a real database
   if (process.env.MONGODB_URI) return; // real database — seed explicitly via `npm run seed`
 
   const { runSeed } = await import("./lib/db/seedData.js");

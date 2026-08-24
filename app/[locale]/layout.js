@@ -3,7 +3,6 @@ import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { ClerkProvider } from "@clerk/nextjs";
-import { SerwistProvider } from "@serwist/next/react";
 import { clerkConfigured } from "@/lib/auth-config";
 import { routing } from "@/i18n/routing";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -62,20 +61,18 @@ export default async function LocaleLayout({ children, params }) {
   setRequestLocale(locale);
 
   const content = (
-    <SerwistProvider swUrl="/sw.js" disable={process.env.NODE_ENV !== "production"}>
-      <NextIntlClientProvider>
-        <TooltipProvider>
-          <GlassNav clerkConfigured={clerkConfigured} />
-          <GlassTopBar />
-          <main className="flex-1 pb-28 md:pb-0">
-            <PageTransition>{children}</PageTransition>
-          </main>
-          <GlassDock />
-          <PwaInstallGate />
-          <Toaster position="top-center" />
-        </TooltipProvider>
-      </NextIntlClientProvider>
-    </SerwistProvider>
+    <NextIntlClientProvider>
+      <TooltipProvider>
+        <GlassNav clerkConfigured={clerkConfigured} />
+        <GlassTopBar />
+        <main className="flex-1 pb-28 md:pb-0">
+          <PageTransition>{children}</PageTransition>
+        </main>
+        <GlassDock />
+        <PwaInstallGate />
+        <Toaster position="top-center" />
+      </TooltipProvider>
+    </NextIntlClientProvider>
   );
 
   return (
