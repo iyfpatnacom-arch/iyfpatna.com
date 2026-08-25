@@ -178,6 +178,25 @@
   html {
     @apply font-sans;
   }
+
+  /* App-shell scrolling: one vertical scroller, never a horizontal one.
+     `clip` rather than `hidden` on purpose — `hidden` would turn these into
+     scroll containers and break the `position: sticky` headers. */
+  html,
+  body {
+    overflow-x: clip;
+    max-width: 100%;
+  }
+
+  html {
+    /* Kills the whole-page rubber-band. That bounce is what makes a fixed
+       bottom dock look like it is sliding around on iOS. */
+    overscroll-behavior-y: none;
+  }
+
+  body {
+    -webkit-tap-highlight-color: transparent;
+  }
 }
 
 [lang="hi"] {
@@ -258,4 +277,39 @@
 
 .animate-glow-pulse {
   animation: glowPulse 7s ease-in-out infinite;
+}
+
+/* Mantra ticker in the mobile dock.
+   The track holds two identical copies of the line, so shifting it by exactly
+   half its own width lands copy two where copy one started — a seamless loop
+   with no JS and no measuring. */
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 26s linear infinite;
+  will-change: transform;
+}
+
+/* Devanagari matras detach from their consonants at wide tracking, so the
+   ticker runs untracked in Hindi. */
+[lang="hi"] .marquee-track {
+  letter-spacing: normal;
+}
+
+.marquee-mask {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Hold the line still rather than hiding it — the mantra is the content here,
+     the travel is only decoration. */
+  .marquee-track {
+    animation: none;
+    width: 100%;
+    justify-content: center;
+  }
+  .marquee-track > :nth-child(2) {
+    display: none;
+  }
 }

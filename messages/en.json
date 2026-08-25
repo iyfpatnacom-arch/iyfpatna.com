@@ -12,7 +12,8 @@
     "join": "Join the Forum",
     "sign_in": "Sign in",
     "theme_light": "Light mode",
-    "theme_dark": "Dark mode"
+    "theme_dark": "Dark mode",
+    "primary_nav": "Main navigation"
   },
   "home": {
     "eyebrow": "Sunday Youth Fest · every week, 5:30 PM",
@@ -162,7 +163,8 @@
     "save": "Save",
     "cancel": "Cancel",
     "close": "Close",
-    "language": "Language"
+    "language": "Language",
+    "maha_mantra": "Hare Krishna Hare Krishna Krishna Krishna Hare Hare · Hare Rama Hare Rama Rama Rama Hare Hare"
   },
   "pwa": {
     "install_title": "Install IYF Patna",

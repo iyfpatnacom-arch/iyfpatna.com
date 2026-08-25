@@ -44,6 +44,10 @@ export const metadata = {
 };
 
 export const viewport = {
+  // `cover` is what makes `env(safe-area-inset-*)` report real values on iOS.
+  // Without it the bottom dock reads an inset of 0 and sits under the home
+  // indicator instead of above it.
+  viewportFit: "cover",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#faf6ef" },
     { media: "(prefers-color-scheme: dark)", color: "#100a06" },
@@ -65,7 +69,7 @@ export default async function LocaleLayout({ children, params }) {
       <TooltipProvider>
         <GlassNav clerkConfigured={clerkConfigured} />
         <GlassTopBar />
-        <main className="flex-1 pb-28 md:pb-0">
+        <main className="flex-1 pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-0">
           <PageTransition>{children}</PageTransition>
         </main>
         <GlassDock />

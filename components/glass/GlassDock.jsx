@@ -16,15 +16,54 @@ const DOCK_ITEMS = [
 
 export function GlassDock() {
   const t = useTranslations("nav");
+  const tc = useTranslations("common");
   const pathname = usePathname();
   const items = DOCK_ITEMS;
+  const mantra = tc("maha_mantra");
 
   return (
-    <nav
-      className="fixed inset-x-3 bottom-3 z-40 md:hidden"
-      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+    <div
+      className="fixed inset-x-0 bottom-0 z-40 w-full max-w-full select-none border-t border-glass/12 bg-gradient-to-b from-glass/[0.06] to-glass/[0.12] shadow-[inset_0_1px_0_var(--glass-hi),0_-20px_44px_-30px_var(--glass-shadow)] backdrop-blur-2xl backdrop-saturate-150 md:hidden"
+      style={{
+        // The blurred surface runs to the physical bottom edge and the row is
+        // pushed up off the home indicator — the native tab-bar arrangement.
+        // Needs `viewportFit: "cover"` in the layout's viewport export, or iOS
+        // reports 0 here and the bar sits under the indicator.
+        paddingBottom: "env(safe-area-inset-bottom)",
+        // Own compositor layer. Without it iOS Safari repaints the backdrop
+        // blur a frame behind momentum scroll and the bar visibly drifts.
+        transform: "translateZ(0)",
+        // Suppress the double-tap-to-zoom delay and the grey tap flash, both of
+        // which read as web-page behaviour rather than app behaviour.
+        touchAction: "manipulation",
+        WebkitTapHighlightColor: "transparent",
+      }}
     >
-      <div className="mx-auto flex max-w-md items-center justify-between gap-1 rounded-[26px] border border-glass/12 bg-gradient-to-br from-glass/10 to-glass/[0.03] px-2 py-2 shadow-[inset_0_1px_0_var(--glass-hi),0_22px_50px_-26px_var(--glass-shadow)] backdrop-blur-2xl backdrop-saturate-150">
+      {/* Mantra ticker. Two identical copies ride in one `w-max` track and the
+          keyframe shifts it 50% — copy two arrives exactly where copy one
+          began, so the loop has no seam. `overflow-hidden` here is load-bearing:
+          the track is deliberately wider than the screen. */}
+      <div className="marquee-mask overflow-hidden border-b border-glass/10 bg-glass/[0.05] py-[3px]">
+        <div className="marquee-track" aria-hidden="true">
+          {[0, 1].map((copy) => (
+            <span
+              key={copy}
+              className="shrink-0 px-3 text-[9px] font-semibold whitespace-nowrap text-gold-ink/75"
+            >
+              {mantra}
+              <span className="px-3 text-foreground/25">·</span>
+            </span>
+          ))}
+        </div>
+        {/* The visible copies are duplicated and clipped; give assistive tech
+            one clean reading instead. */}
+        <span className="sr-only">{mantra}</span>
+      </div>
+
+      <nav
+        aria-label={t("primary_nav")}
+        className="flex w-full items-stretch px-1 py-1.5"
+      >
         {items.map((item) => {
           const active =
             item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
@@ -32,24 +71,29 @@ export function GlassDock() {
             <Link
               key={item.key}
               href={item.href}
-              className="relative flex flex-1 flex-col items-center gap-1 rounded-2xl px-2 py-2"
+              aria-current={active ? "page" : undefined}
+              // `min-w-0` is the fix for the horizontal scroll: flex items
+              // default to `min-width: auto`, so a long label ("Playground",
+              // "प्लेग्राउंड") refused to shrink and pushed the row wider than
+              // the viewport.
+              className="relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-2xl px-0.5 py-1.5 transition-transform duration-150 active:scale-[0.94]"
             >
               {active && (
                 <motion.span
                   layoutId="dock-active"
-                  className="absolute inset-0 rounded-2xl bg-glass/10"
+                  className="absolute inset-0 rounded-md "
                   transition={{ type: "spring", stiffness: 400, damping: 32 }}
                 />
               )}
               <item.Icon
                 className={cn(
-                  "relative z-10 h-5 w-5",
+                  "relative z-10 h-5 w-5 shrink-0",
                   active ? "text-gold-ink" : "text-foreground/55"
                 )}
               />
               <span
                 className={cn(
-                  "relative z-10 text-[10px] font-semibold",
+                  "relative z-10 w-full truncate text-center text-[10px] font-semibold leading-none",
                   active ? "text-foreground" : "text-foreground/45"
                 )}
               >
@@ -58,7 +102,7 @@ export function GlassDock() {
             </Link>
           );
         })}
-      </div>
-    </nav>
+      </nav>
+    </div>
   );
 }

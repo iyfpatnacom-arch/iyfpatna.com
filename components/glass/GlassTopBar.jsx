@@ -21,7 +21,7 @@ export function GlassTopBar() {
 
   return (
     <header className="sticky top-0 z-40 px-3 pt-3 md:hidden">
-      <div className="flex items-center gap-2 rounded-[20px] border border-glass/12 bg-gradient-to-br from-glass/10 to-glass/[0.035] px-3 py-2 shadow-[inset_0_1px_0_var(--glass-hi),0_18px_40px_-26px_var(--glass-shadow)] backdrop-blur-2xl backdrop-saturate-150">
+      <div className="flex items-center gap-2 rounded-md border border-glass/12 bg-gradient-to-br from-glass/10 to-glass/[0.035] px-3 py-2 shadow-[inset_0_1px_0_var(--glass-hi),0_18px_40px_-26px_var(--glass-shadow)] backdrop-blur-2xl backdrop-saturate-150">
         <Link href="/" className="flex items-center gap-2.5">
           <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-gradient-to-br from-brand-gold-light via-brand-gold to-brand-gold-deep shadow-[0_0_18px_-4px_rgba(242,166,59,0.8)]">
             <span className="h-2.5 w-2.5 rounded-full border-2 border-brand-ink/85" />
