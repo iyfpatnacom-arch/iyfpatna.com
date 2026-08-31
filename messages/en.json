@@ -13,47 +13,58 @@
     "sign_in": "Sign in",
     "theme_light": "Light mode",
     "theme_dark": "Dark mode",
-    "primary_nav": "Main navigation"
+    "primary_nav": "Main navigation",
+    "yatra": "Vrindavan Yatra",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Use",
+    "legal": "Legal Information",
+    "contact": "Contact",
+    "menu": "Menu",
+    "close_menu": "Close menu",
+    "open_menu": "Open menu",
+    "external_hint": "opens in a new tab",
+    "schedule": "Schedule"
   },
   "home": {
-    "eyebrow": "Sunday Youth Fest · every week, 5:30 PM",
-    "heading_line1": "Find your",
-    "heading_line2": "highest self,",
-    "heading_line3": "together.",
-    "body": "A community of students in Patna practising bhakti-yoga — kirtan, Gita study, seva and festivals. No dress code, no fees, just honest questions and good association.",
-    "body_hi": "पटना के विद्यार्थियों का भक्ति-योग समुदाय — कीर्तन, गीता अध्ययन, सेवा और उत्सव।",
-    "cta_primary": "Join a Sunday session →",
-    "cta_secondary": "Watch the kirtan ↓",
-    "hero_video_line": "Stillness isn't the absence of noise —",
-    "hero_video_line_accent": "it's knowing what to listen to.",
-    "hero_video_card_eyebrow": "Our approach",
-    "hero_video_card_body": "We don't ask you to believe anything on day one. We chant together, read the Gita together, and let honest questions do the rest.",
-    "hero_video_cta": "Explore more",
-    "about_preview_caption": "Gita study · every week",
-    "stat_members_value": "1,200+",
-    "stat_members_label": "youth members",
-    "stat_chapters_value": "18",
-    "stat_chapters_label": "campus chapters",
-    "stat_festivals_value": "52",
-    "stat_festivals_label": "festivals a year",
-    "about_preview_title": "Who <em>we are</em>",
-    "about_preview_body": "IYF Patna is a family of students and young professionals exploring the wisdom of the Bhagavad Gita through kirtan, seva and honest conversation — no dress code, no fees.",
-    "about_preview_cta": "Meet the community",
-    "programs_preview_title": "Weekly <em>programs</em>",
-    "programs_preview_cta": "See all programs",
-    "festival_banner_eyebrow": "Happening now",
-    "festival_banner_cta": "View festival schedule",
-    "join_cta_title": "Ready to find <em>your people?</em>",
-    "join_cta_body": "Come as you are, every Sunday, 5:30 PM. No registration needed for your first visit.",
-    "join_cta_button": "Join the Forum"
+    "badge": "The youth wing of ISKCON Patna",
+    "title": "ISKCON Youth Forum, Patna",
+    "subtitle": "A community of students and young professionals in Patna practising bhakti-yoga — kirtan, Bhagavad Gita study, seva and festivals. Come as you are.",
+    "cta_primary": "Join the Forum",
+    "cta_secondary": "See our programs",
+    "parent_strip": "IYF Patna is the youth wing of ISKCON Patna, based at Sri Sri Radha Banke Bihari Temple, Buddha Marg.",
+    "pillars_title": "What we do",
+    "pillars_subtitle": "Four things we come back to every week.",
+    "pillar_kirtan_title": "Kirtan & Sunday Fest",
+    "pillar_kirtan_body": "Weekly congregational chanting, a class, and prasadam together. No dress code and no fee — the first visit needs no registration.",
+    "pillar_gita_title": "Bhagavad Gita Courses",
+    "pillar_gita_body": "Structured study circles that read the Gita slowly and honestly, with room for the questions students actually have.",
+    "pillar_seva_title": "Seva & Service",
+    "pillar_seva_body": "Food distribution, festival service and temple seva — practice that happens with your hands, not only in theory.",
+    "pillar_yatra_title": "Festivals & Yatras",
+    "pillar_yatra_body": "Janmashtami, Kirtan Mela and pilgrimage journeys to the holy dhams, organised for youth and families together.",
+    "yatra_eyebrow": "Registrations open",
+    "yatra_title": "Vrindavan Yatra",
+    "yatra_body": "A devotional journey from Patna to Vrindavan Dham — darshan, kirtan and prasadam with the ISKCON Patna family. Youth and family registrations are handled on the yatra site.",
+    "yatra_cta": "Visit the yatra site",
+    "about_title": "Part of ISKCON Patna",
+    "about_body": "ISKCON Youth Forum Patna is not a separate organisation. It is the youth wing of ISKCON Patna — the International Society for Krishna Consciousness — and operates from Sri Sri Radha Banke Bihari Temple on Buddha Marg. Everything we run, from weekly programs to yatras, happens under the temple's Management Council.",
+    "about_cta": "More about us",
+    "join_title": "Come this Sunday",
+    "join_body": "Bring a friend or come alone. No registration needed for a first visit — just turn up.",
+    "join_cta": "Get directions",
+    "hero_image_alt": "IYF Patna youth together on a yatra"
   },
   "about": {
     "eyebrow": "About IYF Patna",
-    "title": "A campus-wide bhakti community",
-    "body": "ISKCON Youth Forum Patna brings together students from colleges across the city for weekly kirtan, Bhagavad Gita study circles, seva projects and festivals. We started as a handful of students meeting after class — today we're eighteen campus chapters strong, and growing every semester.",
-    "body_hi": "इस्कॉन यूथ फोरम पटना शहर भर के महाविद्यालयों के विद्यार्थियों को साप्ताहिक कीर्तन, भगवद्गीता अध्ययन मंडल, सेवा परियोजनाओं और उत्सवों में एक साथ लाता है।",
-    "members_title": "The people behind it",
-    "members_subtitle": "Hover a face to meet them"
+    "title": "The youth wing of ISKCON Patna",
+    "body": "ISKCON Youth Forum Patna brings together students and young professionals from across the city for weekly kirtan, Bhagavad Gita study circles, seva projects and festivals. We are the youth wing of ISKCON Patna and everything we run happens from Sri Sri Radha Banke Bihari Temple on Buddha Marg, under the temple's Management Council.",
+    "parent_title": "Who we belong to",
+    "parent_body": "IYF Patna is not a separate organisation or society. It is the youth wing of ISKCON Patna — the International Society for Krishna Consciousness — and acts under the authority of the Temple Management Council.",
+    "council_title": "Management Council",
+    "council_subtitle": "The ISKCON Patna Temple Management Council, under whose direction IYF Patna operates.",
+    "visit_title": "Come and see",
+    "visit_body": "The simplest way to know what we do is to turn up. Our weekly programs are open to everyone and need no registration for a first visit.",
+    "visit_cta": "Get directions"
   },
   "programs": {
     "eyebrow": "Weekly Programs",
@@ -83,7 +94,10 @@
   "gallery": {
     "eyebrow": "Gallery",
     "title": "Moments from the community",
-    "empty": "Photos are on their way."
+    "empty": "Photos are on their way.",
+    "subtitle": "Photographs from our yatras, festivals and weekly programs.",
+    "open_image": "Open photograph",
+    "close_image": "Close photograph"
   },
   "playground": {
     "eyebrow": "Playground",
@@ -128,10 +142,37 @@
   "festivals": {
     "eyebrow": "Festivals",
     "title": "Celebrate with us",
+    "subtitle": "The festival calendar is the loudest part of the year at ISKCON Patna — kirtan, drama, feasting and all-night chanting. Everyone is welcome, and nothing needs booking.",
     "current_badge": "Now celebrating",
     "schedule_title": "Full schedule",
     "other_title": "Through the year",
-    "empty": "Festival dates are being finalised — check back soon."
+    "empty": "Festival dates are being finalised — check back soon.",
+    "photo_credit": "Photo: {author}",
+    "join_title": "Want to help run one?",
+    "join_body": "Festivals here are built by volunteers — kitchen, kirtan, decoration, stage, clean-up. There is a place for you whatever you are good at.",
+    "join_cta": "Join the Forum",
+    "fallback": {
+      "title": "Janmashtami",
+      "description": "Celebrating the appearance of Lord Sri Krishna — from Jhulan Utsav through to Janmashtami night.",
+      "schedule": [
+        {
+          "dateLabel": "23–28 Jul",
+          "title": "Jhulan Utsav"
+        },
+        {
+          "dateLabel": "30 Jul",
+          "title": "Adhivas"
+        },
+        {
+          "dateLabel": "31 Jul – 2 Aug",
+          "title": "Kirtan Mela"
+        },
+        {
+          "dateLabel": "4 Aug",
+          "title": "Janmashtami"
+        }
+      ]
+    }
   },
   "dashboard": {
     "title": "Your dashboard",
@@ -164,7 +205,8 @@
     "cancel": "Cancel",
     "close": "Close",
     "language": "Language",
-    "maha_mantra": "Hare Krishna Hare Krishna Krishna Krishna Hare Hare · Hare Rama Hare Rama Rama Rama Hare Hare"
+    "maha_mantra": "Hare Krishna Hare Krishna Krishna Krishna Hare Hare · Hare Rama Hare Rama Rama Rama Hare Hare",
+    "whatsapp_cta": "Join our WhatsApp group"
   },
   "pwa": {
     "install_title": "Install IYF Patna",
@@ -173,5 +215,56 @@
     "install_dismiss": "Not now",
     "offline_title": "You're offline",
     "offline_body": "Some pages need a connection. Your Japa Counter and Gita Quiz still work — everything will sync once you're back online."
+  },
+  "footer": {
+    "youth_wing": "The youth wing of ISKCON Patna",
+    "about_line": "A community of students and young professionals in Patna practising bhakti-yoga — kirtan, Gita study, seva and festivals.",
+    "founder": "Founder-Ācārya: His Divine Grace A. C. Bhaktivedanta Swami Prabhupāda",
+    "explore": "Explore",
+    "legal_heading": "Legal",
+    "council_heading": "Management Council",
+    "contact_heading": "Contact",
+    "roles": {
+      "co_chairman": "Co-Chairman, ISKCON Patna",
+      "tmc_member": "Member, Temple Management Council (TMC), Director IYF Patna"
+    },
+    "rights": "All rights reserved.",
+    "operated_by": "iyfpatna.in is operated by ISKCON Youth Forum Patna, the youth wing of ISKCON Patna."
+  },
+  "schedule": {
+    "eyebrow": "Temple timings",
+    "title": "Daily Schedule",
+    "subtitle": "The daily round of aarti, offerings and darshan at Sri Sri Radha Banke Bihari Temple, Buddha Marg. Everyone is welcome at every one of these — no booking, no fee.",
+    "closed_label": "Temple closed",
+    "closed_note": "The temple closes between the midday offering and the evening darshan, while the deities rest.",
+    "note_title": "Before you come",
+    "note_body": "Timings shift slightly on festival days and Ekadashi. If you are travelling a distance, call ahead to confirm.",
+    "note_cta": "Get directions",
+    "items": {
+      "mangala_aarti": {
+        "name": "Mangala Aarti",
+        "body": "Early morning awakening ceremony of the deities."
+      },
+      "darshan_opens": {
+        "name": "Darshan Opens",
+        "body": "Temple opens for public darshan after morning rituals."
+      },
+      "bhoga_offering": {
+        "name": "Bhoga Offering",
+        "body": "Midday offering to the deities."
+      },
+      "evening_darshan": {
+        "name": "Evening Darshan",
+        "body": "Temple reopens for evening darshan."
+      },
+      "sandhya_aarti": {
+        "name": "Sandhya Aarti",
+        "body": "Evening aarti with lamps and kirtan."
+      },
+      "darshan_closes": {
+        "name": "Darshan Closes",
+        "body": "Temple closes after evening programs."
+      }
+    }
   }
 }

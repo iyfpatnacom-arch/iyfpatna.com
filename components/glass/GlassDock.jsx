@@ -23,7 +23,7 @@ export function GlassDock() {
 
   return (
     <div
-      className="fixed inset-x-0 bottom-0 z-40 w-full max-w-full select-none border-t border-glass/12 bg-gradient-to-b from-glass/[0.06] to-glass/[0.12] shadow-[inset_0_1px_0_var(--glass-hi),0_-20px_44px_-30px_var(--glass-shadow)] backdrop-blur-2xl backdrop-saturate-150 md:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 w-full max-w-full select-none border-t border-border bg-background/95 backdrop-blur-lg md:hidden"
       style={{
         // The blurred surface runs to the physical bottom edge and the row is
         // pushed up off the home indicator — the native tab-bar arrangement.
@@ -43,15 +43,15 @@ export function GlassDock() {
           keyframe shifts it 50% — copy two arrives exactly where copy one
           began, so the loop has no seam. `overflow-hidden` here is load-bearing:
           the track is deliberately wider than the screen. */}
-      <div className="marquee-mask overflow-hidden border-b border-glass/10 bg-glass/[0.05] py-[3px]">
+      <div className="marquee-mask overflow-hidden border-b border-border/60 bg-muted/40 py-[3px]">
         <div className="marquee-track" aria-hidden="true">
           {[0, 1].map((copy) => (
             <span
               key={copy}
-              className="shrink-0 px-3 text-[9px] font-semibold whitespace-nowrap text-gold-ink/75"
+              className="shrink-0 px-3 text-[9px] font-semibold whitespace-nowrap text-muted-foreground"
             >
               {mantra}
-              <span className="px-3 text-foreground/25">·</span>
+              <span className="px-3 text-muted-foreground/50">·</span>
             </span>
           ))}
         </div>
@@ -88,13 +88,13 @@ export function GlassDock() {
               <item.Icon
                 className={cn(
                   "relative z-10 h-5 w-5 shrink-0",
-                  active ? "text-gold-ink" : "text-foreground/55"
+                  active ? "text-primary" : "text-muted-foreground"
                 )}
               />
               <span
                 className={cn(
                   "relative z-10 w-full truncate text-center text-[10px] font-semibold leading-none",
-                  active ? "text-foreground" : "text-foreground/45"
+                  active ? "text-foreground" : "text-muted-foreground"
                 )}
               >
                 {t(item.key)}

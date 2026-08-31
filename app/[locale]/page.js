@@ -1,34 +1,52 @@
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
+import { Hero } from "@/components/home/Hero";
+import { Pillars } from "@/components/home/Pillars";
+import { YatraCallout } from "@/components/home/YatraCallout";
+import { ParentOrg } from "@/components/home/ParentOrg";
+import { JoinCta } from "@/components/home/JoinCta";
+import { routing } from "@/i18n/routing";
+import { ORG } from "@/lib/site-config";
 
-export const dynamic = "force-dynamic";
-import { dbConnect } from "@/lib/db/connect";
-import Program from "@/models/Program";
-import Festival from "@/models/Festival";
-import { toPlain } from "@/lib/serialize";
-import { DesktopHome } from "@/components/home/DesktopHome";
-import { MobileHome } from "@/components/home/MobileHome";
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
 
+export async function generateMetadata({ params }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "home" });
+
+  return {
+    title: `${ORG.name} — ${t("badge")}`,
+    description: t("subtitle"),
+    openGraph: {
+      title: ORG.name,
+      description: t("subtitle"),
+      type: "website",
+    },
+  };
+}
+
+/**
+ * Home page.
+ *
+ * Entirely static. The previous version read Programs and Festivals from
+ * MongoDB and was `force-dynamic`, which meant the front page went down with
+ * the database and could never be prerendered. This page's job is to say who
+ * IYF Patna is, who it belongs to and where to find it — none of which
+ * changes per request — so the live event data stays on the Programs and
+ * Festivals pages, which are actually about it.
+ */
 export default async function HomePage({ params }) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  await dbConnect();
-  const [programs, festival] = await Promise.all([
-    Program.find({ isActive: true }).sort({ order: 1 }).limit(3).lean(),
-    Festival.findOne({ isCurrent: true }).lean(),
-  ]);
-
-  const plainPrograms = toPlain(programs);
-  const plainFestival = festival ? toPlain(festival) : null;
-
   return (
     <>
-      <div className="hidden md:block">
-        <DesktopHome programs={plainPrograms} festival={plainFestival} />
-      </div>
-      <div className="md:hidden">
-        <MobileHome programs={plainPrograms} festival={plainFestival} />
-      </div>
+      <Hero />
+      <Pillars />
+      <YatraCallout />
+      <ParentOrg />
+      <JoinCta />
     </>
   );
 }

@@ -25,7 +25,7 @@ export function ThemeToggle({ className }) {
       title={label}
       onClick={() => setTheme(isDark ? "light" : "dark")}
       className={cn(
-        "grid h-[38px] w-[38px] place-items-center rounded-xl border border-glass/10 bg-glass/[0.07] text-foreground/80 transition-colors hover:text-foreground",
+        "grid h-[38px] w-[38px] place-items-center rounded-xl border border-border bg-muted/40 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
         className
       )}
     >

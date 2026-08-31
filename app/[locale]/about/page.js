@@ -1,53 +1,117 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { GlassCard } from "@/components/glass/GlassCard";
-import { MemberGrid } from "@/components/about/MemberGrid";
+import { IskconLogo } from "@/components/site/IskconLogo";
+import { MapPin } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { routing } from "@/i18n/routing";
+import { MANAGEMENT_COUNCIL, ORG } from "@/lib/site-config";
 
-const MEMBERS = [
-  { name: "Aditya Raj", role: "Coordinator", seed: "iyf-member-1" },
-  { name: "Priya Sharma", role: "Kirtan Lead", seed: "iyf-member-2" },
-  { name: "Rohan Kumar", role: "Seva Lead", seed: "iyf-member-3" },
-  { name: "Ananya Singh", role: "Outreach", seed: "iyf-member-4" },
-  { name: "Kartik Verma", role: "Campus Chapters", seed: "iyf-member-5" },
-  { name: "Ishita Gupta", role: "Study Circles", seed: "iyf-member-6" },
-  { name: "Saurabh Jha", role: "Media", seed: "iyf-member-7" },
-  { name: "Divya Mishra", role: "Events", seed: "iyf-member-8" },
-];
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
 
+export async function generateMetadata({ params }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "about" });
+  return { title: t("title"), description: t("body") };
+}
+
+const mapsHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+  ORG.address,
+)}`;
+
+/**
+ * About page.
+ *
+ * The previous version presented eight invented member names behind randomly
+ * generated stock portraits, and claimed a specific number of campus
+ * chapters. None of it was real, so none of it survived. What replaces it is
+ * the one roster we can actually stand behind: the Temple Management Council
+ * that IYF Patna operates under.
+ */
 export default async function AboutPage({ params }) {
   const { locale } = await params;
   setRequestLocale(locale);
+
   const t = await getTranslations("about");
+  const tf = await getTranslations("footer");
 
   return (
-    <div className="mx-auto max-w-4xl px-5 py-14 md:px-10 md:py-20">
-      <span className="text-xs font-bold uppercase tracking-widest text-gold-ink">
+    <div className="mx-auto w-full max-w-4xl px-4 py-14 sm:px-6 sm:py-20">
+      <p className="text-xs font-semibold tracking-wider text-primary uppercase">
         {t("eyebrow")}
-      </span>
-      <h1 className="mt-3 text-3xl font-extrabold text-foreground md:text-5xl">
+      </p>
+      <h1 className="mt-3 text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
         {t("title")}
       </h1>
+      <p className="mt-5 max-w-2xl text-[15px] leading-relaxed text-muted-foreground sm:text-base">
+        {t("body")}
+      </p>
 
-      <div className="mt-8 overflow-hidden rounded-3xl border border-glass/10">
-        <img
-          src="https://picsum.photos/seed/iyf-group-photo/1200/700"
-          alt=""
-          className="h-64 w-full object-cover md:h-96"
+      {/* Parent organisation */}
+      <section className="mt-12 flex flex-col gap-6 rounded-2xl border border-border bg-card p-6 sm:flex-row sm:items-start sm:gap-8 sm:p-8">
+        <IskconLogo
+          className="h-16 w-auto shrink-0 text-foreground"
+          title="ISKCON"
         />
-      </div>
+        <div>
+          <h2 className="text-lg font-semibold tracking-tight">
+            {t("parent_title")}
+          </h2>
+          <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">
+            {t("parent_body")}
+          </p>
+          <p className="mt-4 flex items-start gap-2 text-sm text-muted-foreground">
+            <MapPin
+              className="mt-0.5 size-4 shrink-0 opacity-70"
+              aria-hidden="true"
+            />
+            <span className="leading-relaxed">{ORG.address}</span>
+          </p>
+        </div>
+      </section>
 
-      <GlassCard className="mt-8 p-6 md:p-10">
-        <p className="text-base leading-relaxed text-foreground/70 md:text-lg">
-          {t("body")}
-        </p>
-      </GlassCard>
-
-      <div className="mt-14">
-        <h2 className="text-2xl font-extrabold text-foreground">
-          {t("members_title")}
+      {/* Management Council */}
+      <section className="mt-14">
+        <h2 className="text-2xl font-semibold tracking-tight">
+          {t("council_title")}
         </h2>
-        <p className="mt-1 text-sm text-foreground/50">{t("members_subtitle")}</p>
-        <MemberGrid members={MEMBERS} />
-      </div>
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+          {t("council_subtitle")}
+        </p>
+
+        <ul className="mt-7 grid gap-4 sm:grid-cols-2">
+          {MANAGEMENT_COUNCIL.map((member) => (
+            <li
+              key={member.name}
+              className="rounded-xl border border-border bg-card p-5"
+            >
+              <p className="font-medium text-foreground">{member.name}</p>
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                {tf(`roles.${member.roleKey}`)}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* Visit */}
+      <section className="mt-14 rounded-2xl border border-border bg-muted/30 p-6 sm:p-8">
+        <h2 className="text-lg font-semibold tracking-tight">
+          {t("visit_title")}
+        </h2>
+        <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-muted-foreground">
+          {t("visit_body")}
+        </p>
+        <Button
+          className="mt-6 rounded-full"
+          render={
+            <a href={mapsHref} target="_blank" rel="noopener noreferrer" />
+          }
+        >
+          <MapPin className="size-4" aria-hidden="true" />
+          {t("visit_cta")}
+        </Button>
+      </section>
     </div>
   );
 }

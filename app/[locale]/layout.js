@@ -5,11 +5,13 @@ import { notFound } from "next/navigation";
 import { ClerkProvider } from "@clerk/nextjs";
 import { clerkConfigured } from "@/lib/auth-config";
 import { routing } from "@/i18n/routing";
+import { ORG } from "@/lib/site-config";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
-import { GlassNav } from "@/components/glass/GlassNav";
-import { GlassTopBar } from "@/components/glass/GlassTopBar";
+import { SiteHeader } from "@/components/site/SiteHeader";
+import { SiteFooter } from "@/components/site/SiteFooter";
 import { GlassDock } from "@/components/glass/GlassDock";
+import { WhatsappFab } from "@/components/site/WhatsappFab";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { PageTransition } from "@/components/PageTransition";
 import { PwaInstallGate } from "@/components/pwa/PwaInstallGate";
@@ -37,9 +39,13 @@ const instrumentSerif = Instrument_Serif({
 });
 
 export const metadata = {
-  title: "ISKCON Youth Forum Patna",
+  title: {
+    default: "ISKCON Youth Forum Patna — the youth wing of ISKCON Patna",
+    template: "%s · IYF Patna",
+  },
   description:
-    "A community of students in Patna practising bhakti-yoga — kirtan, Gita study, seva and festivals.",
+    "ISKCON Youth Forum Patna is the youth wing of ISKCON Patna — a community of students and young professionals practising bhakti-yoga through kirtan, Bhagavad Gita study, seva and festivals.",
+  metadataBase: new URL(ORG.siteUrl),
   manifest: "/manifest.webmanifest",
 };
 
@@ -49,7 +55,7 @@ export const viewport = {
   // indicator instead of above it.
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#faf6ef" },
+    { media: "(prefers-color-scheme: light)", color: "#fdfcfa" },
     { media: "(prefers-color-scheme: dark)", color: "#100a06" },
   ],
 };
@@ -67,12 +73,18 @@ export default async function LocaleLayout({ children, params }) {
   const content = (
     <NextIntlClientProvider>
       <TooltipProvider>
-        <GlassNav clerkConfigured={clerkConfigured} />
-        <GlassTopBar />
-        <main className="flex-1 pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-0">
-          <PageTransition>{children}</PageTransition>
-        </main>
+        <SiteHeader clerkConfigured={clerkConfigured} />
+        {/* The dock is fixed over the page on phones, so the padding that
+            keeps it from covering content has to clear the footer too — it
+            sits on the wrapper, not on <main>. */}
+        <div className="flex flex-1 flex-col pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-0">
+          <main className="flex-1">
+            <PageTransition>{children}</PageTransition>
+          </main>
+          <SiteFooter />
+        </div>
         <GlassDock />
+        <WhatsappFab />
         <PwaInstallGate />
         <Toaster position="top-center" />
       </TooltipProvider>

@@ -8,8 +8,17 @@ export default getRequestConfig(async ({ requestLocale }) => {
     ? requested
     : routing.defaultLocale;
 
+  /* The policy documents are long enough that keeping them in the main
+     catalogue would bury every other string, so they live in their own file
+     per locale and are grafted on as the `legal` namespace. Consumers still
+     read one messages object. */
+  const [common, legal] = await Promise.all([
+    import(`../messages/${locale}.json`),
+    import(`../messages/legal.${locale}.json`),
+  ]);
+
   return {
     locale,
-    messages: (await import(`../messages/${locale}.json`)).default,
+    messages: { ...common.default, legal: legal.default },
   };
 });

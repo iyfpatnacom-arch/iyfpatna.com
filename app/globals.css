@@ -86,29 +86,38 @@
   --glow-gold: 26%;
   --glow-purple: 12%;
 
-  --background: #faf6ef;
+  --background: #fdfcfa;
   --foreground: #1f150d;
-  --card: #fffdf9;
+  --card: #ffffff;
   --card-foreground: #1f150d;
-  --popover: #fffdf9;
+  --popover: #ffffff;
   --popover-foreground: #1f150d;
   --primary: #b4640c;
   --primary-foreground: #fffaf2;
-  --secondary: #f2e9dc;
+  --secondary: #f4f1ec;
   --secondary-foreground: #1f150d;
-  --muted: #f2e9dc;
-  --muted-foreground: #6b5a48;
+  --muted: #f5f2ed;
+  --muted-foreground: #6f645a;
   --accent: #ebe9ff;
   --accent-foreground: #2a1b4a;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: #e6dbcb;
-  --input: #e6dbcb;
+  --border: #e8e3da;
+  --input: #e8e3da;
   --ring: var(--brand-gold-deep);
   --chart-1: #d98613;
   --chart-2: #6c6be0;
   --chart-3: #c9701a;
   --chart-4: #2a1b4a;
   --chart-5: #8a7a68;
+  /* ISKCON Patna band above the IYF navigation. Fixed in both themes: the
+     band is a constant piece of brand furniture, not a themed surface.
+     Built from the site's own warm palette — deep ink through to the burnt
+     saffron of --brand-gold-deep — so the header belongs to this site rather
+     than importing another one's colours. */
+  --band-from: #1c0f06;
+  --band-to: #b4640c;
+  --band-accent: #f2a63b;
+
   --radius: 0.625rem;
   --sidebar: #fffdf9;
   --sidebar-foreground: #1f150d;
@@ -170,10 +179,10 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-image:
-      radial-gradient(90% 60% at 72% -12%, color-mix(in oklab, var(--brand-gold) var(--glow-gold), transparent) 0%, transparent 60%),
-      radial-gradient(70% 50% at 10% 6%, color-mix(in oklab, var(--brand-purple) var(--glow-purple), transparent) 0%, transparent 62%);
-    background-attachment: fixed;
+    /* Deliberately flat. The previous full-page gold/purple radial wash was
+       fixed-attachment, so it repainted on every scroll frame and tinted every
+       surface laid over it — which is what made ordinary cards read as heavy.
+       Colour now comes from the components that need it, not from the page. */
   }
   html {
     @apply font-sans;
@@ -224,6 +233,14 @@
 }
 
 @layer components {
+  .iskcon-band {
+    background-image: linear-gradient(
+      100deg,
+      var(--band-from) 0%,
+      var(--band-to) 100%
+    );
+  }
+
   .liquid-glass {
     background: rgba(255, 255, 255, 0.01);
     background-blend-mode: luminosity;
