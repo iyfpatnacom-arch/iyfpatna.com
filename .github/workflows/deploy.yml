@@ -1,0 +1,111 @@
+name: Deploy to VPS
+
+# The VPS is CPU-starved by its hypervisor (sustained ~60-90% steal), so it
+# cannot reliably run `npm ci` or `next build` itself — both time out. The
+# build therefore happens here, and the server only ever receives a finished
+# standalone bundle and restarts PM2.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Never let two deploys interleave on the same target. Queue instead of
+# cancelling: a cancelled run could leave a half-rsynced app directory.
+concurrency:
+  group: deploy-iyfpatna
+  cancel-in-progress: false
+
+env:
+  APP: iyfpatna
+  DOMAIN: iyfpatna.in
+  REMOTE_DIR: /home/iyfpatna/htdocs/iyfpatna.in
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      # Node 20 is not arbitrary: the server runs v20.20.2 (module ABI 115).
+      # The standalone bundle ships its own node_modules, so a mismatch here
+      # would send native binaries the server's Node cannot load.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Building on Linux is also what fixes `sharp`: npm resolves the
+      # linux-x64 binary here, where a Windows-built bundle carried the
+      # win32 one and next/image failed at runtime.
+      - name: Build
+        run: npm run build
+
+      - name: Assemble standalone bundle
+        run: |
+          rm -rf .next/standalone/.next/static .next/standalone/public
+          cp -r .next/static .next/standalone/.next/static
+          cp -r public .next/standalone/public
+          echo "bundle size: $(du -sh .next/standalone | cut -f1)"
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      # --delete keeps the remote free of files dropped from the build, but
+      # .env.production holds the runtime secrets and start.sh is written by
+      # the server side, so both are excluded from the sync and the delete.
+      - name: Upload bundle
+        run: |
+          for attempt in 1 2 3 4 5; do
+            if rsync -az --delete --partial --timeout=60 \
+                 --exclude='.env.production' --exclude='start.sh' \
+                 -e "ssh -i ~/.ssh/id_ed25519 -o ConnectTimeout=30 -o ServerAliveInterval=15" \
+                 .next/standalone/ \
+                 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:$REMOTE_DIR/"; then
+              echo "uploaded on attempt $attempt"; exit 0
+            fi
+            echo "attempt $attempt failed (the link to this host drops often); retrying"
+            sleep 15
+          done
+          echo "rsync failed after 5 attempts" >&2; exit 1
+
+      - name: Restart app
+        run: |
+          ssh -i ~/.ssh/id_ed25519 -o ConnectTimeout=30 \
+            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" bash -s <<REMOTE
+          set -e
+          cd "$REMOTE_DIR"
+          # Recreate the launcher if it went missing. It sources the env file
+          # before exec'ing node, because Next's standalone server reads
+          # secrets from process.env at boot.
+          if [ ! -x start.sh ]; then
+            printf '%s\n' '#!/usr/bin/env bash' 'cd "\$(dirname "\$0")"' \
+              'set -a; . ./.env.production; set +a' 'exec /usr/bin/node server.js' > start.sh
+            chmod +x start.sh
+          fi
+          chmod 600 .env.production
+          chown -R iyfpatna:iyfpatna /home/iyfpatna/htdocs
+          pm2 restart $APP --update-env
+          pm2 save
+          REMOTE
+
+      - name: Verify site is serving
+        run: |
+          sleep 12
+          for attempt in 1 2 3 4 5; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' -L --max-time 45 "https://$DOMAIN/" || echo 000)
+            echo "attempt $attempt: HTTP $code"
+            [ "$code" = "200" ] && { echo "https://$DOMAIN is live"; exit 0; }
+            sleep 10
+          done
+          echo "site did not return 200 after deploy" >&2
+          exit 1
