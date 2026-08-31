@@ -17,6 +17,9 @@ const withSerwist = withSerwistInit({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Ships a self-contained server bundle so the VPS never has to run
+  // `npm ci` or `next build` — the host is CPU-starved and both time out.
+  output: "standalone",
   // mongodb-memory-server is a local-dev-only dependency that shells out to a
   // downloaded mongod binary; keep it out of the server bundle entirely.
   serverExternalPackages: ["mongodb-memory-server"],
