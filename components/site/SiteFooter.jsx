@@ -3,11 +3,25 @@ import { ArrowUpRight, Mail, MapPin, Phone } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { BrandMark } from "@/components/site/BrandMark";
 import {
+  DONATE_NAV,
   LEGAL_NAV,
   MAIN_NAV,
   MANAGEMENT_COUNCIL,
   ORG,
 } from "@/lib/site-config";
+
+/**
+ * Explore, as the footer lists it: the main nav minus Home, plus Donate.
+ *
+ * Donate is appended here rather than added to `MAIN_NAV` because the header
+ * gives it a button of its own — but a donate page that only exists behind a
+ * button in the top bar is one a visitor cannot find again from the bottom of
+ * a long page, which is exactly where they finish reading.
+ */
+const EXPLORE_NAV = [
+  ...MAIN_NAV.filter((item) => item.key !== "home"),
+  DONATE_NAV,
+];
 
 function FooterHeading({ children }) {
   return (
@@ -77,7 +91,7 @@ export function SiteFooter() {
           <nav className="md:col-span-2" aria-label={t("explore")}>
             <FooterHeading>{t("explore")}</FooterHeading>
             <ul className="mt-3 space-y-2">
-              {MAIN_NAV.filter((item) => item.key !== "home").map((item) => (
+              {EXPLORE_NAV.map((item) => (
                 <li key={item.key}>
                   <FooterLink href={item.href} external={item.external}>
                     {tn(item.key)}

@@ -24,7 +24,8 @@
       {
         "heading": "Payments",
         "body": [
-          "iyfpatna.in does not process payments and does not collect card, UPI or bank details. Where a paid activity such as a yatra is offered, registration and payment happen on that activity's own website, which publishes its own privacy, refund and terms pages and uses its own payment gateway."
+          "iyfpatna.in does not process payments and does not collect card, UPI or bank details. Where a paid activity such as a yatra is offered, registration and payment happen on that activity's own website, which publishes its own privacy, refund and terms pages and uses its own payment gateway.",
+          "Donations offered through our donate page are received by ISKCON Patna, not by iyfpatna.in: each donate button opens ISKCON Patna's own donation page at iskconpatna.in, where the payment is completed on the temple's gateway and where your name, contact details and PAN are collected for the receipt."
         ]
       },
       {
@@ -173,6 +174,7 @@
         "heading": "Donations and payments",
         "body": [
           "This website does not collect donations or process payments. Where a paid activity such as a yatra is offered, it is handled on that activity's own website, which publishes its own terms, refund and cancellation policies and uses its own payment gateway.",
+          "Donations are received by ISKCON Patna, not by IYF Patna. Our donate page describes the sevas and the amounts the temple publishes, and every donate button opens ISKCON Patna's own donation page at iskconpatna.in. The payment is completed on the temple's gateway, and the receipt, the 80G certificate and any refund are issued by ISKCON Patna under the terms, refund and privacy policies published on its site.",
           "Please be cautious of anyone soliciting payments in the name of IYF Patna through channels other than those published on this site. If in doubt, call or write to us using the contact details below before paying anything."
         ]
       },

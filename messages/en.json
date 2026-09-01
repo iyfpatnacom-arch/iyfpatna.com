@@ -23,7 +23,8 @@
     "close_menu": "Close menu",
     "open_menu": "Open menu",
     "external_hint": "opens in a new tab",
-    "schedule": "Schedule"
+    "schedule": "Schedule",
+    "donate": "Donate"
   },
   "home": {
     "badge": "The youth wing of ISKCON Patna",
@@ -266,5 +267,115 @@
         "body": "Temple closes after evening programs."
       }
     }
+  },
+  "donate": {
+    "eyebrow": "Support the mission",
+    "title": "Offer Your Seva",
+    "subtitle": "Every contribution, big or small, sustains daily worship at Sri Sri Radha Banke Bihari Temple, feeds thousands, and shares Vedic knowledge across Bihar. All donations to ISKCON Patna are eligible for 80G tax exemption.",
+    "cta": "Donate now",
+    "cta_secondary": "Choose a seva",
+    "external_note": "Opens ISKCON Patna's donation page in a new tab",
+    "trust": {
+      "tax": "80G tax benefit",
+      "receipt": "Instant email receipt",
+      "methods": "UPI · Cards · Netbanking",
+      "registered": "Registered public trust"
+    },
+    "who_title": "Who receives your donation",
+    "who_body": "IYF Patna is the youth wing of ISKCON Patna, not a separate legal entity. It holds no bank account and no payment gateway of its own, so this website neither collects donations nor processes payments.",
+    "who_points": [
+      "Your donation is received by ISKCON Patna — the registered public trust that runs Sri Sri Radha Banke Bihari Temple — through the temple's own donation page and payment gateway at iskconpatna.in.",
+      "Every payment is completed on that site. iyfpatna.in never asks for, sees or stores a card number, UPI ID or bank detail.",
+      "The receipt, the 80G certificate and any refund are issued by ISKCON Patna under the policies published on its site."
+    ],
+    "who_address_label": "Registered address",
+    "festival_badge": "Upcoming festival",
+    "seva_title": "Ways to serve",
+    "seva_subtitle": "Pick a seva, choose an amount, and complete your donation securely on ISKCON Patna's donation page. A receipt is emailed to you immediately.",
+    "amount_label": "Choose an amount",
+    "seva_cta": "Donate ₹{amount}",
+    "seva": {
+      "janmashtami": {
+        "eyebrow": "Festival seva",
+        "tag": "Festival",
+        "name": "Sri Krishna Janmashtami Seva",
+        "body": "Sponsor the midnight abhishekam, grand bhoga offering, and prasadam for thousands on the appearance day of Lord Krishna.",
+        "impact": "₹<b>{amount}</b> serves festival prasadam to <b>{units}</b> {units, plural, one {devotee} other {devotees}}"
+      },
+      "anna_daan": {
+        "eyebrow": "Food for life",
+        "tag": "Most loved",
+        "name": "Anna Daan Seva",
+        "body": "Sanctified prasadam served free to devotees, visitors, and those in need across Patna.",
+        "impact": "₹<b>{amount}</b> feeds <b>{units}</b> {units, plural, one {person} other {people}} a sanctified meal"
+      },
+      "deity_seva": {
+        "eyebrow": "Vigraha seva",
+        "name": "Radha Banke Bihari Deity Seva",
+        "body": "Offer flowers, garments, jewellery and daily bhoga to Sri Sri Radha Banke Bihari.",
+        "impact": "₹<b>{amount}</b> sponsors <b>{units}</b> full {units, plural, one {day} other {days}} of deity worship"
+      },
+      "gau_seva": {
+        "eyebrow": "Cow protection",
+        "name": "Gau Seva",
+        "body": "Lord Krishna personally protected cows. Support the care, fodder and medical needs of our cows.",
+        "impact": "₹<b>{amount}</b> provides <b>{units}</b> {units, plural, one {day} other {days}} of fodder for a cow"
+      },
+      "gita_daan": {
+        "eyebrow": "Book distribution",
+        "name": "Gita Daan",
+        "body": "Sponsor Bhagavad-gita As It Is and other Vedic literature for students, prisoners and seekers.",
+        "impact": "₹<b>{amount}</b> distributes <b>{units}</b> {units, plural, one {copy} other {copies}} of the Bhagavad-gita"
+      },
+      "nitya_seva": {
+        "eyebrow": "Monthly seva",
+        "tag": "Monthly",
+        "name": "Nitya Seva",
+        "body": "A fixed monthly contribution that sustains daily worship, prasadam and temple upkeep all year.",
+        "impact": "₹<b>{amount}</b> sustains <b>{units}</b> {units, plural, one {month} other {months}} of continuous seva"
+      },
+      "temple_seva": {
+        "eyebrow": "Mandir seva",
+        "tag": "Campaign",
+        "name": "Temple Development & Maintenance",
+        "body": "Help maintain and expand Sri Sri Radha Banke Bihari Temple, its kitchen and guest facilities.",
+        "impact": "₹<b>{amount}</b> sponsors <b>{units}</b> sq. ft. of temple development"
+      }
+    },
+    "how_title": "How your donation works",
+    "how_steps": [
+      {
+        "title": "Choose a seva",
+        "body": "Pick the service you want to support and the amount you wish to offer."
+      },
+      {
+        "title": "Pay securely",
+        "body": "You are taken to ISKCON Patna's donation page, where the payment is completed by UPI, card or netbanking on the temple's own gateway."
+      },
+      {
+        "title": "Get your receipt",
+        "body": "A donation receipt is emailed to you immediately, at the address you enter while donating."
+      },
+      {
+        "title": "Claim your 80G",
+        "body": "Form No. 10BE, the certificate used to claim the deduction, follows by 31st May of the next financial year."
+      }
+    ],
+    "tax_title": "80G tax exemption",
+    "tax_body": "ISKCON is registered under the {act} (Regn. No. {registration}) with PAN {pan} and 80G Unique Registration Number {urn}. A donation receipt is emailed for every contribution.",
+    "form_title": "Form 10BE",
+    "form_body": "The donation receipt is an acknowledgement. Form No. 10BE, the certificate used to claim the 80G deduction, is generally issued by 31st May of the following financial year to the PAN, email and WhatsApp number you provide.",
+    "help_title": "Other ways to give",
+    "help_body": "For cheque, cash, corpus donations or corporate CSR contributions, call the temple donation desk. For anything about IYF Patna itself, write to us.",
+    "policies_title": "Policies that govern your donation",
+    "policies_body": "The payment is completed on iskconpatna.in, so the temple's own documents apply to it.",
+    "policies": {
+      "terms": "Terms & Conditions",
+      "refund": "Refund Policy",
+      "privacy": "Privacy Policy"
+    },
+    "caution": "Please be cautious of anyone soliciting donations in the name of IYF Patna through any channel other than the temple page linked here. If in doubt, call the temple before paying anything.",
+    "final_title": "Ready to offer your seva?",
+    "final_body": "You will be taken to ISKCON Patna's secure donation page to complete your contribution."
   }
 }

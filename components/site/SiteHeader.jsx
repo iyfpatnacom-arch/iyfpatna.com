@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, HandHeart } from "lucide-react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { BrandMark } from "@/components/site/BrandMark";
 import { IskconBand } from "@/components/site/IskconBand";
@@ -15,7 +15,7 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
-import { MAIN_NAV } from "@/lib/site-config";
+import { DONATE_NAV, MAIN_NAV } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
 
 /**
@@ -97,6 +97,21 @@ export function SiteHeader({ clerkConfigured = false }) {
           </NavigationMenu>
 
           <div className="ml-auto flex items-center gap-2">
+            {/* Donate rides in the control cluster rather than the link row.
+                The row above is already at its width budget once the Hindi
+                labels are in, and this is the one action on the site worth
+                giving a button to. Below `sm` it drops to an icon and matches
+                the theme toggle's size, so the phone bar stays a bar. */}
+            <Button
+              size="lg"
+              variant="outline"
+              className="rounded-full max-sm:w-9 max-sm:px-0"
+              render={<Link href={DONATE_NAV.href} />}
+            >
+              <HandHeart className="size-4" aria-hidden="true" />
+              <span className="max-sm:sr-only">{t(DONATE_NAV.key)}</span>
+            </Button>
+
             <LocaleToggle />
             <ThemeToggle className="h-9 w-9 rounded-full" />
 
