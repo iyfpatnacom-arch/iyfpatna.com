@@ -149,9 +149,6 @@ export default async function DonatePage({ params }) {
           <Info className="size-4 shrink-0 text-primary" aria-hidden="true" />
           {t("who_title")}
         </h2>
-        <p className="mt-3 max-w-3xl text-[15px] leading-relaxed text-muted-foreground">
-          {t("who_body")}
-        </p>
         <ul className="mt-5 space-y-3">
           {t.raw("who_points").map((point) => (
             <li
