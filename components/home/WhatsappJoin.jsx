@@ -3,20 +3,20 @@ import { useTranslations } from "next-intl";
 import { GraduationCap, Music2, PartyPopper, Sunrise } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { WhatsappIcon } from "@/components/site/WhatsappIcon";
-import { WHATSAPP_GROUP_QR, WHATSAPP_GROUP_URL } from "@/lib/site-config";
+import { WHATSAPP_GROUP_IMAGE, WHATSAPP_GROUP_URL } from "@/lib/site-config";
 
 /**
  * "Join our WhatsApp group", sitting directly under what we do.
  *
- * The group is where the community actually runs day to day, so this is the
- * one section that has to work for both a visitor at a desk and one holding
- * the phone that will scan the code. Hence two paths to the same invite: the
- * QR for someone reading on a laptop, the button for someone already on the
- * device WhatsApp is installed on.
+ * The group is where the community actually runs day to day, and the argument
+ * for joining it is the photograph: forty people who already did. So the
+ * photo leads and the invitation sits immediately under it, where someone
+ * looking at the faces can act without hunting for a link.
  *
- * Layout follows from that. On a phone the code comes first — it is the thing
- * a visitor is looking for when a friend says "scan this" — and the copy
- * explains it underneath. From `md` up the two sit side by side.
+ * On a phone the photo comes first and the copy explains underneath. From
+ * `md` up the two sit side by side, half the width each — a landscape group
+ * shot needs the room, and squeezed into a narrow column nobody in it is
+ * recognisable.
  *
  * The four lines are the group's actual traffic, named plainly, so nobody
  * joins expecting one thing and mutes it a day later over another.
@@ -39,25 +39,35 @@ export function WhatsappJoin() {
 
   return (
     <section id="whatsapp" className="scroll-mt-24 border-b border-border/70">
-      <div className="mx-auto grid w-full max-w-6xl gap-8 px-4 py-16 sm:px-6 md:grid-cols-[auto_1fr] md:items-center md:gap-12">
-        {/* The code, first in the DOM so a phone meets it before the copy.
-            Held on a permanent white card rather than on `bg-card`: a QR is
-            read by a camera, not by a person, and inverting it in dark mode
-            would leave a code that no scanner can lock onto. */}
-        <div className="justify-self-center md:justify-self-start">
-          <div className="rounded-2xl border border-border bg-white p-3 shadow-sm">
-            <Image
-              src={WHATSAPP_GROUP_QR}
-              alt={t("whatsapp_qr_alt")}
-              width={200}
-              height={200}
-              className="size-44 sm:size-48"
-              unoptimized
-            />
-          </div>
-          <p className="mt-3 text-center text-xs text-muted-foreground ">
-            {t("whatsapp_scan_hint")}
-          </p>
+      <div className="mx-auto grid w-full max-w-6xl gap-8 px-4 py-16 sm:px-6 md:grid-cols-2 md:items-center md:gap-12">
+        {/* First in the DOM so a phone meets the photo before the copy.
+            Explicit intrinsic dimensions rather than `fill`: they carry the
+            16:9 shape, so the box is reserved before the bytes arrive and the
+            section never jumps. */}
+        <div>
+          <Image
+            src={WHATSAPP_GROUP_IMAGE.src}
+            alt={t("whatsapp_image_alt")}
+            width={WHATSAPP_GROUP_IMAGE.width}
+            height={WHATSAPP_GROUP_IMAGE.height}
+            sizes="(min-width: 768px) 45vw, 100vw"
+            className="h-auto w-full rounded-2xl border border-border bg-muted"
+          />
+
+          <Button
+            size="lg"
+            className="mt-4 w-full rounded-full bg-[#25D366] px-5 text-white hover:bg-[#1da851] focus-visible:ring-[#25D366]/40 sm:w-auto"
+            render={
+              <a
+                href={WHATSAPP_GROUP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+              />
+            }
+          >
+            <WhatsappIcon className="size-4" />
+            {t("whatsapp_cta")}
+          </Button>
         </div>
 
         <div>
