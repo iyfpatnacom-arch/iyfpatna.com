@@ -43,6 +43,16 @@
     "pillar_seva_body": "Food distribution, festival service and temple seva — practice that happens with your hands, not only in theory.",
     "pillar_yatra_title": "Festivals & Yatras",
     "pillar_yatra_body": "Janmashtami, Kirtan Mela and pilgrimage journeys to the holy dhams, organised for youth and families together.",
+    "whatsapp_eyebrow": "WhatsApp",
+    "whatsapp_title": "Join our WhatsApp group",
+    "whatsapp_subtitle": "Scan the code with your phone, or tap the button. It is where every announcement goes out first.",
+    "whatsapp_item_seminar": "Life Transforming Seminar",
+    "whatsapp_item_darshan": "Daily Darshan",
+    "whatsapp_item_festivals": "Festival Update",
+    "whatsapp_item_kirtan": "Kirtan and Katha",
+    "whatsapp_cta": "Join on WhatsApp",
+    "whatsapp_scan_hint": "Scan to join",
+    "whatsapp_qr_alt": "QR code that opens the IYF Patna WhatsApp group invite",
     "yatra_eyebrow": "Registrations open",
     "yatra_title": "Vrindavan Yatra",
     "yatra_body": "A devotional journey from Patna to Vrindavan Dham — darshan, kirtan and prasadam with the ISKCON Patna family. Youth and family registrations are handled on the yatra site.",
@@ -138,7 +148,8 @@
       "title_hi": "वैष्णव पंचांग",
       "subtitle": "Ekadashi and festival dates.",
       "notice": "This calendar is being connected to a verified Vaishnava panchang source — dates shown here are provisional."
-    }
+    },
+    "coming_soon_body": "Japa counter, kirtan library, the Gita quiz and the Vaishnava calendar are being built. They will open here once they are ready to be relied on."
   },
   "festivals": {
     "eyebrow": "Festivals",
@@ -157,19 +168,19 @@
       "description": "Celebrating the appearance of Lord Sri Krishna — from Jhulan Utsav through to Janmashtami night.",
       "schedule": [
         {
-          "dateLabel": "23–28 Jul",
+          "dateLabel": "23–28 Aug",
           "title": "Jhulan Utsav"
         },
         {
-          "dateLabel": "30 Jul",
+          "dateLabel": "30 Aug",
           "title": "Adhivas"
         },
         {
-          "dateLabel": "31 Jul – 2 Aug",
+          "dateLabel": "31 Aug – 2 Sept",
           "title": "Kirtan Mela"
         },
         {
-          "dateLabel": "4 Aug",
+          "dateLabel": "4 Sept",
           "title": "Janmashtami"
         }
       ]
@@ -184,7 +195,9 @@
     "empty_registrations": "You haven't joined a program or course yet.",
     "status_joined": "Joined",
     "status_attended": "Attended",
-    "status_missed": "Missed"
+    "status_missed": "Missed",
+    "eyebrow": "Your profile",
+    "coming_soon_body": "Your registrations, quiz scores and japa history will live here once accounts are open. Nothing you have already registered for is affected."
   },
   "admin": {
     "flags_title": "Feature flags",
@@ -207,7 +220,8 @@
     "close": "Close",
     "language": "Language",
     "maha_mantra": "Hare Krishna Hare Krishna Krishna Krishna Hare Hare · Hare Rama Hare Rama Rama Rama Hare Hare",
-    "whatsapp_cta": "Join our WhatsApp group"
+    "whatsapp_cta": "Join our WhatsApp group",
+    "coming_soon": "Coming soon"
   },
   "pwa": {
     "install_title": "Install IYF Patna",

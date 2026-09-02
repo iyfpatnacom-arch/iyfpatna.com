@@ -1,6 +1,7 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Hero } from "@/components/home/Hero";
 import { Pillars } from "@/components/home/Pillars";
+import { WhatsappJoin } from "@/components/home/WhatsappJoin";
 import { YatraCallout } from "@/components/home/YatraCallout";
 import { ParentOrg } from "@/components/home/ParentOrg";
 import { JoinCta } from "@/components/home/JoinCta";
@@ -44,6 +45,7 @@ export default async function HomePage({ params }) {
     <>
       <Hero />
       <Pillars />
+      <WhatsappJoin />
       <YatraCallout />
       <ParentOrg />
       <JoinCta />

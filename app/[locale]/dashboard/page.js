@@ -1,67 +1,39 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { clerkConfigured, getOptionalAuth } from "@/lib/auth-config";
-import { getFlag } from "@/lib/flags";
-import { dbConnect } from "@/lib/db/connect";
-import QuizScore from "@/models/QuizScore";
-import Registration from "@/models/Registration";
-import JapaLog from "@/models/JapaLog";
-import { toPlain } from "@/lib/serialize";
-import { GlassCard } from "@/components/glass/GlassCard";
-import { DashboardTabs } from "@/components/dashboard/DashboardTabs";
+import { ComingSoon } from "@/components/site/ComingSoon";
+import { routing } from "@/i18n/routing";
 
-export const dynamic = "force-dynamic";
+/**
+ * Profile / dashboard — not open yet.
+ *
+ * The previous version called `dbConnect()` and then queried three
+ * collections for the signed-in user. When the database was unreachable that
+ * threw straight out of the server component, so the dock's Profile tab
+ * rendered the error page rather than anything a visitor could act on.
+ *
+ * `DashboardTabs` and the models it reads are untouched; put the old page
+ * back (see git history) when there is a database and an account system
+ * behind it.
+ */
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
+export async function generateMetadata({ params }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "dashboard" });
+  return { title: t("title") };
+}
 
 export default async function DashboardPage({ params }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("dashboard");
 
-  if (!clerkConfigured) {
-    return <SetupNotice locale={locale} />;
-  }
-
-  const enabled = await getFlag("dashboard.enabled", false);
-  if (!enabled) {
-    return (
-      <div className="mx-auto max-w-lg px-5 py-24 text-center">
-        <GlassCard className="p-10 text-foreground/60">
-          The dashboard is coming soon.
-        </GlassCard>
-      </div>
-    );
-  }
-
-  const { userId } = await getOptionalAuth();
-
-  await dbConnect();
-  const [quizScores, registrations, japaLogs] = await Promise.all([
-    QuizScore.find({ clerkId: userId }).sort({ createdAt: -1 }).lean(),
-    Registration.find({ clerkId: userId }).sort({ createdAt: -1 }).lean(),
-    JapaLog.find({ clerkId: userId }).sort({ date: -1 }).limit(30).lean(),
-  ]);
-
   return (
-    <div className="mx-auto max-w-4xl px-5 py-14 md:px-10 md:py-20">
-      <h1 className="text-3xl font-extrabold text-foreground md:text-4xl">{t("title")}</h1>
-      <DashboardTabs
-        quizScores={toPlain(quizScores)}
-        registrations={toPlain(registrations)}
-        japaLogs={toPlain(japaLogs)}
-      />
-    </div>
-  );
-}
-
-function SetupNotice({ locale }) {
-  return (
-    <div className="mx-auto max-w-lg px-5 py-24 text-center">
-      <GlassCard className="p-10">
-        <p className="font-bold text-foreground">Accounts aren't set up yet</p>
-        <p className="mt-2 text-sm text-foreground/55">
-          Add Clerk publishable and secret keys to .env.local to enable
-          sign-in and the dashboard.
-        </p>
-      </GlassCard>
-    </div>
+    <ComingSoon
+      eyebrow={t("eyebrow")}
+      title={t("title")}
+      body={t("coming_soon_body")}
+    />
   );
 }

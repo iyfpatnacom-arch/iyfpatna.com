@@ -1,71 +1,41 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
+import { ComingSoon } from "@/components/site/ComingSoon";
+import { routing } from "@/i18n/routing";
 
-export const dynamic = "force-dynamic";
-import { Sparkles, Music, HelpCircle, CalendarClock } from "lucide-react";
-import { getFlag } from "@/lib/flags";
-import { Link } from "@/i18n/navigation";
-import { GlassCard } from "@/components/glass/GlassCard";
+/**
+ * Playground — not open yet.
+ *
+ * The previous version read four feature flags out of MongoDB on every
+ * request (`force-dynamic`) to decide which tiles to light up, and its tiles
+ * led to pages that query the database directly. With the database
+ * unreachable those routes 500, which is what the bottom dock's Playground
+ * tab was doing in production.
+ *
+ * The tools themselves still live under `playground/*` and are unchanged;
+ * nothing links to them until they are ready to be linked to. Restoring the
+ * tile grid is a matter of putting the old page back — see git history — once
+ * there is a database behind it.
+ */
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
 
-const TILES = [
-  { key: "japa", flag: "playground.japa_counter", href: "/playground/japa-counter", Icon: Sparkles },
-  { key: "kirtan", flag: "playground.kirtan_library", href: "/playground/kirtan-library", Icon: Music },
-  { key: "quiz", flag: "playground.gita_quiz", href: "/playground/gita-quiz", Icon: HelpCircle },
-  { key: "calendar", flag: "playground.spiritual_calendar", href: "/playground/spiritual-calendar", Icon: CalendarClock },
-];
+export async function generateMetadata({ params }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "playground" });
+  return { title: t("title") };
+}
 
 export default async function PlaygroundPage({ params }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("playground");
 
-  const flags = await Promise.all(TILES.map((tile) => getFlag(tile.flag, false)));
-
   return (
-    <div className="mx-auto max-w-4xl px-5 py-14 md:px-10 md:py-20">
-      <span className="text-xs font-bold uppercase tracking-widest text-gold-ink">
-        {t("eyebrow")}
-      </span>
-      <h1 className="mt-3 text-3xl font-extrabold text-foreground md:text-5xl">{t("title")}</h1>
-      <p className="font-hindi mt-2 text-gold-ink/70">{t("subtitle")}</p>
-
-      <div className="mt-10 grid grid-cols-2 gap-4 md:gap-6">
-        {TILES.map((tile, i) => {
-          const enabled = flags[i];
-          const tileContent = (
-            <GlassCard
-              tint={i % 2 === 1 ? "purple" : "gold"}
-              className={`flex aspect-square flex-col justify-between p-5 md:p-7 ${
-                enabled ? "" : "opacity-50"
-              }`}
-            >
-              <span className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-brand-gold-light to-brand-gold text-brand-ink md:h-14 md:w-14">
-                <tile.Icon className="h-6 w-6" />
-              </span>
-              <div>
-                <p className="text-lg font-bold text-foreground md:text-xl">
-                  {t(`${tile.key}.title`)}
-                </p>
-                <p className="font-hindi text-sm text-gold-ink/70">
-                  {t(`${tile.key}.title_hi`)}
-                </p>
-                {!enabled && (
-                  <span className="mt-2 inline-block rounded-full border border-glass/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-foreground/50">
-                    {t("coming_soon")}
-                  </span>
-                )}
-              </div>
-            </GlassCard>
-          );
-
-          return enabled ? (
-            <Link key={tile.key} href={tile.href}>
-              {tileContent}
-            </Link>
-          ) : (
-            <div key={tile.key}>{tileContent}</div>
-          );
-        })}
-      </div>
-    </div>
+    <ComingSoon
+      eyebrow={t("eyebrow")}
+      title={t("title")}
+      body={t("coming_soon_body")}
+    />
   );
 }

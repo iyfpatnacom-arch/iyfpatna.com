@@ -5,10 +5,11 @@ import { routing } from "@/i18n/routing";
 
 const intlMiddleware = createIntlMiddleware(routing);
 
-const isProtectedRoute = createRouteMatcher([
-  "/(hi|en)/dashboard(.*)",
-  "/(hi|en)/admin(.*)",
-]);
+// `/dashboard` is deliberately absent: it is a public "coming soon" placeholder
+// now, and protecting it would send every visitor who taps Profile to a sign-in
+// screen instead of the page that explains why there is nothing there yet. Put
+// it back the moment the real dashboard returns.
+const isProtectedRoute = createRouteMatcher(["/(hi|en)/admin(.*)"]);
 
 // API routes have no locale prefix and must never be redirected by
 // next-intl — they only need Clerk's auth context (when configured).

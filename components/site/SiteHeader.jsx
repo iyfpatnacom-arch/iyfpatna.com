@@ -7,6 +7,7 @@ import { Link, usePathname } from "@/i18n/navigation";
 import { BrandMark } from "@/components/site/BrandMark";
 import { IskconBand } from "@/components/site/IskconBand";
 import { LocaleToggle } from "@/components/site/LocaleToggle";
+import { MobileNav } from "@/components/site/MobileNav";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,10 +27,11 @@ import { cn } from "@/lib/utils";
  * space — pinning both tiers would cost roughly a fifth of a phone screen on
  * every page.
  *
- * Desktop gets the full link row. On a phone the bar carries only the brand
- * and the language/theme controls, because getting around is the bottom
- * dock's job; duplicating the links behind a hamburger would just be a second
- * way to do the same thing.
+ * Desktop gets the full link row. A phone gets the brand, the language and
+ * theme controls, and a hamburger that opens the same row as a drawer — the
+ * bottom dock holds five destinations, so without the drawer About, Courses,
+ * Schedule, Gallery and the yatra had no route in from the top of a phone
+ * screen at all.
  */
 export function SiteHeader({ clerkConfigured = false }) {
   const t = useTranslations("nav");
@@ -142,6 +144,8 @@ export function SiteHeader({ clerkConfigured = false }) {
                 {t("join")}
               </Button>
             )}
+
+            <MobileNav />
           </div>
         </div>
       </header>
