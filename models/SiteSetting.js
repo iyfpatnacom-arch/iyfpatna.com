@@ -18,6 +18,18 @@ import mongoose from "mongoose";
  * renders correctly against a database this collection has never been written
  * to — which is precisely its state on day one.
  */
+/**
+ * Every key this collection stores.
+ *
+ * Lives on the model rather than in lib/settings.js because the seed script
+ * needs it too, and the seed runs under plain node — no "@" alias and no
+ * Next.js runtime, so it cannot import anything that reaches for next/cache.
+ * lib/settings.js re-exports this, so callers inside the app are unaffected.
+ */
+export const SETTING_KEYS = {
+  whatsappGroupUrl: "whatsapp_group_url",
+};
+
 const SiteSettingSchema = new mongoose.Schema(
   {
     key: { type: String, required: true, unique: true, index: true },

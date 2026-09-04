@@ -3,6 +3,7 @@ import { useTranslations } from "next-intl";
 import { GraduationCap, Music2, PartyPopper, Sunrise } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { WhatsappIcon } from "@/components/site/WhatsappIcon";
+import { WhatsappAutoJoin } from "@/components/home/WhatsappAutoJoin";
 import { WHATSAPP_GROUP_IMAGE, WHATSAPP_GROUP_URL } from "@/lib/site-config";
 
 /**
@@ -26,6 +27,10 @@ import { WHATSAPP_GROUP_IMAGE, WHATSAPP_GROUP_URL } from "@/lib/site-config";
  * through. `scroll-mt-24` is what makes that land correctly: the header is
  * sticky, and without the offset the browser aligns the section with the
  * viewport top, which is the space the header is already occupying.
+ *
+ * That fragment does more than scroll: <WhatsappAutoJoin> opens the invite
+ * outright for anyone who arrives on it, so a pasted /en#whatsapp behaves
+ * like the button rather than merely pointing at it.
  */
 const BENEFITS = [
   { key: "seminar", Icon: GraduationCap },
@@ -39,6 +44,8 @@ export function WhatsappJoin({ href = WHATSAPP_GROUP_URL }) {
 
   return (
     <section id="whatsapp" className="scroll-mt-24 border-b border-border/70">
+      <WhatsappAutoJoin href={href} />
+
       <div className="mx-auto grid w-full max-w-6xl gap-8 px-4 py-16 sm:px-6 md:grid-cols-2 md:items-center md:gap-12">
         {/* First in the DOM so a phone meets the photo before the copy.
             Explicit intrinsic dimensions rather than `fill`: they carry the
