@@ -52,7 +52,7 @@ const EXTRA_NAV = [
   { key: "profile", href: "/dashboard", Icon: CircleUser },
 ];
 
-export function MobileNav() {
+export function MobileNav({ whatsappUrl = WHATSAPP_GROUP_URL }) {
   const t = useTranslations("nav");
   const tc = useTranslations("common");
   const pathname = usePathname();
@@ -157,7 +157,7 @@ export function MobileNav() {
             className="w-full rounded-full border-[#25D366]/40 text-[#128C7E] hover:bg-[#25D366]/10 dark:text-[#25D366]"
             render={
               <a
-                href={WHATSAPP_GROUP_URL}
+                href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={close}

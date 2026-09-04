@@ -6,6 +6,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { clerkConfigured } from "@/lib/auth-config";
 import { routing } from "@/i18n/routing";
 import { ORG } from "@/lib/site-config";
+import { getWhatsappGroupUrl } from "@/lib/settings";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import { SiteHeader } from "@/components/site/SiteHeader";
@@ -70,10 +71,19 @@ export default async function LocaleLayout({ children, params }) {
 
   setRequestLocale(locale);
 
+  // Resolved once here and handed to both places that link to the group. It
+  // is a cached data read, not a per-request query, so the pages under this
+  // layout stay prerendered — and it falls back to the constant in
+  // site-config if the database has nothing stored or nothing to say.
+  const whatsappUrl = await getWhatsappGroupUrl();
+
   const content = (
     <NextIntlClientProvider>
       <TooltipProvider>
-        <SiteHeader clerkConfigured={clerkConfigured} />
+        <SiteHeader
+          clerkConfigured={clerkConfigured}
+          whatsappUrl={whatsappUrl}
+        />
         {/* The dock is fixed over the page on phones, so the padding that
             keeps it from covering content has to clear the footer too — it
             sits on the wrapper, not on <main>. */}
@@ -84,7 +94,7 @@ export default async function LocaleLayout({ children, params }) {
           <SiteFooter />
         </div>
         <GlassDock />
-        <WhatsappFab />
+        <WhatsappFab href={whatsappUrl} />
         <PwaInstallGate />
         <Toaster position="top-center" />
       </TooltipProvider>

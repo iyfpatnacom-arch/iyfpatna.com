@@ -23,11 +23,17 @@ import { WHATSAPP_GROUP_URL } from "@/lib/site-config";
  * is before they tap. The green is hardcoded for the same reason a brand mark
  * is: it does not belong to the theme and must not follow it into dark mode.
  *
+ * The destination is a prop rather than a direct read of the constant: the
+ * invite is editable at /admin/settings, so the layout resolves it once per
+ * render and hands it down. The constant stays as the default, which keeps
+ * this component renderable on its own and keeps the button working if the
+ * database has nothing stored.
+ *
  * The tooltip is a hover affordance and never the only label — the accessible
  * name is on the anchor itself, so a screen reader and a touch user (who gets
  * no hover) both still know what the button does.
  */
-export function WhatsappFab() {
+export function WhatsappFab({ href = WHATSAPP_GROUP_URL }) {
   const t = useTranslations("common");
   const label = t("whatsapp_cta");
 
@@ -36,7 +42,7 @@ export function WhatsappFab() {
       <TooltipTrigger
         render={
           <a
-            href={WHATSAPP_GROUP_URL}
+            href={href}
             target="_blank"
             rel="noopener noreferrer"
             aria-label={label}

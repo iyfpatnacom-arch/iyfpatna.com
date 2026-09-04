@@ -33,7 +33,7 @@ import { cn } from "@/lib/utils";
  * Schedule, Gallery and the yatra had no route in from the top of a phone
  * screen at all.
  */
-export function SiteHeader({ clerkConfigured = false }) {
+export function SiteHeader({ clerkConfigured = false, whatsappUrl }) {
   const t = useTranslations("nav");
   const pathname = usePathname();
 
@@ -145,7 +145,10 @@ export function SiteHeader({ clerkConfigured = false }) {
               </Button>
             )}
 
-            <MobileNav />
+            {/* Passed through rather than read here: the header is a client
+                component and the invite lives in the database, so the layout
+                is the one place that can resolve it on the server. */}
+            <MobileNav whatsappUrl={whatsappUrl} />
           </div>
         </div>
       </header>

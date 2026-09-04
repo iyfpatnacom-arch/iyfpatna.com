@@ -7,6 +7,7 @@ import { ParentOrg } from "@/components/home/ParentOrg";
 import { JoinCta } from "@/components/home/JoinCta";
 import { routing } from "@/i18n/routing";
 import { ORG } from "@/lib/site-config";
+import { getWhatsappGroupUrl } from "@/lib/settings";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -41,11 +42,13 @@ export default async function HomePage({ params }) {
   const { locale } = await params;
   setRequestLocale(locale);
 
+  const whatsappUrl = await getWhatsappGroupUrl();
+
   return (
     <>
       <Hero />
       <Pillars />
-      <WhatsappJoin />
+      <WhatsappJoin href={whatsappUrl} />
       <YatraCallout />
       <ParentOrg />
       <JoinCta />

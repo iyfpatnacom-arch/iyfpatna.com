@@ -1,5 +1,5 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { clerkConfigured } from "@/lib/auth-config";
+import { clerkConfigured, getAdminUser } from "@/lib/auth-config";
 import { getAllFlagDocs } from "@/lib/flags";
 import { toPlain } from "@/lib/serialize";
 import { GlassCard } from "@/components/glass/GlassCard";
@@ -16,9 +16,9 @@ export default async function AdminFlagsPage({ params }) {
     return (
       <div className="mx-auto max-w-lg px-5 py-24 text-center">
         <GlassCard className="p-10">
-          <p className="font-bold text-foreground">Accounts aren't set up yet</p>
+          <p className="font-bold text-foreground">Accounts aren&apos;t set up yet</p>
           <p className="mt-2 text-sm text-foreground/55">
-            Add Clerk keys to .env.local, then set your user's publicMetadata.role
+            Add Clerk keys to .env.local, then set your user&apos;s publicMetadata.role
             to &quot;admin&quot; to unlock this page.
           </p>
         </GlassCard>
@@ -26,9 +26,8 @@ export default async function AdminFlagsPage({ params }) {
     );
   }
 
-  const { currentUser } = await import("@clerk/nextjs/server");
-  const user = await currentUser();
-  if (!user || user.publicMetadata?.role !== "admin") {
+  const user = await getAdminUser();
+  if (!user) {
     return (
       <div className="mx-auto max-w-lg px-5 py-24 text-center">
         <GlassCard className="p-10 text-foreground/60">Admins only.</GlassCard>
