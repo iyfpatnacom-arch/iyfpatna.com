@@ -1,7 +1,7 @@
 import { setRequestLocale } from "next-intl/server";
 import { SignUp } from "@clerk/nextjs";
 import { clerkConfigured } from "@/lib/auth-config";
-import { GlassCard } from "@/components/glass/GlassCard";
+import { Panel } from "@/components/site/Panel";
 
 export default async function SignUpPage({ params }) {
   const { locale } = await params;
@@ -12,9 +12,9 @@ export default async function SignUpPage({ params }) {
       {clerkConfigured ? (
         <SignUp />
       ) : (
-        <GlassCard className="max-w-sm p-10 text-center text-foreground/60">
+        <Panel className="max-w-sm p-10 text-center text-muted-foreground">
           Accounts aren&apos;t set up yet — add Clerk keys to .env.local.
-        </GlassCard>
+        </Panel>
       )}
     </div>
   );

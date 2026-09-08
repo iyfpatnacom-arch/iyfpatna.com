@@ -113,12 +113,12 @@ export function WhatsappLinkForm({ current, isDefault, updatedAt }) {
       {error ? (
         <p className="mt-2 text-sm font-medium text-destructive">{t(error)}</p>
       ) : (
-        <p id="whatsapp-url-hint" className="mt-2 text-sm text-foreground/55">
+        <p id="whatsapp-url-hint" className="mt-2 text-sm text-muted-foreground">
           {t("whatsapp_hint")}
         </p>
       )}
 
-      <p className="mt-6 text-xs text-foreground/45">
+      <p className="mt-6 text-xs text-muted-foreground">
         {isDefault
           ? t("whatsapp_default")
           : t("whatsapp_updated", {

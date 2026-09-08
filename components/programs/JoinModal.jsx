@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { GlassModal } from "@/components/glass/GlassModal";
+import { Modal } from "@/components/site/Modal";
 import { ClerkAutofillBridge } from "./ClerkAutofillBridge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -66,7 +66,7 @@ export function JoinModal({ open, onOpenChange, item, itemType, clerkConfigured 
   }
 
   return (
-    <GlassModal
+    <Modal
       open={open}
       onOpenChange={onOpenChange}
       title={item ? t("modal_title", { title: item.title[locale] }) : ""}
@@ -74,40 +74,40 @@ export function JoinModal({ open, onOpenChange, item, itemType, clerkConfigured 
       {clerkConfigured && <ClerkAutofillBridge onAutofill={handleAutofill} />}
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 pt-2">
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="name" className="text-foreground/70">
+          <Label htmlFor="name" className="text-muted-foreground">
             {t("form_name")}
           </Label>
-          <Input id="name" {...register("name")} className="border-glass/15 bg-glass/5 text-foreground" />
-          {errors.name && <p className="text-xs text-red-400">{errors.name.message}</p>}
+          <Input id="name" {...register("name")} />
+          {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
         </div>
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="email" className="text-foreground/70">
+          <Label htmlFor="email" className="text-muted-foreground">
             {t("form_email")}
           </Label>
-          <Input id="email" type="email" {...register("email")} className="border-glass/15 bg-glass/5 text-foreground" />
-          {errors.email && <p className="text-xs text-red-400">{errors.email.message}</p>}
+          <Input id="email" type="email" {...register("email")} />
+          {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
         </div>
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="phone" className="text-foreground/70">
+          <Label htmlFor="phone" className="text-muted-foreground">
             {t("form_phone")}
           </Label>
-          <Input id="phone" type="tel" {...register("phone")} className="border-glass/15 bg-glass/5 text-foreground" />
-          {errors.phone && <p className="text-xs text-red-400">{errors.phone.message}</p>}
+          <Input id="phone" type="tel" {...register("phone")} />
+          {errors.phone && <p className="text-xs text-destructive">{errors.phone.message}</p>}
         </div>
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="note" className="text-foreground/70">
+          <Label htmlFor="note" className="text-muted-foreground">
             {t("form_note")}
           </Label>
-          <Textarea id="note" {...register("note")} className="border-glass/15 bg-glass/5 text-foreground" rows={2} />
+          <Textarea id="note" {...register("note")} rows={2} />
         </div>
         <button
           type="submit"
           disabled={submitting}
-          className="mt-2 rounded-2xl bg-gradient-to-br from-brand-gold-light to-brand-gold px-6 py-3.5 text-sm font-bold text-brand-ink disabled:opacity-60"
+          className="mt-2 min-h-11 rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition-opacity active:opacity-90 disabled:opacity-60"
         >
           {submitting ? t("form_submitting") : t("form_submit")}
         </button>
       </form>
-    </GlassModal>
+    </Modal>
   );
 }

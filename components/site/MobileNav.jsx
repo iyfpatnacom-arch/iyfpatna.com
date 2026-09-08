@@ -9,6 +9,7 @@ import {
   HandHeart,
   Menu,
 } from "lucide-react";
+import { Show, SignInButton, SignUpButton } from "@clerk/nextjs";
 import { Link, usePathname } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -52,7 +53,10 @@ const EXTRA_NAV = [
   { key: "profile", href: "/dashboard", Icon: CircleUser },
 ];
 
-export function MobileNav({ whatsappUrl = WHATSAPP_GROUP_URL }) {
+export function MobileNav({
+  whatsappUrl = WHATSAPP_GROUP_URL,
+  clerkConfigured = false,
+}) {
   const t = useTranslations("nav");
   const tc = useTranslations("common");
   const pathname = usePathname();
@@ -142,6 +146,37 @@ export function MobileNav({ whatsappUrl = WHATSAPP_GROUP_URL }) {
         </nav>
 
         <div className="flex flex-col gap-2 px-4 pb-4">
+          {/* Guarded like the header's pair: these read ClerkProvider context,
+              which the layout only mounts when keys are present. Closing the
+              drawer first matters here — the modal would otherwise open
+              underneath the sheet that launched it. */}
+          {clerkConfigured ? (
+            <Show when="signed-out">
+              <div className="flex gap-2">
+                <SignInButton mode="modal">
+                  <Button
+                    size="lg"
+                    variant="ghost"
+                    className="flex-1 rounded-full"
+                    onClick={close}
+                  >
+                    {t("sign_in")}
+                  </Button>
+                </SignInButton>
+                <SignUpButton mode="modal">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="flex-1 rounded-full"
+                    onClick={close}
+                  >
+                    {t("sign_up")}
+                  </Button>
+                </SignUpButton>
+              </div>
+            </Show>
+          ) : null}
+
           <Button
             size="lg"
             className="w-full rounded-full"

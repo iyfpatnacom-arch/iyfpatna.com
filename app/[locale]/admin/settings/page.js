@@ -1,8 +1,12 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { clerkConfigured, getAdminUser } from "@/lib/auth-config";
+import {
+  clerkConfigured,
+  getAdminUser,
+  redirectSignedOut,
+} from "@/lib/auth-config";
 import { SETTING_KEYS, getSettingDoc } from "@/lib/settings";
 import { WHATSAPP_GROUP_URL } from "@/lib/site-config";
-import { GlassCard } from "@/components/glass/GlassCard";
+import { Panel } from "@/components/site/Panel";
 import { WhatsappLinkForm } from "@/components/admin/WhatsappLinkForm";
 
 /**
@@ -28,22 +32,23 @@ export default async function AdminSettingsPage({ params }) {
   if (!clerkConfigured) {
     return (
       <div className="mx-auto max-w-lg px-5 py-24 text-center">
-        <GlassCard className="p-10">
-          <p className="font-bold text-foreground">Accounts aren&apos;t set up yet</p>
-          <p className="mt-2 text-sm text-foreground/55">
+        <Panel className="p-10">
+          <p className="font-semibold text-foreground">Accounts aren&apos;t set up yet</p>
+          <p className="mt-2 text-sm text-muted-foreground">
             Add Clerk keys to .env.local, then set your user&apos;s publicMetadata.role
             to &quot;admin&quot; to unlock this page.
           </p>
-        </GlassCard>
+        </Panel>
       </div>
     );
   }
 
+  await redirectSignedOut(locale);
   const user = await getAdminUser();
   if (!user) {
     return (
       <div className="mx-auto max-w-lg px-5 py-24 text-center">
-        <GlassCard className="p-10 text-foreground/60">Admins only.</GlassCard>
+        <Panel className="p-10 text-muted-foreground">Admins only.</Panel>
       </div>
     );
   }
@@ -52,20 +57,20 @@ export default async function AdminSettingsPage({ params }) {
 
   return (
     <div className="mx-auto max-w-3xl px-5 py-14 md:px-10 md:py-20">
-      <h1 className="text-3xl font-extrabold text-foreground md:text-4xl">
+      <h1 className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
         {t("settings_title")}
       </h1>
-      <p className="mt-2 text-foreground/60">{t("settings_subtitle")}</p>
+      <p className="mt-2 text-muted-foreground">{t("settings_subtitle")}</p>
 
-      <GlassCard className="mt-8 p-6 md:p-8">
+      <Panel className="mt-8 p-6 md:p-8">
         <WhatsappLinkForm
           current={doc?.value || WHATSAPP_GROUP_URL}
           isDefault={!doc?.value}
           updatedAt={doc?.updatedAt ? doc.updatedAt.toISOString() : null}
         />
-      </GlassCard>
+      </Panel>
 
-      <p className="mt-6 text-sm text-foreground/50">{t("whatsapp_where")}</p>
+      <p className="mt-6 text-sm text-muted-foreground">{t("whatsapp_where")}</p>
     </div>
   );
 }

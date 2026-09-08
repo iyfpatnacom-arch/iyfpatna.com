@@ -1,5 +1,6 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Hero } from "@/components/home/Hero";
+import { TodayPills } from "@/components/home/TodayPills";
 import { Pillars } from "@/components/home/Pillars";
 import { WhatsappJoin } from "@/components/home/WhatsappJoin";
 import { YatraCallout } from "@/components/home/YatraCallout";
@@ -47,6 +48,9 @@ export default async function HomePage({ params }) {
   return (
     <>
       <Hero />
+      {/* Computed in the browser, so a prerendered home page never serves the
+          build date as "today". Absent until it has something true to say. */}
+      <TodayPills />
       <Pillars />
       <WhatsappJoin href={whatsappUrl} />
       <YatraCallout />

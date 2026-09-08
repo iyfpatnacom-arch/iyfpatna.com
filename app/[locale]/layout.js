@@ -3,6 +3,7 @@ import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { ClerkProvider } from "@clerk/nextjs";
+import { shadcn } from "@clerk/ui/themes";
 import { clerkConfigured } from "@/lib/auth-config";
 import { routing } from "@/i18n/routing";
 import { ORG } from "@/lib/site-config";
@@ -11,7 +12,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
-import { GlassDock } from "@/components/glass/GlassDock";
+import { AppDock } from "@/components/site/AppDock";
 import { WhatsappFab } from "@/components/site/WhatsappFab";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { PageTransition } from "@/components/PageTransition";
@@ -65,6 +66,33 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
+/**
+ * Clerk's sign-in and sign-up surfaces, dressed as the rest of the site.
+ *
+ * The shadcn theme alone renders them nearly see-through in dark mode — it
+ * maps its card onto `--card`, which here is a translucent token meant to sit
+ * *on* the page, not float above it. `--clerk-surface` (see globals.css) swaps
+ * in the solid popover colour, which is what the rest of the site's panels do
+ * too: a border and a fill, no frosting.
+ *
+ * Hoisted to a module constant rather than written inline: an object literal
+ * in JSX is a new reference on every render, and this one crosses to the
+ * client on each pass.
+ */
+const CLERK_APPEARANCE = {
+  theme: shadcn,
+  variables: {
+    colorBackground: "var(--clerk-surface)",
+  },
+  elements: {
+    // The theme's own classes are repeated so this reads the same whether
+    // Clerk merges element strings or replaces them.
+    cardBox:
+      "shadow-sm border data-[elevation=flush]:shadow-none data-[elevation=flush]:border-0",
+    popoverBox: "shadow-sm border",
+  },
+};
+
 export default async function LocaleLayout({ children, params }) {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
@@ -93,7 +121,7 @@ export default async function LocaleLayout({ children, params }) {
           </main>
           <SiteFooter />
         </div>
-        <GlassDock />
+        <AppDock />
         <WhatsappFab href={whatsappUrl} />
         <PwaInstallGate />
         <Toaster position="top-center" />
@@ -111,7 +139,13 @@ export default async function LocaleLayout({ children, params }) {
         {/* Theme wraps Clerk, not the other way round, so the light/dark
             switch works signed out and even without Clerk keys. */}
         <ThemeProvider>
-          {clerkConfigured ? <ClerkProvider>{content}</ClerkProvider> : content}
+          {clerkConfigured ? (
+            <ClerkProvider appearance={CLERK_APPEARANCE}>
+              {content}
+            </ClerkProvider>
+          ) : (
+            content
+          )}
         </ThemeProvider>
       </body>
     </html>

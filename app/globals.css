@@ -1,6 +1,10 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+/* Maps Clerk's modals onto the shadcn tokens defined below, so sign-in and
+   sign-up inherit this site's palette in both themes instead of shipping
+   Clerk's own. Must stay with the other @imports: CSS requires them first. */
+@import "@clerk/ui/themes/shadcn.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -92,6 +96,18 @@
   --card-foreground: #1f150d;
   --popover: #ffffff;
   --popover-foreground: #1f150d;
+
+  /* Clerk's shadcn theme surfaces its cards on --card, which in dark mode is
+     a near-transparent glass token: right for a card resting on the page,
+     wrong for a dialog floating over it, where the page shows straight
+     through the form. --popover is the solid counterpart in both themes, so
+     the auth surface borrows that and keeps a few points of translucency —
+     just enough for the backdrop blur to have something to do.
+
+     Declared once, resolved twice: `.dark` lands on the same <html> element
+     as `:root`, so var(--popover) here picks up whichever value is in
+     force. */
+  --clerk-surface: color-mix(in oklab, var(--popover) 93%, transparent);
   --primary: #b4640c;
   --primary-foreground: #fffaf2;
   --secondary: #f4f1ec;

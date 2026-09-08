@@ -14,7 +14,7 @@ const DOCK_ITEMS = [
   { href: "/dashboard", key: "profile", Icon: CircleUser },
 ];
 
-export function GlassDock() {
+export function AppDock() {
   const t = useTranslations("nav");
   const tc = useTranslations("common");
   const pathname = usePathname();

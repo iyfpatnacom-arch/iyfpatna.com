@@ -37,27 +37,27 @@ export function FlagsTable({ flags }) {
   }
 
   return (
-    <div className="mt-8 overflow-x-auto rounded-2xl border border-glass/10">
+    <div className="mt-8 overflow-x-auto rounded-xl border border-border bg-card">
       <Table>
         <TableHeader>
-          <TableRow className="border-glass/10 hover:bg-transparent">
-            <TableHead className="text-foreground/60">{t("flag_key")}</TableHead>
-            <TableHead className="text-foreground/60">{t("flag_scope")}</TableHead>
-            <TableHead className="text-foreground/60">{t("flag_status")}</TableHead>
+          <TableRow className="hover:bg-transparent">
+            <TableHead className="text-muted-foreground">{t("flag_key")}</TableHead>
+            <TableHead className="text-muted-foreground">{t("flag_scope")}</TableHead>
+            <TableHead className="text-muted-foreground">{t("flag_status")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {items.map((flag) => (
-            <TableRow key={flag.key} className="border-glass/8">
+            <TableRow key={flag.key}>
               <TableCell className="font-mono text-xs text-foreground">
                 {flag.key}
                 {flag.temporary && (
-                  <Badge className="ml-2 bg-glass/10 text-[10px] text-foreground/50">
+                  <Badge variant="secondary" className="ml-2 text-[10px]">
                     temporary
                   </Badge>
                 )}
               </TableCell>
-              <TableCell className="text-foreground/50">{flag.scope}</TableCell>
+              <TableCell className="text-muted-foreground">{flag.scope}</TableCell>
               <TableCell>
                 <Switch
                   checked={flag.enabled}

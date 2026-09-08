@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { GlassCard } from "@/components/glass/GlassCard";
+import { Panel } from "@/components/site/Panel";
 import { cn } from "@/lib/utils";
 
 export function GitaQuiz({ questions, clerkConfigured }) {
@@ -52,43 +52,43 @@ export function GitaQuiz({ questions, clerkConfigured }) {
 
   if (!started) {
     return (
-      <GlassCard className="mt-10 flex flex-col items-center gap-4 p-10 text-center">
-        <p className="text-foreground/60">{questions.length} questions</p>
+      <Panel className="mt-10 flex flex-col items-center gap-4 p-10 text-center">
+        <p className="text-muted-foreground">{questions.length} questions</p>
         <button
           onClick={() => setStarted(true)}
-          className="rounded-2xl bg-gradient-to-br from-brand-gold-light to-brand-gold px-6 py-3.5 text-sm font-bold text-brand-ink"
+          className="min-h-11 rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition-opacity active:opacity-90"
         >
           {t("start")}
         </button>
-      </GlassCard>
+      </Panel>
     );
   }
 
   if (finished) {
     return (
-      <GlassCard className="mt-10 flex flex-col items-center gap-4 p-10 text-center">
-        <p className="text-sm font-semibold uppercase tracking-widest text-foreground/50">
+      <Panel className="mt-10 flex flex-col items-center gap-4 p-10 text-center">
+        <p className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
           {t("score")}
         </p>
-        <p className="text-5xl font-extrabold text-foreground">
+        <p className="text-5xl font-semibold tabular-nums text-foreground">
           {score}/{questions.length}
         </p>
         <button
           onClick={restart}
-          className="mt-2 rounded-2xl border border-glass/15 px-6 py-3 text-sm font-semibold text-foreground"
+          className="mt-2 min-h-11 rounded-full border border-border px-6 text-sm font-semibold text-foreground transition-colors active:bg-muted"
         >
           {t("retry")}
         </button>
-      </GlassCard>
+      </Panel>
     );
   }
 
   return (
-    <GlassCard className="mt-10 p-6 md:p-8">
-      <p className="text-xs font-semibold text-foreground/40">
+    <Panel className="mt-10 p-6 md:p-8">
+      <p className="text-xs font-medium text-muted-foreground">
         {index + 1} / {questions.length}
       </p>
-      <h2 className="mt-2 text-lg font-bold text-foreground">{question.question[locale]}</h2>
+      <h2 className="mt-2 text-lg font-semibold text-foreground">{question.question[locale]}</h2>
       <div className="mt-5 flex flex-col gap-2.5">
         {question.options.map((opt, i) => {
           const isCorrect = i === question.correctIndex;
@@ -101,10 +101,10 @@ export function GitaQuiz({ questions, clerkConfigured }) {
               disabled={revealed}
               className={cn(
                 "rounded-xl border px-4 py-3 text-left text-sm font-medium transition-colors",
-                revealed && isCorrect && "border-emerald-400/50 bg-emerald-400/10 text-emerald-200",
-                revealed && isSelected && !isCorrect && "border-red-400/50 bg-red-400/10 text-red-200",
-                !revealed && "border-glass/12 text-foreground/80 hover:bg-glass/5",
-                revealed && !isCorrect && !isSelected && "border-glass/8 text-foreground/40"
+                revealed && isCorrect && "border-emerald-600/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
+                revealed && isSelected && !isCorrect && "border-destructive/40 bg-destructive/10 text-destructive",
+                !revealed && "border-border text-foreground hover:bg-muted/50",
+                revealed && !isCorrect && !isSelected && "border-border/60 text-muted-foreground"
               )}
             >
               {opt[locale]}
@@ -115,11 +115,11 @@ export function GitaQuiz({ questions, clerkConfigured }) {
       {selected !== null && (
         <button
           onClick={next}
-          className="mt-6 w-full rounded-xl bg-gradient-to-br from-brand-gold-light to-brand-gold px-4 py-3 text-sm font-bold text-brand-ink"
+          className="mt-6 min-h-11 w-full rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground transition-opacity active:opacity-90"
         >
           {index + 1 < questions.length ? t("next") : t("submit")}
         </button>
       )}
-    </GlassCard>
+    </Panel>
   );
 }

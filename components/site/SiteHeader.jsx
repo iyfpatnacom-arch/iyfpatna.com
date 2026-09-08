@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { ArrowUpRight, HandHeart } from "lucide-react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { BrandMark } from "@/components/site/BrandMark";
@@ -119,21 +119,39 @@ export function SiteHeader({ clerkConfigured = false, whatsappUrl }) {
 
             {/* Clerk's components read context from ClerkProvider, which the
               layout only mounts when keys are present — so they must stay
-              behind the same flag or they throw on a keyless deploy. */}
+              behind the same flag or they throw on a keyless deploy.
+
+              `Show` rather than `SignedIn`/`SignedOut`: Core 3 removed those
+              two, and because this branch only renders once real keys exist,
+              the breakage stays invisible until the day the keys land. */}
             {clerkConfigured ? (
               <>
-                <SignedOut>
+                <Show when="signed-out">
+                  {/* Sign in is the quieter of the two: a returning member
+                      knows to look for it, whereas a first-time visitor has
+                      to be *offered* an account. Below `sm` only Sign up
+                      survives — the bar is already at its width budget, and
+                      the drawer carries both. */}
                   <SignInButton mode="modal">
-                    <Button size="sm" className="rounded-full">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="rounded-full max-sm:hidden"
+                    >
                       {t("sign_in")}
                     </Button>
                   </SignInButton>
-                </SignedOut>
-                <SignedIn>
+                  <SignUpButton mode="modal">
+                    <Button size="sm" className="rounded-full">
+                      {t("sign_up")}
+                    </Button>
+                  </SignUpButton>
+                </Show>
+                <Show when="signed-in">
                   <UserButton
                     appearance={{ elements: { avatarBox: "h-8 w-8" } }}
                   />
-                </SignedIn>
+                </Show>
               </>
             ) : (
               <Button
@@ -148,7 +166,7 @@ export function SiteHeader({ clerkConfigured = false, whatsappUrl }) {
             {/* Passed through rather than read here: the header is a client
                 component and the invite lives in the database, so the layout
                 is the one place that can resolve it on the server. */}
-            <MobileNav whatsappUrl={whatsappUrl} />
+            <MobileNav whatsappUrl={whatsappUrl} clerkConfigured={clerkConfigured} />
           </div>
         </div>
       </header>
