@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Vibration diagnostic</title>
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; margin: 0; padding: 20px; background: #111; color: #eee; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  p.sub { margin: 0 0 20px; color: #999; font-size: 13px; }
+  table { border-collapse: collapse; width: 100%; margin-bottom: 24px; font-size: 13px; }
+  td { padding: 6px 4px; border-bottom: 1px solid #2a2a2a; vertical-align: top; }
+  td:first-child { color: #999; width: 42%; }
+  .ok { color: #4ade80; } .bad { color: #f87171; } .warn { color: #fbbf24; }
+  button { display: block; width: 100%; margin: 0 0 10px; padding: 16px; font-size: 16px;
+           font-weight: 600; border: 1px solid #3a3a3a; border-radius: 12px;
+           background: #1c1c1c; color: #eee; -webkit-tap-highlight-color: transparent; }
+  button:active { background: #2a2a2a; }
+  #log { margin-top: 20px; font-family: ui-monospace, monospace; font-size: 12px;
+         white-space: pre-wrap; color: #888; border-top: 1px solid #2a2a2a; padding-top: 12px; }
+</style>
+</head>
+<body>
+
+<h1>Vibration diagnostic</h1>
+<p class="sub">Plain HTML. No React, no app code, no iframe. If nothing here buzzes, the problem is the phone or the browser, not the site.</p>
+
+<table id="facts"></table>
+
+<button data-ms="50">Vibrate 50ms (short)</button>
+<button data-ms="200">Vibrate 200ms (clear)</button>
+<button data-ms="800">Vibrate 800ms (impossible to miss)</button>
+<button data-pattern="1">Vibrate pattern 200-100-200-100-400</button>
+<button id="clear">Clear saved haptics preference</button>
+
+<div id="log">Tap a button above.</div>
+
+<script>
+(function () {
+  var log = document.getElementById("log");
+  var lines = [];
+  function say(text) {
+    lines.unshift(text);
+    log.textContent = lines.slice(0, 12).join("\n");
+  }
+
+  function readPref() {
+    try { return window.localStorage.getItem("iyf:haptics"); }
+    catch (e) { return "(localStorage threw: " + e.name + ")"; }
+  }
+
+  var supported = typeof navigator.vibrate === "function";
+  var pref = readPref();
+  var reduced = window.matchMedia
+    && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // The browser refuses vibration outright in some of these situations, so
+  // they are worth seeing before drawing any conclusion from a silent phone.
+  var facts = [
+    ["navigator.vibrate exists", supported ? "yes" : "NO", supported ? "ok" : "bad"],
+    ["Secure context (https)", window.isSecureContext ? "yes" : "NO", window.isSecureContext ? "ok" : "bad"],
+    ["In an iframe", window.top === window.self ? "no" : "YES - blocks vibration",
+      window.top === window.self ? "ok" : "bad"],
+    ["Saved app preference", pref === null ? "(none - defaults to on)" : pref,
+      pref === "off" ? "bad" : "ok"],
+    ["prefers-reduced-motion", reduced ? "reduce" : "no-preference", reduced ? "warn" : "ok"],
+    ["Page visible", document.visibilityState, "ok"],
+    ["Browser", navigator.userAgent, ""]
+  ];
+
+  var table = document.getElementById("facts");
+  facts.forEach(function (row) {
+    var tr = table.insertRow();
+    tr.insertCell().textContent = row[0];
+    var cell = tr.insertCell();
+    cell.textContent = row[1];
+    if (row[2]) cell.className = row[2];
+  });
+
+  function fire(arg, label) {
+    if (!supported) { say(label + " -> navigator.vibrate does not exist"); return; }
+    var result;
+    try {
+      result = navigator.vibrate(arg);
+    } catch (e) {
+      say(label + " -> threw " + e.name + ": " + e.message);
+      return;
+    }
+    say(label + " -> returned " + result +
+      (result === false
+        ? "  (browser REFUSED the call)"
+        : "  (browser ACCEPTED it - if you felt nothing, Android suppressed it)"));
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll("button[data-ms]"), function (btn) {
+    btn.addEventListener("click", function () {
+      var ms = Number(btn.getAttribute("data-ms"));
+      fire(ms, "vibrate(" + ms + ")");
+    });
+  });
+
+  document.querySelector("button[data-pattern]").addEventListener("click", function () {
+    fire([200, 100, 200, 100, 400], "vibrate([200,100,200,100,400])");
+  });
+
+  document.getElementById("clear").addEventListener("click", function () {
+    try {
+      window.localStorage.removeItem("iyf:haptics");
+      say("Cleared iyf:haptics. Reload this page to confirm it reads (none).");
+    } catch (e) {
+      say("Could not clear: " + e.name);
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
