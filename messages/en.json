@@ -156,6 +156,15 @@
         "tagline": "Scan the code on the wall when you arrive. That's the whole thing."
       }
     },
+    "sarathi": {
+      "name": "Sarathi AI",
+      "gloss": "सारथि",
+      "badge": "Coming soon",
+      "tagline": "Ask what you actually want to ask — in Hindi or English, in your own words — and get the answer from the Bhagavad-gita, the Srimad-Bhagavatam and Srila Prabhupada's purports, with the verse named so you can read it for yourself.",
+      "point_ask": "Ask in Hindi or English",
+      "point_cite": "Every answer names its verse",
+      "point_honest": "Says so when the shastra doesn't"
+    },
     "sadhana": {
       "tab_day": "The day",
       "tab_month": "The month",

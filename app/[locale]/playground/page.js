@@ -5,6 +5,7 @@ import { routing } from "@/i18n/routing";
 import { TOOLS } from "@/lib/playground/tools";
 import { ToolChip } from "@/components/playground/ToolShell";
 import { Panel } from "@/components/site/Panel";
+import { SarathiCard } from "@/components/playground/SarathiCard";
 
 /**
  * Playground — the seven sadhana tools.
@@ -47,6 +48,8 @@ export default async function PlaygroundPage({ params }) {
       </header>
 
       <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <SarathiCard />
+
         {TOOLS.map((tool) => (
           <Link key={tool.key} href={tool.href} className="group">
             <Panel className="flex h-full flex-col p-5 transition-colors group-hover:border-primary/40">
