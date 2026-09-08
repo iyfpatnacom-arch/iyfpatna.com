@@ -127,11 +127,12 @@
   --chart-5: #8a7a68;
   /* ISKCON Patna band above the IYF navigation. Fixed in both themes: the
      band is a constant piece of brand furniture, not a themed surface.
-     Built from the site's own warm palette — deep ink through to the burnt
-     saffron of --brand-gold-deep — so the header belongs to this site rather
-     than importing another one's colours. */
-  --band-from: #1c0f06;
-  --band-to: #b4640c;
+     One flat warm ink, not a wash: the band used to fade diagonally from
+     near-black into burnt saffron, which swung the contrast under the white
+     text from ~16:1 on the left to ~4:1 on the right and turned the middle
+     muddy. A single colour keeps every label equally legible and leaves the
+     gold rule underneath as the band's only accent. */
+  --band-bg: #1e1108;
   --band-accent: #f2a63b;
 
   --radius: 0.625rem;
@@ -250,11 +251,7 @@
 
 @layer components {
   .iskcon-band {
-    background-image: linear-gradient(
-      100deg,
-      var(--band-from) 0%,
-      var(--band-to) 100%
-    );
+    background-color: var(--band-bg);
   }
 
   .liquid-glass {
@@ -304,12 +301,38 @@
   to { transform: translateX(-50%); }
 }
 
+/* Lotus mandala behind the hero copy. One full turn every four minutes: slow
+   enough that nobody catches it moving, present enough that the page is never
+   quite static. */
+@keyframes mandalaTurn {
+  from { transform: translateY(-50%) rotate(0deg); }
+  to { transform: translateY(-50%) rotate(360deg); }
+}
+
 .animate-float-slow {
   animation: floatSlow 7s ease-in-out infinite;
 }
 
 .animate-glow-pulse {
   animation: glowPulse 7s ease-in-out infinite;
+}
+
+/* The keyframe carries the -translate-y-1/2 that centres the mandala, because
+   an animated `transform` overrides the utility outright rather than composing
+   with it — without it the shape would jump down half its own height on the
+   first frame. */
+.animate-mandala {
+  animation: mandalaTurn 240s linear infinite;
+}
+
+/* These three are ornament, and ornament is exactly what this preference is
+   about. The glow and the mandala simply hold their first frame. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-slow,
+  .animate-glow-pulse,
+  .animate-mandala {
+    animation: none;
+  }
 }
 
 /* Mantra ticker in the mobile dock.

@@ -1,4 +1,5 @@
 import { IskconLogo } from "@/components/site/IskconLogo";
+import { MobileNav } from "@/components/site/MobileNav";
 import {
   ORG,
   PARENT_BAND,
@@ -51,8 +52,13 @@ function SocialGlyph({ name, className }) {
  * On phones it compresses to the temple line alone: the founder credit and
  * the society's full name are the first things worth losing when there are
  * only 400 pixels, and both still appear in the footer.
+ *
+ * The one control in it is the phone menu, parked at the right end of this
+ * row rather than in the navigation bar below. That bar is the sticky tier,
+ * so the drawer trigger now scrolls away with the band; the bottom dock is
+ * what carries navigation once the page has moved.
  */
-export function IskconBand() {
+export function IskconBand({ whatsappUrl, clerkConfigured = false }) {
   return (
     <div className="iskcon-band text-white">
       <div className="mx-auto flex w-full max-w-6xl items-center gap-4 px-4 py-2.5 sm:px-6 sm:py-3">
@@ -85,33 +91,44 @@ export function IskconBand() {
           </p>
         </div>
 
-        {/* Founder credit + socials */}
-        <div className="ml-auto flex shrink-0 flex-col items-end gap-1.5">
-          <p className="hidden text-right text-[11px] leading-tight text-white/85 lg:block">
-            {PARENT_BAND.founderTitle}
-            <br />
-            <span className="font-medium text-white">
-              {PARENT_BAND.founderName}
-            </span>
-          </p>
+        {/* Founder credit + socials, then the phone menu. */}
+        <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
+          <div className="flex flex-col items-end gap-1.5">
+            <p className="hidden text-right text-[11px] leading-tight text-white/85 lg:block">
+              {PARENT_BAND.founderTitle}
+              <br />
+              <span className="font-medium text-white">
+                {PARENT_BAND.founderName}
+              </span>
+            </p>
 
-          {activeSocialLinks.length > 0 && (
-            <ul className="flex items-center gap-1.5">
-              {activeSocialLinks.map((link) => (
-                <li key={link.key}>
-                  <a
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={link.label}
-                    className="grid size-7 place-items-center rounded-full border border-white/30 text-white/90 transition-colors hover:bg-white/15 hover:text-white"
-                  >
-                    <SocialGlyph name={link.key} className="size-3.5" />
-                  </a>
-                </li>
-              ))}
-            </ul>
-          )}
+            {activeSocialLinks.length > 0 && (
+              <ul className="flex items-center gap-1.5">
+                {activeSocialLinks.map((link) => (
+                  <li key={link.key}>
+                    <a
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={link.label}
+                      className="grid size-7 place-items-center rounded-full border border-white/30 text-white/90 transition-colors hover:bg-white/15 hover:text-white"
+                    >
+                      <SocialGlyph name={link.key} className="size-3.5" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          {/* Explicit white-on-dark classes, including the `dark:` ones: the
+              band keeps its own colours in both themes, so the button's
+              themed defaults would otherwise repaint it in dark mode. */}
+          <MobileNav
+            whatsappUrl={whatsappUrl}
+            clerkConfigured={clerkConfigured}
+            triggerClassName="border-white/30 bg-transparent text-white hover:bg-white/15 hover:text-white focus-visible:border-white focus-visible:ring-white/50 dark:border-white/30 dark:bg-transparent dark:hover:bg-white/15"
+          />
         </div>
       </div>
 

@@ -56,6 +56,7 @@ const EXTRA_NAV = [
 export function MobileNav({
   whatsappUrl = WHATSAPP_GROUP_URL,
   clerkConfigured = false,
+  triggerClassName,
 }) {
   const t = useTranslations("nav");
   const tc = useTranslations("common");
@@ -77,12 +78,15 @@ export function MobileNav({
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
+      {/* The trigger is styled by whoever mounts it: it currently sits in the
+          ISKCON band, which is a fixed dark surface in both themes, so the
+          themed `outline` colours have to be overridable from outside. */}
       <SheetTrigger
         render={
           <Button
             variant="outline"
             size="icon-lg"
-            className="rounded-full md:hidden"
+            className={cn("rounded-full md:hidden", triggerClassName)}
             aria-label={t("open_menu")}
           />
         }

@@ -218,6 +218,7 @@
       "haptics_on": "Vibration on",
       "haptics_off": "Vibration off",
       "haptics_unsupported": "This phone doesn't support vibration.",
+      "haptics_blocked": "Your phone supports vibration but the system is blocking it. Check that touch feedback is on in Settings → Sound & vibration, and that battery saver is off.",
       "rewards_title": "Rewards",
       "rewards_hint": "They unlock on their own. Nothing here is bought, and nothing expires.",
       "unlocked_count": "{unlocked} of {total} unlocked",

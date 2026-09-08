@@ -7,7 +7,6 @@ import { Link, usePathname } from "@/i18n/navigation";
 import { BrandMark } from "@/components/site/BrandMark";
 import { IskconBand } from "@/components/site/IskconBand";
 import { LocaleToggle } from "@/components/site/LocaleToggle";
-import { MobileNav } from "@/components/site/MobileNav";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,10 +27,12 @@ import { cn } from "@/lib/utils";
  * every page.
  *
  * Desktop gets the full link row. A phone gets the brand, the language and
- * theme controls, and a hamburger that opens the same row as a drawer — the
- * bottom dock holds five destinations, so without the drawer About, Courses,
- * Schedule, Gallery and the yatra had no route in from the top of a phone
- * screen at all.
+ * theme controls; the hamburger that opens the same row as a drawer lives in
+ * the band above, where there is room for it beside the socials — this row is
+ * already at its width budget on a phone once donate, locale and theme are
+ * in. The drawer itself matters either way: the bottom dock holds five
+ * destinations, so without it About, Courses, Schedule, Gallery and the yatra
+ * had no route in from the top of a phone screen at all.
  */
 export function SiteHeader({ clerkConfigured = false, whatsappUrl }) {
   const t = useTranslations("nav");
@@ -42,7 +43,13 @@ export function SiteHeader({ clerkConfigured = false, whatsappUrl }) {
 
   return (
     <>
-      <IskconBand />
+      {/* The phone menu trigger renders inside the band, so the invite and
+          the Clerk flag have to travel one tier further up than the drawer
+          that uses them. */}
+      <IskconBand
+        whatsappUrl={whatsappUrl}
+        clerkConfigured={clerkConfigured}
+      />
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/85 backdrop-blur-md">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center gap-4 px-4 sm:px-6">
           {/* `compact` drops the "youth wing of ISKCON Patna" subtitle: the
@@ -162,11 +169,6 @@ export function SiteHeader({ clerkConfigured = false, whatsappUrl }) {
                 {t("join")}
               </Button>
             )}
-
-            {/* Passed through rather than read here: the header is a client
-                component and the invite lives in the database, so the layout
-                is the one place that can resolve it on the server. */}
-            <MobileNav whatsappUrl={whatsappUrl} clerkConfigured={clerkConfigured} />
           </div>
         </div>
       </header>

@@ -52,6 +52,11 @@ export function JapaCounter() {
   const [log, setLog, hydrated] = useLocalState(STORAGE_KEY, {});
   const [target, setTarget] = useLocalState(TARGET_KEY, 16);
   const [tab, setTab] = useState("counter");
+  /* What the last vibration attempt actually did. Kept so a phone that
+     supports vibration but refuses to perform it — Android suppressing touch
+     feedback is the usual reason — can say so instead of leaving the user
+     tapping at a counter they were told would buzz. */
+  const [hapticStatus, setHapticStatus] = useState("ok");
 
   useOutboxFlush(signedIn);
 
@@ -94,16 +99,16 @@ export function JapaCounter() {
     const next = beads + 1;
     const positionInRound = next % BEADS_PER_ROUND;
 
-    if (positionInRound === 0) haptic("round");
-    else if (positionInRound % 27 === 0) haptic("quarter");
-    else haptic("bead");
+    if (positionInRound === 0) setHapticStatus(haptic("round"));
+    else if (positionInRound % 27 === 0) setHapticStatus(haptic("quarter"));
+    else setHapticStatus(haptic("bead"));
 
     setBeads(next, { firstAt: nowHHMM() });
   }, [beads, setBeads]);
 
   const undo = useCallback(() => {
     if (beads === 0) return;
-    haptic("undo");
+    setHapticStatus(haptic("undo"));
     setBeads(beads - 1);
   }, [beads, setBeads]);
 
@@ -140,6 +145,8 @@ export function JapaCounter() {
           onTarget={setTarget}
           onTap={tap}
           onUndo={undo}
+          hapticStatus={hapticStatus}
+          onHapticStatus={setHapticStatus}
           streak={stats.streak}
           lifetime={stats.lifetimeRounds}
         />
@@ -161,6 +168,8 @@ function CounterTab({
   onTarget,
   onTap,
   onUndo,
+  hapticStatus,
+  onHapticStatus,
   streak,
   lifetime,
 }) {
@@ -247,7 +256,10 @@ function CounterTab({
                 const next = !haptics;
                 setOverride(next);
                 setHapticsEnabled(next);
-                if (next) haptic("confirm");
+                // Switching it on doubles as the test pulse: this is the one
+                // tap where the user is definitely watching, so it is the
+                // right moment to find out the phone will not cooperate.
+                if (next) onHapticStatus(haptic("confirm"));
               }}
               className={cn(
                 "min-h-10 rounded-full border px-3.5 text-sm font-medium transition-colors",
@@ -264,6 +276,12 @@ function CounterTab({
             </span>
           )}
         </div>
+
+        {supported && haptics && hapticStatus === "blocked" ? (
+          <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+            {t("haptics_blocked")}
+          </p>
+        ) : null}
       </Panel>
 
       <Panel className="p-4">
