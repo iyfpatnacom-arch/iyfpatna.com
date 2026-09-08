@@ -64,9 +64,9 @@ export function Hero() {
           </p>
         </div>
 
-        <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl border border-border bg-muted sm:aspect-[3/2] lg:aspect-[4/5]">
+        <div className="relative aspect-4/5 w-full overflow-hidden rounded-2xl border border-border bg-muted ">
           <Image
-            src={HERO_IMAGE.src}
+            src={HERO_IMAGE}
             alt={t("hero_image_alt")}
             fill
             priority
