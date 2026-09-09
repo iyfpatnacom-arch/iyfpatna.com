@@ -46,6 +46,7 @@ export function WhatsappFab({ href = WHATSAPP_GROUP_URL }) {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={label}
+            data-whatsapp-fab
           />
         }
         className="fixed end-4 bottom-[calc(6.25rem+env(safe-area-inset-bottom))] z-50 grid size-12 place-items-center rounded-full bg-[#25D366] text-white shadow-lg shadow-[#25D366]/30 transition-transform hover:scale-105 focus-visible:ring-3 focus-visible:ring-[#25D366]/50 focus-visible:outline-none active:scale-95 md:end-6 md:bottom-6"

@@ -73,7 +73,10 @@ export function SiteFooter() {
   const tn = useTranslations("nav");
 
   return (
-    <footer className="mt-auto border-t border-border/70 bg-muted/25">
+    <footer
+      data-site-footer
+      className="mt-auto border-t border-border/70 bg-muted/25"
+    >
       <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
         <div className="grid gap-10 md:grid-cols-12">
           {/* Identity */}

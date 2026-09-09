@@ -121,11 +121,13 @@
     "intro": "Seven small tools for daily practice — the sadhana card, a japa counter, the Vaishnava calendar and more. Every one of them works offline and none of them needs an account.",
     "footnote": "Nothing here collects anything about you. Your rounds, your card and your puzzle streak are stored on this phone. Signing in only adds a copy so they follow you to another device.",
     "more_tools": "More tools",
-    "search_placeholder": "Search tools",
+    "shelf_tools": "Tools",
+    "places": "Around the site",
+    "whatsapp": "WhatsApp",
+    "search_placeholder": "Search",
     "search_label": "Search the playground",
     "search_clear": "Clear search",
     "search_empty": "Nothing matches “{query}”.",
-    "search_empty_hint": "Try a word from the tool's name — japa, Gita, kirtan, calendar.",
     "badge_soon": "Soon",
     "badge_offline": "Works offline",
     "badge_sync": "Sign in to sync devices",
@@ -135,35 +137,43 @@
     "tools": {
       "sadhana": {
         "name": "Sadhana Card",
+        "short": "Sadhana",
         "tagline": "The paper sheet you already fill in, on your phone — and one tap to send the week to your counsellor."
       },
       "japa": {
         "name": "Japa Counter",
+        "short": "Japa",
         "tagline": "Count your rounds with your eyes shut. It buzzes at every quarter and again at 108."
       },
       "gita_daily": {
         "name": "Gita Daily",
+        "short": "Gita Daily",
         "tagline": "One verse a day, the same one for everybody. Five guesses at the chapter it comes from."
       },
       "feelings": {
         "name": "Gita for what you're feeling",
+        "short": "Feelings",
         "tagline": "Pick how you feel right now. Get the verses that speak to exactly that."
       },
       "kirtan": {
         "name": "Kirtan Library",
+        "short": "Kirtan",
         "tagline": "Words to the kirtans we sing, scrolling in time with the recording."
       },
       "calendar": {
         "name": "Vaishnava Calendar",
+        "short": "Calendar",
         "tagline": "Real tithis, Ekadashi fasts and break-fast windows, computed for Patna's own sunrise."
       },
       "checkin": {
         "name": "Programme Check-in",
+        "short": "Check-in",
         "tagline": "Scan the code on the wall when you arrive. That's the whole thing."
       }
     },
     "sarathi": {
       "name": "Sarathi AI",
+      "short": "Sarathi",
       "gloss": "सारथि",
       "badge": "Coming soon",
       "tagline": "Ask what you actually want to ask — in Hindi or English, in your own words — and get the answer from the Bhagavad-gita, the Srimad-Bhagavatam and Srila Prabhupada's purports, with the verse named so you can read it for yourself.",

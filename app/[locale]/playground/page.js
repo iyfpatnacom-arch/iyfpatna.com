@@ -2,6 +2,7 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
+import { getWhatsappGroupUrl } from "@/lib/settings";
 import { TOOLS } from "@/lib/playground/tools";
 import { ToolChip } from "@/components/playground/ToolShell";
 import { Panel } from "@/components/site/Panel";
@@ -11,12 +12,18 @@ import { AppGrid } from "@/components/playground/AppGrid";
 /**
  * Playground — the seven sadhana tools.
  *
- * This page reads nothing. The version it replaces queried four feature flags
- * out of MongoDB on every request to decide which tiles to light up, which is
- * why the dock's Playground tab served an error page whenever the database was
+ * This page reads no feature flags. The version it replaces queried four out
+ * of MongoDB on every request to decide which tiles to light up, which is why
+ * the dock's Playground tab served an error page whenever the database was
  * unreachable. There is nothing here worth that risk: every tool behind these
  * tiles keeps its state in the browser and works signed out and offline, so
  * there is no state of the world in which a tile should be hidden.
+ *
+ * The one read left is the WhatsApp invite, which the phone grid shows as an
+ * app — the same cached read the layout already does for the floating button
+ * on every other page, with the same constant behind it if the database has
+ * nothing to say. It cannot take the page down and it does not un-prerender
+ * it.
  *
  * Two layouts, one per pointer. Phones get `AppGrid` — icons four to a row,
  * with a search field — because that is what a screen full of small tools
@@ -40,10 +47,11 @@ export default async function PlaygroundPage({ params }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("playground");
+  const whatsappUrl = await getWhatsappGroupUrl();
 
   return (
     <>
-      <AppGrid className="sm:hidden" />
+      <AppGrid className="sm:hidden" whatsappUrl={whatsappUrl} />
 
       <div className="mx-auto hidden w-full max-w-5xl px-4 py-12 sm:block sm:px-6 sm:py-16">
         <header className="max-w-2xl">
