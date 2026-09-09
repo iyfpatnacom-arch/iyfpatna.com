@@ -379,35 +379,127 @@
     "title": "Celebrate with us",
     "subtitle": "The festival calendar is the loudest part of the year at ISKCON Patna — kirtan, drama, feasting and all-night chanting. Everyone is welcome, and nothing needs booking.",
     "current_badge": "Now celebrating",
+    "upcoming_badge": "Coming up",
     "schedule_title": "Full schedule",
-    "other_title": "Through the year",
     "empty": "Festival dates are being finalised — check back soon.",
     "photo_credit": "Photo: {author}",
     "join_title": "Want to help run one?",
     "join_body": "Festivals here are built by volunteers — kitchen, kirtan, decoration, stage, clean-up. There is a place for you whatever you are good at.",
     "join_cta": "Join the Forum",
-    "fallback": {
-      "title": "Janmashtami",
-      "description": "Celebrating the appearance of Lord Sri Krishna — from Jhulan Utsav through to Janmashtami night.",
-      "schedule": [
-        {
-          "dateLabel": "23–28 Aug",
-          "title": "Jhulan Utsav"
-        },
-        {
-          "dateLabel": "30 Aug",
-          "title": "Adhivas"
-        },
-        {
-          "dateLabel": "31 Aug – 2 Sept",
-          "title": "Kirtan Mela"
-        },
-        {
-          "dateLabel": "4 Sept",
-          "title": "Janmashtami"
-        }
-      ]
-    }
+    "all_title": "Through the year",
+    "all_subtitle": "The Vaishnava year turns through these celebrations. Tap any festival to open the calendar, where the exact date, tithi and fasting rules are worked out for you.",
+    "card_cta": "See on the calendar",
+    "all": [
+      {
+        "key": "jhulan",
+        "tag": "5-day festival",
+        "tileTop": "23",
+        "tileBottom": "Aug",
+        "when": "23–28 Aug",
+        "name": "Jhulan Yatra",
+        "description": "The joyful swing festival — the Lordships are placed on a beautifully decorated jhula each evening amid kirtan."
+      },
+      {
+        "key": "balaram",
+        "tag": "Appearance Day",
+        "tileTop": "28",
+        "tileBottom": "Aug",
+        "when": "28 Aug",
+        "name": "Balaram Purnima",
+        "description": "Celebrating the appearance of Lord Balarama, the original spiritual master and Krishna’s elder brother."
+      },
+      {
+        "key": "nandotsav",
+        "tag": "Celebration",
+        "tileTop": "05",
+        "tileBottom": "Sep",
+        "when": "5 Sep",
+        "name": "Nandotsav & Srila Prabhupada Appearance",
+        "description": "The celebration of Krishna’s birth by Nanda Maharaj, and the appearance day of our Founder-Acharya Srila Prabhupada."
+      },
+      {
+        "key": "radhashtami",
+        "tag": "Appearance Day",
+        "tileTop": "19",
+        "tileBottom": "Sep",
+        "when": "19 Sep",
+        "name": "Radhashtami",
+        "description": "The appearance of Srimati Radharani — special darshan, offerings and glorification of the divine mother."
+      },
+      {
+        "key": "kartik",
+        "tag": "Holy Month",
+        "tileTop": "26",
+        "tileBottom": "Oct",
+        "when": "26 Oct – 24 Nov",
+        "name": "Kartik & Damodar Month",
+        "description": "The most sacred month of the year — offer a ghee lamp to the Lord every evening for unlimited spiritual benefit."
+      },
+      {
+        "key": "diwali",
+        "tag": "Festival of Lights",
+        "tileTop": "Nov",
+        "tileBottom": "",
+        "when": "Nov",
+        "name": "Diwali — Festival of Lights",
+        "description": "The temple glows with thousands of lamps to celebrate the Lord’s return — arati, kirtan and prasadam for all."
+      },
+      {
+        "key": "govardhan",
+        "tag": "Annakut",
+        "tileTop": "Nov",
+        "tileBottom": "",
+        "when": "Nov",
+        "name": "Govardhan Puja & Annakut",
+        "description": "A mountain of vegetarian delicacies is offered to the Lord, remembering Krishna lifting Govardhan Hill."
+      },
+      {
+        "key": "gita_jayanti",
+        "tag": "Scripture",
+        "tileTop": "Dec",
+        "tileBottom": "",
+        "when": "Dec",
+        "name": "Gita Jayanti & Gita Marathon",
+        "description": "The day the Bhagavad Gita was spoken — join our annual book-distribution marathon and special classes."
+      },
+      {
+        "key": "gaur_purnima",
+        "tag": "Appearance Day",
+        "tileTop": "Mar",
+        "tileBottom": "",
+        "when": "Mar",
+        "name": "Gaur Purnima",
+        "description": "The appearance of Sri Chaitanya Mahaprabhu, the golden avatar who spread the congregational chanting of the Holy Name."
+      },
+      {
+        "key": "holi",
+        "tag": "Festival of Colours",
+        "tileTop": "Mar",
+        "tileBottom": "",
+        "when": "Mar",
+        "name": "Holi with the Lord",
+        "description": "A spiritual festival of colours and kirtan with the Lordships — joy, community and devotion."
+      },
+      {
+        "key": "akshaya",
+        "tag": "Auspicious Day",
+        "tileTop": "May",
+        "tileBottom": "",
+        "when": "May",
+        "name": "Akshaya Tritiya",
+        "description": "One of the most auspicious days of the year — Chandan Yatra begins as the deities are anointed with cooling sandalwood."
+      },
+      {
+        "key": "rath_yatra",
+        "tag": "Chariot Festival",
+        "tileTop": "Jun",
+        "tileBottom": "",
+        "when": "Jun–Jul",
+        "name": "Jagannath Rath Yatra",
+        "description": "Patna’s grand chariot festival — Lord Jagannath is pulled through the city in a joyous procession."
+      }
+    ],
+    "photo_alt": "Devotees celebrating Janmashtami at the temple"
   },
   "dashboard": {
     "title": "Your dashboard",
