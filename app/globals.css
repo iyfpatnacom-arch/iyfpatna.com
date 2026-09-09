@@ -376,7 +376,11 @@
    icons on it — and the footer's first heading was landing inside the opening
    viewport, directly under the second row of tools. The floating WhatsApp
    button goes with it: it hovered over the bottom-right icon, which is the one
-   place on this screen a thumb is meant to land on a tool.
+   place on this screen a thumb is meant to land on a tool. So does the brand
+   row: a launcher does not put a title bar over the icons, and the two
+   controls that row carried on a phone — language and theme — are on the
+   drawer itself now, as apps. The ISKCON band above it stays; it is the
+   attribution and the way to the menu, and it scrolls away on its own.
 
    Keyed off the drawer's own marker rather than the route, so it costs no JS
    and cannot flash the footer in before a pathname is read. Bounded to below
@@ -384,6 +388,7 @@
    640px, so the two never overlap at the breakpoint itself. Both surfaces are
    still on every other page, and the card grid above `sm` keeps them. */
 @media (max-width: 39.9375rem) {
+  body:has([data-app-drawer]) [data-site-header],
   body:has([data-app-drawer]) [data-site-footer],
   body:has([data-app-drawer]) [data-whatsapp-fab] {
     display: none;

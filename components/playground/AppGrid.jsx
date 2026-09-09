@@ -1,22 +1,19 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { useTheme } from "next-themes";
 import {
-  CalendarDays,
-  CircleUser,
   Clock,
   GraduationCap,
   HandHeart,
-  Home,
   Images,
   Info,
-  PartyPopper,
+  Languages,
+  Moon,
   Route,
-  Search,
-  X,
+  Sun,
 } from "lucide-react";
-import { Link } from "@/i18n/navigation";
+import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { TOOLS } from "@/lib/playground/tools";
 import { ToolIcon } from "@/components/playground/ToolShell";
 import { haptic } from "@/lib/playground/haptics";
@@ -183,6 +180,24 @@ const PLACE_TINT = {
  */
 const PLACE_FALLBACK = { Icon: Info, tint: "bg-muted text-muted-foreground" };
 
+/**
+ * The two settings, as apps.
+ *
+ * Language and theme used to ride in the brand row above the grid, which this
+ * screen no longer shows — a launcher does not wear a title bar. They are not
+ * pages, so they are not links; they are buttons that happen to be drawn as
+ * icons, which is what a phone's own settings tiles are.
+ *
+ * Each language is named in its own script rather than translated, because the
+ * one person who needs to read "हिंदी" is the one who cannot read "Hindi".
+ */
+const LOCALE_NAMES = { en: "English", hi: "हिंदी" };
+
+const SETTING_TINT = {
+  language: "bg-lime-200 text-lime-800 dark:bg-lime-900 dark:text-lime-200",
+  theme: "bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-200",
+};
+
 const PLACES = [
   ...MAIN_NAV.filter((item) => !DOCK_KEYS.includes(item.key)),
   DONATE_NAV,
@@ -194,64 +209,39 @@ const PLACES = [
   tint: PLACE_TINT[item.key] ?? PLACE_FALLBACK.tint,
 }));
 
-/** Case-insensitive enough for eight names across two scripts. */
-function normalise(value) {
-  return value.toLocaleLowerCase().replace(/\s+/g, " ").trim();
-}
-
 export function AppGrid({ className, whatsappUrl = WHATSAPP_GROUP_URL }) {
   const t = useTranslations("playground");
   const tn = useTranslations("nav");
   const tc = useTranslations("common");
-  const [query, setQuery] = useState("");
 
-  // Names and taglines both, so "offline", "rounds" or "एकादशी" find something
-  // even though only the name is on screen. Eight items need no memo for the
-  // filtering itself; it is there so the translated strings are not rebuilt on
-  // every keystroke.
-  const results = useMemo(() => {
-    const needle = normalise(query);
-    if (!needle) return APPS;
-    return APPS.filter((app) =>
-      normalise(
-        `${t(app.shortKey)} ${t(app.nameKey)} ${t(app.taglineKey)}`
-      ).includes(needle)
-    );
-  }, [query, t]);
+  const locale = useLocale();
+  const pathname = usePathname();
+  const router = useRouter();
+  const nextLocale = locale === "hi" ? "en" : "hi";
 
-  // The field says "Search", not "Search tools", because it now reaches the
-  // shelf below as well: typing "gallery" and being told nothing matches while
-  // a Gallery icon sits two rows down would be a lie the layout tells itself.
-  //
+  const { resolvedTheme, setTheme } = useTheme();
+
   // WhatsApp is assembled here rather than in `PLACES` because it is the one
   // entry whose destination is not a constant — the invite is editable at
   // /admin/settings and arrives as a prop — and the one whose glyph is not a
   // lucide icon. Its label is the word alone; the full "join the group" line
   // is the accessible name, the same string the floating button uses.
-  const places = useMemo(() => {
-    const all = [
-      ...PLACES.map((place) => ({
-        ...place,
-        label: tn(place.key),
-        name: tn(place.key),
-      })),
-      {
-        key: "whatsapp",
-        href: whatsappUrl,
-        external: true,
-        Icon: WhatsappIcon,
-        tint: PLACE_TINT.whatsapp,
-        label: t("whatsapp"),
-        name: tc("whatsapp_cta"),
-      },
-    ];
-
-    const needle = normalise(query);
-    if (!needle) return all;
-    return all.filter((place) =>
-      normalise(`${place.label} ${place.name}`).includes(needle)
-    );
-  }, [query, t, tn, tc, whatsappUrl]);
+  const places = [
+    ...PLACES.map((place) => ({
+      ...place,
+      label: tn(place.key),
+      name: tn(place.key),
+    })),
+    {
+      key: "whatsapp",
+      href: whatsappUrl,
+      external: true,
+      Icon: WhatsappIcon,
+      tint: PLACE_TINT.whatsapp,
+      label: t("whatsapp"),
+      name: tc("whatsapp_cta"),
+    },
+  ];
 
   return (
     <section data-app-drawer className={cn("relative overflow-hidden", className)}>
@@ -272,10 +262,9 @@ export function AppGrid({ className, whatsappUrl = WHATSAPP_GROUP_URL }) {
           blooms are clipped by this section's own `overflow-hidden`, so a box
           that ends where the last icon does cuts the blur off mid-fade and
           leaves a visible horizontal edge across the screen. `100svh` less the
-          band, the sticky header and the dock's own clearance — the small
-          viewport height, so the screen still does not scroll with the URL bar
-          expanded. */}
-      <div className="relative flex min-h-[calc(100svh-14rem)] flex-col px-4 pt-5 pb-6">
+          band and the dock's own clearance — the small viewport height, so the
+          screen still does not scroll with the URL bar expanded. */}
+      <div className="relative min-h-[calc(100svh-10rem)] px-4 pt-4 pb-6">
         {/* The heading is read, not shown. A launcher has no title — the tab
             the visitor just pressed is labelled Playground and the icons say
             the rest — but the page still owes a screen reader and a search
@@ -288,60 +277,79 @@ export function AppGrid({ className, whatsappUrl = WHATSAPP_GROUP_URL }) {
             works offline, no account needed — in its own header. */}
         <h1 className="sr-only">{t("title")}</h1>
 
-        {results.length === 0 && places.length === 0 && (
-          <p className="mt-12 text-center text-sm text-muted-foreground">
-            {t("search_empty", { query: query.trim() })}
-          </p>
-        )}
+        <Shelf label={t("shelf_tools")}>
+          {APPS.map((app) => (
+            <li key={app.key}>
+              <Tile
+                href={app.href}
+                tint={APP_TINT[app.key] ?? APP_TINT.sadhana}
+                glyph={<ToolIcon name={app.icon} className="size-5" />}
+                label={t(app.shortKey)}
+                name={t(app.nameKey)}
+                soon={app.href ? null : t("badge_soon")}
+              />
+            </li>
+          ))}
+        </Shelf>
 
-        {results.length > 0 && (
-          <Shelf label={t("shelf_tools")}>
-            {results.map((app) => (
-              <li key={app.key}>
-                <Tile
-                  href={app.href}
-                  tint={APP_TINT[app.key] ?? APP_TINT.sadhana}
-                  glyph={<ToolIcon name={app.icon} className="size-5" />}
-                  label={t(app.shortKey)}
-                  name={t(app.nameKey)}
-                  soon={app.href ? null : t("badge_soon")}
-                />
-              </li>
-            ))}
-          </Shelf>
-        )}
+        <Shelf label={t("places")} className="mt-4">
+          {places.map((place) => (
+            <li key={place.key}>
+              <Tile
+                href={place.href}
+                external={place.external}
+                externalHint={tn("external_hint")}
+                muted
+                tint={place.tint}
+                glyph={<place.Icon className="size-5" aria-hidden="true" />}
+                label={place.label}
+                name={place.name === place.label ? undefined : place.name}
+              />
+            </li>
+          ))}
 
-        {places.length > 0 && (
-          <Shelf label={t("places")} className="mt-4">
-            {places.map((place) => (
-              <li key={place.key}>
-                <Tile
-                  href={place.href}
-                  external={place.external}
-                  externalHint={tn("external_hint")}
-                  muted
-                  tint={place.tint}
-                  glyph={<place.Icon className="size-5" aria-hidden="true" />}
-                  label={place.label}
-                  name={place.name === place.label ? undefined : place.name}
-                />
-              </li>
-            ))}
-          </Shelf>
-        )}
+          <li>
+            <Tile
+              onClick={() => router.replace(pathname, { locale: nextLocale })}
+              muted
+              tint={SETTING_TINT.language}
+              glyph={<Languages className="size-5" aria-hidden="true" />}
+              label={
+                <span className={nextLocale === "hi" ? "font-hindi" : undefined}>
+                  {LOCALE_NAMES[nextLocale]}
+                </span>
+              }
+              name={`${tc("language")}: ${LOCALE_NAMES[nextLocale]}`}
+            />
+          </li>
 
-        {/* The field goes last, and low. It is the one control on this screen
-            rather than one of forty destinations, and the bottom third is the
-            part of a phone a thumb reaches without the hand moving — which is
-            where every launcher that ships with a search bar puts it.
-
-            `mt-auto` floors it on a screen the icons do not fill, and the
-            sticky offset keeps it above the dock on one they overflow, so it
-            is in the same place either way. The offset is the dock's own
-            clearance, the figure the layout uses to pad the page. */}
-        <div className="sticky bottom-[calc(5.5rem+env(safe-area-inset-bottom))] mt-auto pt-8">
-          <SearchField query={query} onQuery={setQuery} />
-        </div>
+          {/* Which way this tile points is decided in CSS, not in React: the
+              server renders in the default theme and only the class on <html>
+              knows better, so a tile that read the theme during render would
+              have to hold itself blank until it had mounted. Both glyphs and
+              both labels ship, and the theme shows one of each — no flash, no
+              client-only state, and the label that is hidden is hidden from a
+              screen reader too, so the visible one is the button's name. */}
+          <li>
+            <Tile
+              onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+              muted
+              tint={SETTING_TINT.theme}
+              glyph={
+                <>
+                  <Moon className="size-5 dark:hidden" aria-hidden="true" />
+                  <Sun className="hidden size-5 dark:block" aria-hidden="true" />
+                </>
+              }
+              label={
+                <>
+                  <span className="dark:hidden">{tn("theme_dark")}</span>
+                  <span className="hidden dark:inline">{tn("theme_light")}</span>
+                </>
+              }
+            />
+          </li>
+        </Shelf>
       </div>
     </section>
   );
@@ -414,6 +422,7 @@ function Shelf({ label, className, children }) {
  */
 function Tile({
   href,
+  onClick,
   external = false,
   externalHint,
   muted = false,
@@ -460,7 +469,7 @@ function Tile({
 
   // No link, no button and no state layer for Sarathi: it is a label on the
   // grid, and anything that answers a press is a promise it cannot keep.
-  if (!href) {
+  if (!href && !onClick) {
     return (
       <span className="flex flex-col items-center" title={name}>
         {inner}
@@ -470,10 +479,29 @@ function Tile({
 
   const shared = {
     "aria-label": name,
-    onClick: () => haptic("bead"),
     className: "group flex flex-col items-center",
     style: { WebkitTapHighlightColor: "transparent", touchAction: "manipulation" },
   };
+
+  // Language and theme: the same tile, but it changes this screen instead of
+  // leaving it, so it owes the accessibility tree a button rather than a link.
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        {...shared}
+        className={cn(shared.className, "w-full")}
+        onClick={() => {
+          haptic("bead");
+          onClick();
+        }}
+      >
+        {inner}
+      </button>
+    );
+  }
+
+  shared.onClick = () => haptic("bead");
 
   // The yatra lives on its own host: a plain anchor, never the locale-aware
   // Link, which would prefix the hostname with /en or /hi.
@@ -492,58 +520,5 @@ function Tile({
     <Link href={href} {...shared}>
       {inner}
     </Link>
-  );
-}
-
-/**
- * The drawer's search field.
- *
- * A pill on a filled surface — the Material search bar, not the rounded
- * rectangle iOS puts above a list. 48px rather than Material's own 56dp: every
- * icon on this screen is 48px, and a field taller than the things it searches
- * reads as the subject of the screen instead of a control on it.
- *
- * Elevated and blurred because it is pinned low over the grid rather than
- * sitting above it: `--muted` is a translucent wash in the dark theme, so an
- * icon would otherwise show straight through the field as it scrolled past.
- */
-function SearchField({ query, onQuery }) {
-  const t = useTranslations("playground");
-
-  return (
-    <div className="relative mt-5">
-      <Search
-        className="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground"
-        aria-hidden="true"
-      />
-      {/* `text-base` is load-bearing rather than a size choice: iOS Safari
-          zooms the page in when a focused field's text is under 16px and does
-          not zoom back out — this layout is drawn for Android, but the iPhones
-          in the minority still have to use it. A plain `text` input rather than
-          `search`, too, because the native clear button lands under the one
-          below. */}
-      <input
-        type="text"
-        value={query}
-        onChange={(event) => onQuery(event.target.value)}
-        aria-label={t("search_label")}
-        placeholder={t("search_placeholder")}
-        enterKeyHint="search"
-        autoCapitalize="none"
-        autoCorrect="off"
-        spellCheck={false}
-        className="h-12 w-full rounded-full border border-border/50 bg-muted pr-12 pl-11 text-base text-foreground shadow-md backdrop-blur-md placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
-      />
-      {query && (
-        <button
-          type="button"
-          onClick={() => onQuery("")}
-          aria-label={t("search_clear")}
-          className="absolute top-1/2 right-1.5 grid size-9 -translate-y-1/2 place-items-center rounded-full text-muted-foreground transition-colors active:bg-foreground/10"
-        >
-          <X className="size-5" aria-hidden="true" />
-        </button>
-      )}
-    </div>
   );
 }
