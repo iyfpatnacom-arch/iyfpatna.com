@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
 import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { YATRA_URL, yatraIsExternal } from "@/lib/site-config";
+import { YATRA_ENABLED, YATRA_URL, yatraIsExternal } from "@/lib/site-config";
 import { Link } from "@/i18n/navigation";
 
 /**
@@ -11,9 +11,15 @@ import { Link } from "@/i18n/navigation";
  * links out by absolute URL. If it is ever folded in as a route on this site,
  * `YATRA_URL` becomes a path and this renders an internal link instead —
  * nothing else here changes.
+ *
+ * Renders nothing while `YATRA_ENABLED` is off. The guard lives here rather
+ * than at the call site so the section can never be reinstated on a page
+ * without the flag coming with it.
  */
 export function YatraCallout() {
   const t = useTranslations("home");
+
+  if (!YATRA_ENABLED) return null;
 
   const label = (
     <>

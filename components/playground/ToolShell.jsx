@@ -8,6 +8,7 @@ import {
   Music,
   Puzzle,
   QrCode,
+  Sparkles,
   UserRoundCheck,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
@@ -34,6 +35,9 @@ export const TOOL_ICONS = {
   Music,
   MoonStar,
   QrCode,
+  // Not a tool in `TOOLS` — Sarathi is the announced-but-unbuilt one, and the
+  // phone's app grid draws it alongside the seven that work.
+  Sparkles,
 };
 
 export function ToolIcon({ name, className }) {

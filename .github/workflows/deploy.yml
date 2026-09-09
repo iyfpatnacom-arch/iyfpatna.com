@@ -49,8 +49,17 @@ jobs:
       # Building on Linux is also what fixes `sharp`: npm resolves the
       # linux-x64 binary here, where a Windows-built bundle carried the
       # win32 one and next/image failed at runtime.
+      # NEXT_PUBLIC_* is inlined into the bundle here, at build time, so the
+      # yatra flag has to be set on this step — adding it to the server's
+      # .env.production would do nothing, because by then the value is already
+      # baked into the JS. Unset means off, which is what hides the yatra
+      # today. To show it: set the YATRA_ENABLED repository variable to true
+      # (Settings > Secrets and variables > Actions > Variables) and re-run
+      # this workflow; the flip only takes effect on the next build.
       - name: Build
         run: npm run build
+        env:
+          NEXT_PUBLIC_YATRA_ENABLED: ${{ vars.YATRA_ENABLED }}
 
       - name: Assemble standalone bundle
         run: |
