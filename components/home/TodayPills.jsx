@@ -221,6 +221,12 @@ function TodayRow({ className }) {
  * off — steep near the card, long and shallow above it — read as the light
  * going out of the bottom of the picture. And the colour is the site's own
  * near-black brown, so what dims a warm photograph is not a cold grey.
+ *
+ * Which is also why the glass itself stays thin — a light fill, a hairline
+ * border and just enough blur to soften the photo. The shade already does the
+ * work of legibility, so the card does not need to be opaque on top of it; a
+ * heavier pane would read as a grey slab dropped on the picture rather than
+ * as something the picture is showing through.
  */
 const SHADE =
   "linear-gradient(to top," +
@@ -256,7 +262,7 @@ function TodayOverlay({ className }) {
               className={
                 item.tone === "joy"
                   ? "inline-flex max-w-full items-center gap-1.5 rounded-full bg-brand-gold px-2.5 py-1 text-[11px] font-semibold text-brand-ink shadow-[0_6px_20px_-6px_rgba(242,166,59,0.9)] transition-transform active:scale-[0.97]"
-                  : "inline-flex max-w-full items-center gap-1.5 rounded-full border border-white/25 bg-white/12 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur-md transition-transform active:scale-[0.97]"
+                  : "inline-flex max-w-full items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.07] px-2.5 py-1 text-[11px] font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] backdrop-blur-md backdrop-saturate-125 transition-transform active:scale-[0.97]"
               }
             >
               {item.glyph && <span aria-hidden="true">{item.glyph}</span>}
@@ -273,7 +279,7 @@ function TodayOverlay({ className }) {
 
       <Link
         href={CALENDAR_HREF}
-        className="flex items-center gap-3 rounded-2xl border border-white/20 bg-white/10 p-3 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_14px_34px_-14px_rgba(0,0,0,0.9)] backdrop-blur-xl backdrop-saturate-150 transition-transform active:scale-[0.985]"
+        className="flex items-center gap-3 rounded-2xl border border-white/15 bg-white/[0.07] p-3 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_10px_28px_-18px_rgba(0,0,0,0.75)] backdrop-blur-md backdrop-saturate-125 transition-transform active:scale-[0.985]"
       >
         <MoonHalo phase={day.moonPhase} className="size-11 text-lg" />
 
@@ -286,7 +292,7 @@ function TodayOverlay({ className }) {
           </span>
         </span>
 
-        <span className="h-9 w-px shrink-0 bg-white/20" aria-hidden="true" />
+        <span className="h-9 w-px shrink-0 bg-white/15" aria-hidden="true" />
 
         {/* The temperature and the sunrise are two separate readings that happen
             to share a corner, so they are spaced as two lines rather than set

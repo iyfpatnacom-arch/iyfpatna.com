@@ -70,14 +70,11 @@ export function IskconBand({ whatsappUrl, clerkConfigured = false }) {
           target="_blank"
           rel="noopener noreferrer"
           aria-label={`${ORG.parent} — opens in a new tab`}
-          className="flex shrink-0 items-center gap-2.5 rounded-md border border-white/25 px-2.5 py-1.5 transition-colors hover:border-white/50 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:outline-none sm:gap-3 sm:px-3"
+          className="flex shrink-0 items-center gap-[1px] rounded-full px-2 py-2 transition-colors hover:border-white/50 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:outline-none sm:gap-3 sm:px-3"
         >
           {/* The official mark already contains the ISKCON wordmark, so only
               "PATNA" is set alongside it. */}
           <IskconLogo className="h-8 w-auto shrink-0 text-white sm:h-9" />
-          <span className="mt-0.5 text-[10px] font-semibold tracking-[0.3em] text-[var(--band-accent)] sm:text-[11px]">
-            PATNA
-          </span>
         </a>
 
         {/* Society + temple. Hidden on the narrowest screens, where it would

@@ -7,10 +7,13 @@ import { routing } from "@/i18n/routing";
 import { istDayKey, upcomingObservances } from "@/lib/panchang";
 
 /*
- * Revalidate rather than prerender-and-forget. The festival on show is chosen
- * by an `isCurrent` flag that temple staff flip in the database; a fully
- * static page would keep serving last year's festival until someone
- * redeployed. Five minutes is well inside the time it takes anyone to notice.
+ * Revalidate rather than prerender-and-forget.
+ *
+ * Two things move under this page: the `isCurrent` flag temple staff flip in
+ * the database, and the date itself, which is what now picks the highlight. A
+ * fully static page would freeze both — it would still be advertising a
+ * festival that finished in August until someone redeployed. Five minutes is
+ * well inside the time it takes anyone to notice either one.
  */
 export const revalidate = 300;
 
@@ -25,15 +28,7 @@ export async function generateMetadata({ params }) {
 }
 
 /*
- * Banner photograph.
- *
- * This is a Times of India press image, supplied by the site owner. It is NOT
- * freely licensed, so it is credited by source and no licence is asserted —
- * see public/festivals/CREDITS.md, which records that permission still has to
- * be obtained or the photograph replaced with the temple's own.
- */
-/*
- * Every festival card lands here.
+ * Every festival card, and the highlight, land here.
  *
  * The cards carry a month, or at best a day and a month — enough to place a
  * festival in the year, not enough to plan around, because most of these
@@ -44,6 +39,18 @@ export async function generateMetadata({ params }) {
  */
 const CALENDAR_HREF = "/playground/vaishnava-calendar";
 
+/*
+ * Banner photograph.
+ *
+ * This is a Times of India press image, supplied by the site owner. It is NOT
+ * freely licensed, so it is credited by source and no licence is asserted —
+ * see public/festivals/CREDITS.md, which records that permission still has to
+ * be obtained or the photograph replaced with the temple's own.
+ *
+ * It is a Janmashtami photograph and stays one whatever the highlight below
+ * says, which is why its alt text describes the picture rather than the
+ * festival on show.
+ */
 const PHOTO = {
   src: "/festivals/janmashtami.jpg",
   author: "Times of India",
