@@ -10,9 +10,9 @@ import { Sparkles } from "lucide-react";
  * and no hover affordance: nothing about it invites a tap, which is the honest
  * way to say "coming soon" to someone on a phone who cannot hover to find out.
  *
- * It spans the full grid row rather than sitting as an eighth tile because a
- * tile that behaves differently from its neighbours while looking identical to
- * them is a bug report waiting to happen.
+ * It spans both columns rather than sitting as an eighth tile because a tile
+ * that behaves differently from its neighbours while looking identical to them
+ * is a bug report waiting to happen.
  *
  * Drawn with a border and two flat tints rather than the frosted-glass
  * vocabulary the tools used to share — see the note in `components/site/Panel`
@@ -24,7 +24,7 @@ export function SarathiCard() {
   return (
     <section
       aria-labelledby="sarathi-heading"
-      className="relative overflow-hidden rounded-xl border border-brand-purple/25 bg-linear-to-br from-brand-purple/[0.07] via-card to-primary/[0.07] p-5 sm:col-span-2 sm:p-6 lg:col-span-3 dark:from-brand-purple/12 dark:to-primary/10"
+      className="relative overflow-hidden rounded-xl border border-brand-purple/25 bg-linear-to-br from-brand-purple/[0.07] via-card to-primary/[0.07] col-span-2 p-5 sm:p-6 dark:from-brand-purple/12 dark:to-primary/10"
     >
       {/* A single soft bloom in the corner, positioned off the panel so it
           reads as light rather than as a shape. `blur-3xl` on one absolutely
