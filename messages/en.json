@@ -25,7 +25,8 @@
     "open_menu": "Open menu",
     "external_hint": "opens in a new tab",
     "schedule": "Schedule",
-    "donate": "Donate"
+    "donate": "Donate",
+    "campus": "Campus"
   },
   "home": {
     "badge": "The youth wing of ISKCON Patna",
@@ -169,6 +170,11 @@
         "name": "Programme Check-in",
         "short": "Check-in",
         "tagline": "Scan the code on the wall when you arrive. That's the whole thing."
+      },
+      "campus": {
+        "name": "Campus Map",
+        "short": "Campus",
+        "tagline": "Find your way around the temple grounds — every place, with its own India Post code."
       }
     },
     "sarathi": {
@@ -627,6 +633,129 @@
       "darshan_closes": {
         "name": "Darshan Closes",
         "body": "Temple closes after evening programs."
+      }
+    }
+  },
+  "campus": {
+    "eyebrow": "Inside the campus",
+    "title": "Campus Map",
+    "subtitle": "Two acres, a dozen doorways, and no sign at the gate telling you what is behind them. Here is what is where at Sri Sri Radha Banke Bihari Temple.",
+    "intro": "Tap any place for its timings and its DIGIPIN — the ten-character code India Post gives to every four-metre square in the country. It is the shortest way to tell someone exactly where to stand.",
+    "approximate_note": "Positions here are still being surveyed, so the codes will shift by a few metres. The places, the floors and the timings are right.",
+    "search_placeholder": "Search places",
+    "search_label": "Search the campus",
+    "search_clear": "Clear search",
+    "search_empty": "Nothing on the campus matches “{query}”.",
+    "count": "{count, plural, =1 {# place} other {# places}}",
+    "floor_label": "Floor",
+    "floor_ground": "Ground floor",
+    "floor_upper": "Floor {n}",
+    "all_floors": "Whole campus",
+    "hours_label": "Timings",
+    "hours_range": "{open} – {close}",
+    "hours_none": "Open through the day",
+    "digipin_label": "DIGIPIN",
+    "digipin_note": "India Post's code for this spot — a square roughly {width} by {height} metres.",
+    "digipin_copy": "Copy code",
+    "digipin_copied": "Copied",
+    "digipin_approximate": "Position approximate",
+    "digipin_shared": "{other} carries this same code. DIGIPIN records a spot on the ground, not which floor you are on.",
+    "digipin_learn": "What is a DIGIPIN?",
+    "directions": "Open in Maps",
+    "qr_title": "For the signboard",
+    "qr_body": "Print this code and anyone who scans it lands on this page, in their own language.",
+    "back": "All places",
+    "nearby": "Nearby",
+    "nearby_metres": "{metres} m away",
+    "pin": {
+      "eyebrow": "DIGIPIN",
+      "title": "Look up a DIGIPIN",
+      "subtitle": "Ten characters from India Post's national grid. Paste one and see exactly where it lands — anywhere in India, not only here.",
+      "input_label": "DIGIPIN",
+      "input_placeholder": "235M64MM85",
+      "submit": "Find it",
+      "invalid_title": "That is not a DIGIPIN",
+      "invalid_body": "A DIGIPIN is ten characters drawn from {alphabet}. There are no vowels in it, and no 0 or 1 — so a letter that looks wrong usually is. Check “{code}” for a typo.",
+      "coordinates": "Coordinates",
+      "cell_label": "Covers",
+      "cell_value": "about {width} × {height} metres",
+      "on_campus_title": "This is on the campus",
+      "on_campus_here": "This code points at {place}.",
+      "on_campus_near": "About {metres} metres from {place}.",
+      "off_campus_title": "Somewhere else in India",
+      "off_campus_body": "This code is not on the ISKCON Patna campus, but it decodes cleanly. Here is where it lands.",
+      "open_maps": "Open in Maps",
+      "about_title": "About these codes",
+      "about_body": "DIGIPIN is an open addressing system from the Department of Posts, built with IIT Hyderabad and NRSC/ISRO. It cuts India into a grid ten times over, so ten characters name a square about four metres across — precise enough for a doorway, and short enough to read out over a phone."
+    },
+    "categories": {
+      "entry": "Getting in",
+      "worship": "Worship",
+      "food": "Prasadam",
+      "stay": "Staying over",
+      "service": "Service",
+      "facility": "Facilities"
+    },
+    "places": {
+      "main-gate": {
+        "name": "Main Gate",
+        "blurb": "The Buddha Marg entrance. Security and the visitor register are just inside."
+      },
+      "parking": {
+        "name": "Parking",
+        "blurb": "Cars and two-wheelers, to the left as you come through the gate."
+      },
+      "reception": {
+        "name": "Reception",
+        "blurb": "Ask here first. Guest house bookings, programme timings and lost slippers."
+      },
+      "shoe-stand": {
+        "name": "Shoe Stand",
+        "blurb": "Leave your footwear here before going up. Free, and staffed through darshan hours."
+      },
+      "donation-counter": {
+        "name": "Donation Counter",
+        "blurb": "Seva, sponsorships and receipts for 80G."
+      },
+      "temple-hall": {
+        "name": "Temple Hall",
+        "blurb": "The main hall, under the 108-foot tower. Kirtan, classes and festival programmes happen here."
+      },
+      "deity-darshan": {
+        "name": "Deity Darshan",
+        "blurb": "Sri Sri Radha Banke Bihari, up the stairs from the hall. The altar closes while the deities rest."
+      },
+      "iyf-office": {
+        "name": "IYF Office",
+        "blurb": "The youth forum's own room. Course sign-ups, and where to find a mentor."
+      },
+      "book-stall": {
+        "name": "Book Stall",
+        "blurb": "Srila Prabhupada's books in Hindi and English, plus japa beads and photographs."
+      },
+      "prasadam-store": {
+        "name": "Prasadam Store",
+        "blurb": "Sweets, packaged prasadam and offerings to carry home."
+      },
+      "govindas": {
+        "name": "Govinda's Restaurant",
+        "blurb": "Pure vegetarian, cooked and offered before it is served. Thalis at lunch and dinner."
+      },
+      "washrooms": {
+        "name": "Washrooms",
+        "blurb": "Behind the prasadam store, on the east side of the courtyard."
+      },
+      "guest-house": {
+        "name": "Guest House",
+        "blurb": "Rooms for pilgrims and visiting devotees. Book at reception or ahead by phone."
+      },
+      "monks-ashram": {
+        "name": "Monks' Ashram",
+        "blurb": "Where the resident brahmacharis live. Please ask at reception before visiting."
+      },
+      "gaushala": {
+        "name": "Gaushala",
+        "blurb": "The temple's cows. Open to visitors in the morning and late afternoon."
       }
     }
   },

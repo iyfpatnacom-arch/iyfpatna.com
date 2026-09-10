@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "seed": "node scripts/seed.mjs"
+    "seed": "node scripts/seed.mjs",
+    "verify:digipin": "node scripts/verify-digipin.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
