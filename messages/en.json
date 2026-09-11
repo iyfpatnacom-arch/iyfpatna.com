@@ -922,6 +922,7 @@
       "tool_failed": "Couldn't fetch — answered without it",
       "error_not_configured": "Sarathi isn't switched on yet on this server (no Gemini API key). Please try again later.",
       "error_rate_limited": "Many questions in a short while — please wait a few minutes and ask again.",
+      "error_busy": "Gemini, the AI behind Sarathi, is very busy right now. Please try again in a minute.",
       "error_blocked": "This question couldn't be answered. Please try asking it another way.",
       "error_upstream": "Something went wrong while answering. Please try again.",
       "error_network": "Couldn't reach Sarathi. Check your connection and try again.",
