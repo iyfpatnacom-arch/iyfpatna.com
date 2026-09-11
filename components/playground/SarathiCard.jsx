@@ -1,18 +1,14 @@
 import { useTranslations } from "next-intl";
-import { Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 
 /**
- * Sarathi AI — announced, not yet built.
+ * Sarathi AI — the door from the playground to `/sarathi`.
  *
- * The one tile on the playground index that is deliberately not a link. Every
- * other card here opens something; this one is a promise, so it must not look
- * like a tool that is merely failing to respond. Hence no `Link`, no `onClick`
- * and no hover affordance: nothing about it invites a tap, which is the honest
- * way to say "coming soon" to someone on a phone who cannot hover to find out.
- *
- * It spans both columns rather than sitting as an eighth tile because a tile
- * that behaves differently from its neighbours while looking identical to them
- * is a bug report waiting to happen.
+ * It spans both columns rather than sitting as one more tile because it is
+ * not one more tool: it opens a section of its own, with its own cards (AI
+ * Avatars today, more announced). A tile identical to its neighbours that
+ * opened a whole second grid would be a surprise; a wide banner says so.
  *
  * Drawn with a border and two flat tints rather than the frosted-glass
  * vocabulary the tools used to share — see the note in `components/site/Panel`
@@ -22,9 +18,10 @@ export function SarathiCard() {
   const t = useTranslations("playground.sarathi");
 
   return (
-    <section
+    <Link
+      href="/sarathi"
       aria-labelledby="sarathi-heading"
-      className="relative overflow-hidden rounded-xl border border-brand-purple/25 bg-linear-to-br from-brand-purple/[0.07] via-card to-primary/[0.07] col-span-2 p-5 sm:p-6 dark:from-brand-purple/12 dark:to-primary/10"
+      className="group relative col-span-2 overflow-hidden rounded-xl border border-brand-purple/25 bg-linear-to-br from-brand-purple/[0.07] via-card to-primary/[0.07] p-5 transition-colors hover:border-brand-purple/50 sm:p-6 dark:from-brand-purple/12 dark:to-primary/10"
     >
       {/* A single soft bloom in the corner, positioned off the panel so it
           reads as light rather than as a shape. `blur-3xl` on one absolutely
@@ -71,8 +68,16 @@ export function SarathiCard() {
               </li>
             ))}
           </ul>
+
+          <p className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-purple">
+            {t("open")}
+            <ArrowRight
+              className="size-4 transition-transform group-hover:translate-x-0.5"
+              aria-hidden="true"
+            />
+          </p>
         </div>
       </div>
-    </section>
+    </Link>
   );
 }

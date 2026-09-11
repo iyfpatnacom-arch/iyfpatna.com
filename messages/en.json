@@ -181,11 +181,12 @@
       "name": "Sarathi AI",
       "short": "Sarathi",
       "gloss": "सारथि",
-      "badge": "Coming soon",
+      "badge": "New",
       "tagline": "Ask what you actually want to ask — in Hindi or English, in your own words — and get the answer from the Bhagavad-gita, the Srimad-Bhagavatam and Srila Prabhupada's purports, with the verse named so you can read it for yourself.",
       "point_ask": "Ask in Hindi or English",
       "point_cite": "Every answer names its verse",
-      "point_honest": "Says so when the shastra doesn't"
+      "point_honest": "Says so when the shastra doesn't",
+      "open": "Open Sarathi"
     },
     "sadhana": {
       "tab_day": "The day",
@@ -868,5 +869,63 @@
     "caution": "Please be cautious of anyone soliciting donations in the name of IYF Patna through any channel other than the temple page linked here. If in doubt, call the temple before paying anything.",
     "final_title": "Ready to offer your seva?",
     "final_body": "You will be taken to ISKCON Patna's secure donation page to complete your contribution."
+  },
+  "sarathi": {
+    "eyebrow": "Sarathi AI",
+    "title": "Sarathi — a charioteer for your questions",
+    "intro": "Krishna drove Arjuna's chariot and answered his questions on the battlefield. Sarathi is a small set of AI tools built in that spirit: ask in your own words, in Hindi or English, and get answers rooted in shastra and in the words of our acharyas.",
+    "footnote": "Sarathi is an AI and it can be wrong. It is a way in, not a substitute for the books, for a spiritual master, or for the devotees at the temple. Every answer names its sources so you can check them for yourself.",
+    "status_live": "Try it",
+    "status_soon": "Coming soon",
+    "features": {
+      "avatars": {
+        "name": "AI Avatars",
+        "tagline": "Put your question to Srila Prabhupada and hear it answered the way he taught — with the verse named."
+      },
+      "ask_shastra": {
+        "name": "Ask the Shastra",
+        "tagline": "Any question, answered from the Gita, the Bhagavatam and the Caitanya-caritamrta."
+      },
+      "verse_explain": {
+        "name": "Verse Explainer",
+        "tagline": "Paste any verse. Get the word meanings, the translation and the point, in plain Hindi or English."
+      },
+      "sadhana_coach": {
+        "name": "Sadhana Coach",
+        "tagline": "Gentle, practical help with chanting, waking early and keeping your vows."
+      }
+    },
+    "avatars": {
+      "back": "Sarathi AI",
+      "title": "AI Avatars",
+      "intro": "Ask a question and an acharya answers in his own voice — thinking it through first, looking up the verse on Vedabase, and telling you where to read it.",
+      "talk": "Ask a question",
+      "soon": "Coming soon"
+    },
+    "chat": {
+      "back": "All avatars",
+      "disclaimer": "This is an AI trained to speak in the spirit of Srila Prabhupada's teachings. It is not Srila Prabhupada, and it can make mistakes. His own words are in his books — follow the links under each answer.",
+      "suggestions": "Try asking",
+      "placeholder": "Ask anything, in Hindi or English…",
+      "send": "Send",
+      "new_chat": "New conversation",
+      "reflecting": "Reflecting…",
+      "how": "How the answer was reached",
+      "thought_count": "{count} steps",
+      "sources": "Read it yourself",
+      "you": "You",
+      "step_INITIAL": "Understanding",
+      "step_THINK": "Thinking",
+      "step_ANALYSE": "Checking",
+      "tool_getVerse": "Reading {input} on Vedabase",
+      "tool_searchWikipedia": "Searching Wikipedia for “{input}”",
+      "tool_failed": "Couldn't fetch — answered without it",
+      "error_not_configured": "Sarathi isn't switched on yet on this server (no Gemini API key). Please try again later.",
+      "error_rate_limited": "Many questions in a short while — please wait a few minutes and ask again.",
+      "error_blocked": "This question couldn't be answered. Please try asking it another way.",
+      "error_upstream": "Something went wrong while answering. Please try again.",
+      "error_network": "Couldn't reach Sarathi. Check your connection and try again.",
+      "retry": "Try again"
+    }
   }
 }

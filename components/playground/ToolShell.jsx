@@ -39,8 +39,8 @@ export const TOOL_ICONS = {
   // The campus map, which lives at `/campus` rather than under `/playground`
   // but is listed in the grid alongside the tools.
   MapPin,
-  // Not a tool in `TOOLS` — Sarathi is the announced-but-unbuilt one, and the
-  // phone's app grid draws it alongside the seven that work.
+  // Not a tool in `TOOLS` — Sarathi AI is its own section at `/sarathi`, and
+  // the phone's app grid draws it alongside the tools.
   Sparkles,
 };
 
