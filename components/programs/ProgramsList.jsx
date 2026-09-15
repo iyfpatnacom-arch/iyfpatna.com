@@ -6,6 +6,7 @@ import { CalendarClock, Clock, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MediaTile } from "@/components/media/MediaTile";
 import { mediaFor } from "@/lib/site-config";
+import { Link } from "@/i18n/navigation";
 import { JoinModal } from "./JoinModal";
 
 /**
@@ -70,6 +71,11 @@ export function ProgramsList({
                   {itemType === "course"
                     ? item.duration?.[locale]
                     : item.schedule?.[locale]}
+                  {item.priceLabel && (
+                    <span className="ms-auto rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold">
+                      {item.priceLabel}
+                    </span>
+                  )}
                 </p>
 
                 {itemType === "program" && item.location?.[locale] && (
@@ -79,13 +85,25 @@ export function ProgramsList({
                   </p>
                 )}
 
-                <Button
-                  onClick={() => setJoinItem(item)}
-                  disabled={!registrationsOpen}
-                  className="mt-3 w-full rounded-full"
-                >
-                  {registrationsOpen ? t("join_button") : t("closed_button")}
-                </Button>
+                {/* A course with its own landing page links there — the page
+                    carries the details, the price and the checkout. Everything
+                    else keeps the quick join dialog. */}
+                {item.href ? (
+                  <Button
+                    render={<Link href={item.href} />}
+                    className="mt-3 w-full rounded-full"
+                  >
+                    {t("join_button")}
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => setJoinItem(item)}
+                    disabled={!registrationsOpen}
+                    className="mt-3 w-full rounded-full"
+                  >
+                    {registrationsOpen ? t("join_button") : t("closed_button")}
+                  </Button>
+                )}
               </div>
             </li>
           );

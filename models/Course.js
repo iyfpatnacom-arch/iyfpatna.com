@@ -3,6 +3,10 @@ import { bilingualField } from "../lib/db/bilingual.js";
 
 const CourseSchema = new mongoose.Schema(
   {
+    /* Links the row to its landing page and checkout in
+       content/courses/<slug>.json. Optional: a course without one keeps the
+       quick join dialog on its card. */
+    slug: { type: String, trim: true, index: true },
     title: bilingualField(),
     description: bilingualField(),
     duration: bilingualField(),

@@ -3,6 +3,7 @@ import { clerkConfigured } from "@/lib/auth-config";
 import { ProgramsList } from "@/components/programs/ProgramsList";
 import { routing } from "@/i18n/routing";
 import { FALLBACK_COURSES } from "@/lib/site-config";
+import { courseCardExtras } from "@/lib/courses/catalog";
 
 export const revalidate = 300;
 
@@ -46,7 +47,9 @@ export default async function CoursesPage({ params }) {
   setRequestLocale(locale);
 
   const t = await getTranslations("courses");
-  const { items, registrationsOpen } = await loadCourses();
+  const { items: rows, registrationsOpen } = await loadCourses();
+  // Courses with a landing page get its link and price on their card.
+  const items = rows.map((item) => ({ ...item, ...courseCardExtras(item) }));
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6 sm:py-20">

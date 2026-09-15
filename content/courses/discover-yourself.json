@@ -1,0 +1,323 @@
+{
+  "slug": "discover-yourself",
+  "orderPrefix": "DYS",
+  "matchTitles": ["discover yourself"],
+
+  "title": { "en": "Discover Yourself", "hi": "खुद को खोजें" },
+  "eyebrow": { "en": "DYS Workshop · 2-day masterclass", "hi": "DYS वर्कशॉप · 2 दिन की मास्टरक्लास" },
+  "headline": {
+    "en": "You don't need a new mind — you need to harmonise the one you already have.",
+    "hi": "आपको नया मन नहीं चाहिए — बस उसी मन से तालमेल चाहिए जो आपके पास पहले से है।"
+  },
+  "summary": {
+    "en": "A 2-day, 6-session masterclass for students and young professionals on focus, clarity and inner stability — practical meditation and ancient wisdom for a distracted, digital life.",
+    "hi": "छात्रों और युवा प्रोफेशनल्स के लिए 2 दिन, 6 सत्रों की मास्टरक्लास — फोकस, स्पष्टता और आंतरिक स्थिरता पर। डिजिटल दौर की भटकन के लिए व्यावहारिक ध्यान और प्राचीन ज्ञान।"
+  },
+  "socialProof": {
+    "en": "Backed by results. Trusted by over 10,000 young people.",
+    "hi": "नतीजों पर आधारित। 10,000 से ज़्यादा युवाओं का भरोसा।"
+  },
+  "language": { "en": "Hinglish", "hi": "हिंग्लिश" },
+
+  "media": {
+    "image": "https://ik.imagekit.io/mnkh9j9dw/IYF/WhatsApp%20Image%202026-09-02%20at%2013.03.29.jpeg"
+  },
+
+  "pricing": {
+    "amount": 99,
+    "mrp": 999,
+    "currency": "INR"
+  },
+
+  "batch": {
+    "id": "dys-2026-next",
+    "registrationOpen": true,
+    "capacity": null,
+    "dateLabel": null,
+    "time": { "en": "4 PM onwards", "hi": "शाम 4 बजे से" },
+    "sessions": { "en": "6 sessions over 2 days", "hi": "2 दिन में 6 सत्र" },
+    "sessionLength": { "en": "90 minutes each", "hi": "हर सत्र 90 मिनट" },
+    "venue": { "en": "ISKCON Patna, or live on Zoom", "hi": "इस्कॉन पटना, या Zoom पर लाइव" }
+  },
+
+  "modes": [
+    {
+      "key": "offline",
+      "label": { "en": "In person at ISKCON Patna", "hi": "इस्कॉन पटना में आकर" },
+      "detail": { "en": "Sri Sri Radha Banke Bihari Temple, Buddha Marg", "hi": "श्री श्री राधा बांके बिहारी मंदिर, बुद्ध मार्ग" }
+    },
+    {
+      "key": "online",
+      "label": { "en": "Online, live on Zoom", "hi": "ऑनलाइन, Zoom पर लाइव" },
+      "detail": { "en": "The link is shared in the batch WhatsApp group", "hi": "लिंक बैच के WhatsApp ग्रुप में मिलेगा" }
+    }
+  ],
+
+  "whatsappGroupUrl": "",
+
+  "stats": [
+    { "value": "10,000+", "label": { "en": "young people reached", "hi": "युवाओं तक पहुँच" } },
+    { "value": "6", "label": { "en": "live sessions", "hi": "लाइव सत्र" } },
+    { "value": "90", "label": { "en": "minutes per session", "hi": "मिनट प्रति सत्र" } },
+    { "value": "2", "label": { "en": "days", "hi": "दिन" } }
+  ],
+
+  "pillars": [
+    {
+      "icon": "book",
+      "title": { "en": "Daily study retention", "hi": "पढ़ा हुआ याद रहे" },
+      "body": {
+        "en": "Train your attention so the hours at your desk actually turn into learning.",
+        "hi": "ध्यान को ऐसे साधें कि पढ़ाई के घंटे सच में सीख में बदलें।"
+      }
+    },
+    {
+      "icon": "compass",
+      "title": { "en": "Confusion to clarity", "hi": "उलझन से स्पष्टता तक" },
+      "body": {
+        "en": "Cut through overthinking and comparison, and find a direction you actually believe in.",
+        "hi": "ज़्यादा सोचने और तुलना से बाहर निकलें, और वो दिशा पाएँ जिस पर आपको खुद भरोसा हो।"
+      }
+    },
+    {
+      "icon": "lotus",
+      "title": { "en": "Meditation & focus", "hi": "ध्यान और फोकस" },
+      "body": {
+        "en": "Simple, practical meditation you can keep doing on your own after the workshop ends.",
+        "hi": "सरल, व्यावहारिक ध्यान जिसे आप वर्कशॉप के बाद भी खुद जारी रख सकें।"
+      }
+    }
+  ],
+
+  "quote": {
+    "line": {
+      "en": "Your problem is not your enemy. Your untrained mind is.",
+      "hi": "आपकी समस्या आपकी दुश्मन नहीं है। आपका अप्रशिक्षित मन है।"
+    },
+    "tail": {
+      "en": "And once you understand it… everything changes.",
+      "hi": "और एक बार आप इसे समझ लें… सब कुछ बदल जाता है।"
+    }
+  },
+
+  "learn": [
+    {
+      "en": "How your mind, habits and attention are being shaped by modern digital life.",
+      "hi": "आपका मन, आदतें और ध्यान आज के डिजिटल जीवन से कैसे आकार ले रहे हैं।"
+    },
+    {
+      "en": "Why overthinking, distraction and stress happen — and practical ways out of them.",
+      "hi": "ज़्यादा सोचना, भटकाव और तनाव क्यों होते हैं — और इनसे निकलने के व्यावहारिक तरीके।"
+    },
+    {
+      "en": "Techniques to improve focus, clarity and emotional stability.",
+      "hi": "फोकस, स्पष्टता और भावनात्मक स्थिरता बढ़ाने की तकनीकें।"
+    },
+    {
+      "en": "The difference between temporary motivation and real inner transformation.",
+      "hi": "क्षणिक मोटिवेशन और असली आंतरिक बदलाव का फ़र्क।"
+    },
+    {
+      "en": "Simple meditation and mindfulness practices for mental balance.",
+      "hi": "मानसिक संतुलन के लिए सरल ध्यान और माइंडफुलनेस अभ्यास।"
+    },
+    {
+      "en": "How ancient wisdom answers the challenges young people face today.",
+      "hi": "प्राचीन ज्ञान आज के युवाओं की चुनौतियों का जवाब कैसे देता है।"
+    }
+  ],
+
+  "audience": [
+    { "en": "Students", "hi": "छात्र" },
+    { "en": "Digitally distracted youth", "hi": "डिजिटल भटकाव से जूझते युवा" },
+    { "en": "Overthinkers", "hi": "ज़्यादा सोचने वाले" },
+    { "en": "Ambitious achievers", "hi": "महत्वाकांक्षी युवा" },
+    { "en": "The stressed and mentally exhausted", "hi": "तनाव और मानसिक थकान से परेशान" },
+    { "en": "Meditation & spirituality seekers", "hi": "ध्यान और आध्यात्मिकता के जिज्ञासु" },
+    { "en": "Young professionals", "hi": "युवा प्रोफेशनल्स" },
+    { "en": "Anyone after real transformation", "hi": "असली बदलाव चाहने वाले" },
+    { "en": "Anyone ready for a digital detox", "hi": "डिजिटल डिटॉक्स के लिए तैयार" }
+  ],
+
+  "benefits": [
+    {
+      "icon": "shield",
+      "title": { "en": "Build inner stability", "hi": "भीतर से स्थिर बनें" },
+      "body": {
+        "en": "Practical spiritual tools for stress, anxiety, emotional ups and downs and mental overload.",
+        "hi": "तनाव, चिंता, भावनात्मक उतार-चढ़ाव और मानसिक बोझ के लिए व्यावहारिक आध्यात्मिक साधन।"
+      }
+    },
+    {
+      "icon": "scale",
+      "title": { "en": "Balance ambition & ability", "hi": "महत्वाकांक्षा और क्षमता में संतुलन" },
+      "body": {
+        "en": "Grow on the outside without going empty on the inside.",
+        "hi": "बाहर से आगे बढ़ें, बिना भीतर से खाली हुए।"
+      }
+    },
+    {
+      "icon": "repeat",
+      "title": { "en": "Better habits, naturally", "hi": "अच्छी आदतें, सहज रूप से" },
+      "body": {
+        "en": "Discipline that comes from within — sustainable practices instead of motivation that fades by Monday.",
+        "hi": "भीतर से आने वाला अनुशासन — सोमवार तक उतर जाने वाले मोटिवेशन की जगह टिकाऊ अभ्यास।"
+      }
+    },
+    {
+      "icon": "target",
+      "title": { "en": "Purpose & direction", "hi": "उद्देश्य और दिशा" },
+      "body": {
+        "en": "Know what you are working towards, and why it matters to you.",
+        "hi": "जानें आप किस ओर बढ़ रहे हैं, और वो आपके लिए क्यों मायने रखता है।"
+      }
+    },
+    {
+      "icon": "heart",
+      "title": { "en": "Better relationships", "hi": "बेहतर रिश्ते" },
+      "body": {
+        "en": "Less reactivity, more patience — with family, friends and yourself.",
+        "hi": "कम प्रतिक्रिया, ज़्यादा धैर्य — परिवार, दोस्तों और खुद के साथ।"
+      }
+    },
+    {
+      "icon": "sparkles",
+      "title": { "en": "Lifestyle discipline", "hi": "जीवनशैली में अनुशासन" },
+      "body": {
+        "en": "A daily routine that protects your focus instead of draining it.",
+        "hi": "एक दिनचर्या जो आपके फोकस को बचाए, खत्म न करे।"
+      }
+    }
+  ],
+
+  "includes": [
+    { "en": "6 live sessions, 90 minutes each", "hi": "6 लाइव सत्र, हर सत्र 90 मिनट" },
+    { "en": "Guided meditation you can continue at home", "hi": "गाइडेड मेडिटेशन जिसे आप घर पर जारी रख सकें" },
+    { "en": "Interactive discussions and reflection activities", "hi": "इंटरैक्टिव चर्चा और आत्म-चिंतन गतिविधियाँ" },
+    { "en": "Batch WhatsApp group for updates and the Zoom link", "hi": "अपडेट और Zoom लिंक के लिए बैच WhatsApp ग्रुप" },
+    { "en": "Instant payment receipt", "hi": "तुरंत भुगतान रसीद" }
+  ],
+
+  "testimonials": [
+    {
+      "name": "Aman Raj",
+      "role": { "en": "Engineering student, Patna", "hi": "इंजीनियरिंग छात्र, पटना" },
+      "quote": {
+        "en": "I used to sit with books for hours but my mind was always distracted by social media and overthinking. This course helped me understand how my attention was getting controlled.",
+        "hi": "मैं घंटों किताबें लेकर बैठता था, पर मन हमेशा सोशल मीडिया और ज़्यादा सोचने में भटका रहता था। इस कोर्स ने मुझे समझाया कि मेरा ध्यान कैसे नियंत्रित हो रहा था।"
+      }
+    },
+    {
+      "name": "Priyanshu Kumar",
+      "role": { "en": "NEET aspirant", "hi": "NEET अभ्यर्थी" },
+      "quote": {
+        "en": "I thought motivation videos would fix my life, but nothing lasted. In this workshop I understood the root cause of my inconsistency — and became calmer and more disciplined after applying the practices.",
+        "hi": "मुझे लगता था मोटिवेशन वीडियो मेरी ज़िंदगी ठीक कर देंगे, पर कुछ टिका नहीं। इस वर्कशॉप में मैंने अपनी अनियमितता की जड़ समझी — और अभ्यास अपनाकर ज़्यादा शांत और अनुशासित बना।"
+      }
+    },
+    {
+      "name": "Aditya Singh",
+      "role": { "en": "College student", "hi": "कॉलेज छात्र" },
+      "quote": {
+        "en": "Before joining, I constantly felt pressure and comparison from friends and social media. This course helped me stop comparing myself with others.",
+        "hi": "जुड़ने से पहले मैं दोस्तों और सोशल मीडिया की वजह से लगातार दबाव और तुलना महसूस करता था। इस कोर्स ने मुझे दूसरों से अपनी तुलना करना छोड़ने में मदद की।"
+      }
+    },
+    {
+      "name": "Rohit Raj",
+      "role": { "en": "Young professional", "hi": "युवा प्रोफेशनल" },
+      "quote": {
+        "en": "I had career goals but no peace of mind. This workshop helped me realise that success without mental stability creates burnout. The practices gave me clarity and emotional balance.",
+        "hi": "मेरे पास करियर के लक्ष्य थे, पर मन की शांति नहीं थी। इस वर्कशॉप ने समझाया कि मानसिक स्थिरता के बिना सफलता बर्नआउट लाती है। अभ्यासों से मुझे स्पष्टता और भावनात्मक संतुलन मिला।"
+      }
+    },
+    {
+      "name": "Satyam Kumar",
+      "role": { "en": "Hostel student", "hi": "हॉस्टल छात्र" },
+      "quote": {
+        "en": "Late-night scrolling and no routine had destroyed my focus. I slowly reduced my digital addiction and became serious about my studies.",
+        "hi": "देर रात तक स्क्रॉलिंग और बेतरतीब दिनचर्या ने मेरा फोकस खत्म कर दिया था। धीरे-धीरे मेरी डिजिटल लत कम हुई और मैं पढ़ाई को लेकर गंभीर हो गया।"
+      }
+    }
+  ],
+
+  "faqs": [
+    {
+      "q": { "en": "Is this a religious course only?", "hi": "क्या यह सिर्फ़ एक धार्मिक कोर्स है?" },
+      "a": {
+        "en": "No. It is designed to help students understand focus, stress, overthinking, habits, clarity and inner stability through practical wisdom and self-development.",
+        "hi": "नहीं। यह व्यावहारिक ज्ञान और आत्म-विकास के ज़रिए छात्रों को फोकस, तनाव, ज़्यादा सोचने, आदतों, स्पष्टता और आंतरिक स्थिरता को समझने में मदद के लिए बनाया गया है।"
+      }
+    },
+    {
+      "q": { "en": "Will this help in studies and career?", "hi": "क्या इससे पढ़ाई और करियर में मदद मिलेगी?" },
+      "a": {
+        "en": "Yes — it works on the distraction, lack of focus, overthinking and mental pressure that hold back academic and professional performance.",
+        "hi": "हाँ — यह उन्हीं चीज़ों पर काम करता है जो पढ़ाई और काम में पीछे खींचती हैं: भटकाव, फोकस की कमी, ज़्यादा सोचना और मानसिक दबाव।"
+      }
+    },
+    {
+      "q": { "en": "Is meditation taught in this course?", "hi": "क्या इसमें ध्यान (मेडिटेशन) सिखाया जाता है?" },
+      "a": {
+        "en": "Yes — simple, practical meditation techniques for a calm mind and better concentration.",
+        "hi": "हाँ — शांत मन और बेहतर एकाग्रता के लिए सरल, व्यावहारिक ध्यान तकनीकें।"
+      }
+    },
+    {
+      "q": { "en": "Can I attend online?", "hi": "क्या मैं ऑनलाइन जुड़ सकता/सकती हूँ?" },
+      "a": {
+        "en": "Yes. Attend in person at ISKCON Patna or live on Zoom — you choose while registering, and the Zoom link is shared in the batch WhatsApp group.",
+        "hi": "हाँ। आप इस्कॉन पटना आकर या Zoom पर लाइव जुड़ सकते हैं — रजिस्ट्रेशन के समय चुनें। Zoom लिंक बैच के WhatsApp ग्रुप में मिलेगा।"
+      }
+    },
+    {
+      "q": { "en": "Do I need any spiritual background?", "hi": "क्या कोई आध्यात्मिक पृष्ठभूमि ज़रूरी है?" },
+      "a": {
+        "en": "Not at all. It is beginner-friendly and designed for modern students.",
+        "hi": "बिल्कुल नहीं। यह शुरुआती लोगों के लिए है और आज के छात्रों को ध्यान में रखकर बनाया गया है।"
+      }
+    },
+    {
+      "q": { "en": "Is this only for ISKCON followers?", "hi": "क्या यह सिर्फ़ इस्कॉन के अनुयायियों के लिए है?" },
+      "a": {
+        "en": "No — it is open to everyone, whatever your background, beliefs or experience.",
+        "hi": "नहीं — यह सबके लिए खुला है, चाहे आपकी पृष्ठभूमि, मान्यता या अनुभव कुछ भी हो।"
+      }
+    },
+    {
+      "q": { "en": "How is this different from a motivation seminar?", "hi": "यह मोटिवेशनल सेमिनार से कैसे अलग है?" },
+      "a": {
+        "en": "It works on understanding your mind, habits, attention and emotions for long-term change — not a temporary high.",
+        "hi": "यह अस्थायी जोश नहीं, बल्कि लंबे बदलाव के लिए आपके मन, आदतों, ध्यान और भावनाओं की समझ पर काम करता है।"
+      }
+    },
+    {
+      "q": { "en": "Will there be practical activities?", "hi": "क्या इसमें व्यावहारिक गतिविधियाँ होंगी?" },
+      "a": {
+        "en": "Yes — interactive sessions, discussions, practical exercises, reflection activities and meditation experiences.",
+        "hi": "हाँ — इंटरैक्टिव सत्र, चर्चा, व्यावहारिक अभ्यास, आत्म-चिंतन गतिविधियाँ और ध्यान के अनुभव।"
+      }
+    },
+    {
+      "q": { "en": "What age group is it for?", "hi": "यह किस उम्र के लिए है?" },
+      "a": {
+        "en": "Mainly 15–30 — school and college students and young professionals.",
+        "hi": "मुख्य रूप से 15–30 वर्ष — स्कूल-कॉलेज के छात्र और युवा प्रोफेशनल्स।"
+      }
+    },
+    {
+      "q": { "en": "What will I gain?", "hi": "मुझे क्या मिलेगा?" },
+      "a": {
+        "en": "Better focus, mental clarity, emotional balance, stronger habits, deeper self-understanding and practical spiritual insight.",
+        "hi": "बेहतर फोकस, मानसिक स्पष्टता, भावनात्मक संतुलन, मज़बूत आदतें, खुद की गहरी समझ और व्यावहारिक आध्यात्मिक दृष्टि।"
+      }
+    },
+    {
+      "q": { "en": "How do I register?", "hi": "रजिस्टर कैसे करें?" },
+      "a": {
+        "en": "Tap \"Register now\", fill in your details and pay {price} online. You get a receipt instantly, along with the link to the batch WhatsApp group.",
+        "hi": "\"अभी रजिस्टर करें\" पर टैप करें, अपनी जानकारी भरें और {price} ऑनलाइन चुकाएँ। आपको तुरंत रसीद और बैच के WhatsApp ग्रुप का लिंक मिलेगा।"
+      }
+    }
+  ]
+}
