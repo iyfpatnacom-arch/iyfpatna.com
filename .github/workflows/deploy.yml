@@ -56,10 +56,22 @@ jobs:
       # today. To show it: set the YATRA_ENABLED repository variable to true
       # (Settings > Secrets and variables > Actions > Variables) and re-run
       # this workflow; the flip only takes effect on the next build.
+      #
+      # Clerk is the same trap twice over. The publishable key is inlined, and
+      # `clerkConfigured` (lib/auth-config.js) also needs CLERK_SECRET_KEY —
+      # which the prerendered layout evaluates here, at build time. Without
+      # both on this step the site ships with sign-in switched off, whatever
+      # the server's .env.production says. The secret key is still read again
+      # at runtime from .env.production by the proxy and API routes.
       - name: Build
         run: npm run build
         env:
           NEXT_PUBLIC_YATRA_ENABLED: ${{ vars.YATRA_ENABLED }}
+          NEXT_PUBLIC_SITE_URL: ${{ vars.SITE_URL || 'https://iyfpatna.in' }}
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ vars.CLERK_PUBLISHABLE_KEY }}
+          NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL: ${{ vars.CLERK_SIGN_IN_FALLBACK_REDIRECT_URL || '/' }}
+          NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL: ${{ vars.CLERK_SIGN_UP_FALLBACK_REDIRECT_URL || '/' }}
+          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
 
       - name: Assemble standalone bundle
         run: |
