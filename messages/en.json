@@ -673,7 +673,7 @@
     "title": "Admin",
     "subtitle": "Things you can change on the live site, without a deploy.",
     "nav_settings": "Links",
-    "nav_settings_hint": "The WhatsApp group invite the whole site points at.",
+    "nav_settings_hint": "The WhatsApp group invites — youth forum and temple.",
     "nav_flags": "Feature flags",
     "nav_flags_hint": "Turn features on and off.",
     "settings_title": "Links",
@@ -685,6 +685,8 @@
     "whatsapp_default": "Nothing saved yet — the site is using the built-in default link.",
     "whatsapp_updated": "Last saved {date}",
     "whatsapp_where": "This link is used by the floating WhatsApp button, the button in the phone menu, and the “Join our WhatsApp group” section on the home page.",
+    "temple_whatsapp_label": "Temple general WhatsApp group link",
+    "temple_whatsapp_where": "This link is used by the “Temple WhatsApp group” section on the schedule page, and by the printed QR code that points to it.",
     "save": "Save",
     "save_failed": "Could not save. Please try again.",
     "error_empty": "Paste a link first.",
@@ -742,6 +744,9 @@
     "note_title": "Before you come",
     "note_body": "Timings shift slightly on festival days and Ekadashi. If you are travelling a distance, call ahead to confirm.",
     "note_cta": "Get directions",
+    "whatsapp_title": "Temple WhatsApp group",
+    "whatsapp_body": "Timing changes, festival announcements and daily darshan updates from the temple — for everyone, not just the youth forum.",
+    "whatsapp_cta": "Join the temple group",
     "items": {
       "mangala_aarti": {
         "name": "Mangala Aarti",

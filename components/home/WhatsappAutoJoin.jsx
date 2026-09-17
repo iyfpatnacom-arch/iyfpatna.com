@@ -12,6 +12,9 @@ import { WHATSAPP_GROUP_URL } from "@/lib/site-config";
  * `#whatsapp` on the URL does what pressing "Join now" would have done, and
  * the section underneath is what they see if they come back.
  *
+ * The fragment is a prop so the schedule page can do the same for the temple
+ * group at /schedule#temple-whatsapp — the URL printed as a QR code.
+ *
  * Renders nothing. It exists only for the effect, and lives inside
  * <WhatsappJoin> so it is mounted exactly where the section is — the home
  * page — and is handed the same admin-editable invite the button uses,
@@ -36,16 +39,19 @@ import { WHATSAPP_GROUP_URL } from "@/lib/site-config";
  *   tab instead. Leaving the site is the right answer here: the visitor
  *   followed a link whose entire purpose was to reach the group.
  */
-export function WhatsappAutoJoin({ href = WHATSAPP_GROUP_URL }) {
+export function WhatsappAutoJoin({
+  href = WHATSAPP_GROUP_URL,
+  hash = "whatsapp",
+}) {
   useEffect(() => {
     if (!href) return;
 
     function join() {
-      if (window.location.hash !== "#whatsapp") return;
+      if (window.location.hash !== `#${hash}`) return;
 
       /* Before the hash goes, so the section is where the visitor left off
          if the invite opened in a tab of its own and they come back. */
-      document.getElementById("whatsapp")?.scrollIntoView();
+      document.getElementById(hash)?.scrollIntoView();
 
       window.history.replaceState(
         null,
@@ -71,7 +77,7 @@ export function WhatsappAutoJoin({ href = WHATSAPP_GROUP_URL }) {
        /en#whatsapp followed from somewhere else on the site. */
     window.addEventListener("hashchange", join);
     return () => window.removeEventListener("hashchange", join);
-  }, [href]);
+  }, [href, hash]);
 
   return null;
 }

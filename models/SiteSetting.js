@@ -28,6 +28,7 @@ import mongoose from "mongoose";
  */
 export const SETTING_KEYS = {
   whatsappGroupUrl: "whatsapp_group_url",
+  templeWhatsappGroupUrl: "temple_whatsapp_group_url",
 };
 
 const SiteSettingSchema = new mongoose.Schema(

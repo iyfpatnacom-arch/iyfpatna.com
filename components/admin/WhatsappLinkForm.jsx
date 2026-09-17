@@ -8,7 +8,25 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { WhatsappIcon } from "@/components/site/WhatsappIcon";
-import { saveWhatsappGroupUrl } from "@/app/[locale]/admin/settings/actions";
+import {
+  saveTempleWhatsappGroupUrl,
+  saveWhatsappGroupUrl,
+} from "@/app/[locale]/admin/settings/actions";
+
+/* Which stored link a form edits. Picked here by name rather than passing
+   the action in, so the page cannot wire a form to the wrong setting. */
+const KINDS = {
+  community: {
+    save: saveWhatsappGroupUrl,
+    id: "whatsapp-url",
+    label: "whatsapp_label",
+  },
+  temple: {
+    save: saveTempleWhatsappGroupUrl,
+    id: "temple-whatsapp-url",
+    label: "temple_whatsapp_label",
+  },
+};
 
 /**
  * The one control on the admin dashboard: paste an invite link, press save.
@@ -29,7 +47,13 @@ import { saveWhatsappGroupUrl } from "@/app/[locale]/admin/settings/actions";
  * under the field rather than as a toast: the toast is gone in four seconds
  * and the mistake is still in the box.
  */
-export function WhatsappLinkForm({ current, isDefault, updatedAt }) {
+export function WhatsappLinkForm({
+  kind = "community",
+  current,
+  isDefault,
+  updatedAt,
+}) {
+  const { save, id, label } = KINDS[kind];
   const t = useTranslations("admin");
   const format = useFormatter();
   const [value, setValue] = useState(current);
@@ -43,7 +67,7 @@ export function WhatsappLinkForm({ current, isDefault, updatedAt }) {
 
     startTransition(async () => {
       try {
-        const result = await saveWhatsappGroupUrl(value);
+        const result = await save(value);
         if (!result.ok) {
           setError(result.error);
           return;
@@ -59,16 +83,16 @@ export function WhatsappLinkForm({ current, isDefault, updatedAt }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-8">
-      <Label htmlFor="whatsapp-url" className="text-foreground">
+    <form onSubmit={handleSubmit}>
+      <Label htmlFor={id} className="text-foreground">
         <WhatsappIcon className="size-4 text-[#25D366]" />
-        {t("whatsapp_label")}
+        {t(label)}
       </Label>
 
       <div className="mt-3 flex flex-col gap-2 sm:flex-row">
         <Input
-          id="whatsapp-url"
-          name="whatsapp-url"
+          id={id}
+          name={id}
           type="url"
           inputMode="url"
           autoComplete="off"
@@ -76,7 +100,7 @@ export function WhatsappLinkForm({ current, isDefault, updatedAt }) {
           value={value}
           disabled={isPending}
           aria-invalid={error ? true : undefined}
-          aria-describedby="whatsapp-url-hint"
+          aria-describedby={`${id}-hint`}
           onValueChange={(next) => setValue(next)}
           placeholder="https://chat.whatsapp.com/…"
           className="h-11 flex-1 font-mono text-xs"
@@ -113,7 +137,7 @@ export function WhatsappLinkForm({ current, isDefault, updatedAt }) {
       {error ? (
         <p className="mt-2 text-sm font-medium text-destructive">{t(error)}</p>
       ) : (
-        <p id="whatsapp-url-hint" className="mt-2 text-sm text-muted-foreground">
+        <p id={`${id}-hint`} className="mt-2 text-sm text-muted-foreground">
           {t("whatsapp_hint")}
         </p>
       )}

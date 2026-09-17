@@ -5,7 +5,10 @@ import {
   redirectSignedOut,
 } from "@/lib/auth-config";
 import { SETTING_KEYS, getSettingDoc } from "@/lib/settings";
-import { WHATSAPP_GROUP_URL } from "@/lib/site-config";
+import {
+  TEMPLE_WHATSAPP_GROUP_URL,
+  WHATSAPP_GROUP_URL,
+} from "@/lib/site-config";
 import { Panel } from "@/components/site/Panel";
 import { WhatsappLinkForm } from "@/components/admin/WhatsappLinkForm";
 
@@ -53,7 +56,10 @@ export default async function AdminSettingsPage({ params }) {
     );
   }
 
-  const doc = await getSettingDoc(SETTING_KEYS.whatsappGroupUrl);
+  const [doc, templeDoc] = await Promise.all([
+    getSettingDoc(SETTING_KEYS.whatsappGroupUrl),
+    getSettingDoc(SETTING_KEYS.templeWhatsappGroupUrl),
+  ]);
 
   return (
     <div className="mx-auto max-w-3xl px-5 py-14 md:px-10 md:py-20">
@@ -70,7 +76,22 @@ export default async function AdminSettingsPage({ params }) {
         />
       </Panel>
 
-      <p className="mt-6 text-sm text-muted-foreground">{t("whatsapp_where")}</p>
+      <p className="mt-3 text-sm text-muted-foreground">{t("whatsapp_where")}</p>
+
+      <Panel className="mt-10 p-6 md:p-8">
+        <WhatsappLinkForm
+          kind="temple"
+          current={templeDoc?.value || TEMPLE_WHATSAPP_GROUP_URL}
+          isDefault={!templeDoc?.value}
+          updatedAt={
+            templeDoc?.updatedAt ? templeDoc.updatedAt.toISOString() : null
+          }
+        />
+      </Panel>
+
+      <p className="mt-3 text-sm text-muted-foreground">
+        {t("temple_whatsapp_where")}
+      </p>
     </div>
   );
 }

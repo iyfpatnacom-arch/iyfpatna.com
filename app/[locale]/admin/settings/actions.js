@@ -24,12 +24,23 @@ import {
  * an admin gets nothing to render.
  */
 export async function saveWhatsappGroupUrl(input) {
+  return saveWhatsappSetting(SETTING_KEYS.whatsappGroupUrl, input);
+}
+
+/** Same, for the temple's general group on the schedule page. */
+export async function saveTempleWhatsappGroupUrl(input) {
+  return saveWhatsappSetting(SETTING_KEYS.templeWhatsappGroupUrl, input);
+}
+
+/* Not exported: a "use server" file exposes every export as an endpoint, and
+   the key must never be something the caller chooses. */
+async function saveWhatsappSetting(key, input) {
   const userId = await requireAdmin();
 
   const { url, error } = parseWhatsappUrl(input);
   if (error) return { ok: false, error };
 
-  await setSetting(SETTING_KEYS.whatsappGroupUrl, url, { updatedBy: userId });
+  await setSetting(key, url, { updatedBy: userId });
 
   // Two invalidations, because the link lives in two kinds of cache. The tag
   // expires the settings read itself (`updateTag`, not `revalidateTag`, so

@@ -6,7 +6,10 @@ import {
 import { Bell, DoorOpen, Flame, Lamp, MapPin, Moon, MoonStar, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { routing } from "@/i18n/routing";
+import { WhatsappIcon } from "@/components/site/WhatsappIcon";
+import { WhatsappAutoJoin } from "@/components/home/WhatsappAutoJoin";
 import { DAILY_SCHEDULE, ORG } from "@/lib/site-config";
+import { getTempleWhatsappGroupUrl } from "@/lib/settings";
 import { cn } from "@/lib/utils";
 
 export function generateStaticParams() {
@@ -49,6 +52,11 @@ const mapsHref = `https://www.google.com/maps/search/?api=1&query=${encodeURICom
  * next-intl, so each locale gets its own meridiem rather than a second
  * hardcoded copy of every time. (hi-IN keeps Latin digits, which is the
  * ordinary convention.)
+ *
+ * The temple's general WhatsApp group sits at the foot of the page with
+ * `id="temple-whatsapp"`. That fragment is what the printed QR code points
+ * at, and arriving on it opens the invite straight away, the way
+ * /#whatsapp does for the youth group on the home page.
  */
 export default async function SchedulePage({ params }) {
   const { locale } = await params;
@@ -56,6 +64,7 @@ export default async function SchedulePage({ params }) {
 
   const t = await getTranslations("schedule");
   const format = await getFormatter();
+  const templeWhatsappUrl = await getTempleWhatsappGroupUrl();
 
   const formatTime = (hhmm) => {
     const [hours, minutes] = hhmm.split(":").map(Number);
@@ -152,6 +161,38 @@ export default async function SchedulePage({ params }) {
             {ORG.phone}
           </a>
         </div>
+      </section>
+
+      <section
+        id="temple-whatsapp"
+        className="mt-6 flex scroll-mt-24 flex-col gap-5 rounded-2xl border border-[#25D366]/30 bg-[#25D366]/5 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8"
+      >
+        <WhatsappAutoJoin href={templeWhatsappUrl} hash="temple-whatsapp" />
+
+        <div>
+          <h2 className="flex items-center gap-2 text-lg font-semibold tracking-tight">
+            <WhatsappIcon className="size-4 text-[#25D366]" />
+            {t("whatsapp_title")}
+          </h2>
+          <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
+            {t("whatsapp_body")}
+          </p>
+        </div>
+
+        <Button
+          size="lg"
+          className="w-full shrink-0 rounded-full bg-[#25D366] px-5 text-white hover:bg-[#1da851] focus-visible:ring-[#25D366]/40 sm:w-auto"
+          render={
+            <a
+              href={templeWhatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            />
+          }
+        >
+          <WhatsappIcon className="size-4" />
+          {t("whatsapp_cta")}
+        </Button>
       </section>
     </div>
   );
