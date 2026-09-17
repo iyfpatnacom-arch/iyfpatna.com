@@ -90,6 +90,11 @@ const CLERK_APPEARANCE = {
     cardBox:
       "shadow-sm border data-[elevation=flush]:shadow-none data-[elevation=flush]:border-0",
     popoverBox: "shadow-sm border",
+    // The footer ("Already have an account?", "Secured by Clerk") paints
+    // Clerk's own translucent gradient rather than colorBackground, so on the
+    // dark glass it reads far more see-through than the form above it. Pin it
+    // to the same surface; `!` beats Clerk's emotion styles.
+    footer: "bg-none! bg-(--clerk-surface)!",
   },
 };
 
