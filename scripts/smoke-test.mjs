@@ -22,6 +22,9 @@
 import { readFile } from "node:fs/promises";
 
 const base = (process.argv[2] || "http://localhost:3000").replace(/\/$/, "");
+// Per request. Production goes through a slow VPS link, so its default is
+// generous; CI talks to a server on localhost and sets this much lower.
+const TIMEOUT_MS = Number(process.env.SMOKE_TIMEOUT_MS) || 45_000;
 
 // Pages that must render without a database: CI builds and boots the server
 // with no MONGODB_URI, and production must survive Mongo being unreachable.
@@ -59,7 +62,7 @@ async function get(path, attempts = 4) {
     try {
       const res = await fetch(base + path, {
         headers: { "user-agent": "iyfpatna-smoke-test", "accept-language": "en" },
-        signal: AbortSignal.timeout(45_000),
+        signal: AbortSignal.timeout(TIMEOUT_MS),
       });
       // A 5xx right after a restart can be the server still warming up.
       if (res.status >= 500 && i < attempts) throw new Error(`HTTP ${res.status}`);
@@ -123,6 +126,10 @@ for (const asset of assets) {
 if (failures.length) {
   console.error(`\nsmoke test FAILED against ${base} — ${failures.length} problem(s):`);
   failures.forEach((f) => console.error(`  - ${f}`));
+  // Surfaced as annotations on the run summary, not buried in the step log.
+  if (process.env.GITHUB_ACTIONS) {
+    failures.forEach((f) => console.log(`::error title=Smoke test (${base})::${f}`));
+  }
   process.exit(1);
 }
 console.log(`\nsmoke test passed against ${base}`);
