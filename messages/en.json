@@ -1,5 +1,6 @@
 {
   "nav": {
+    "admin": "Admin",
     "home": "Home",
     "about": "About",
     "programs": "Programs",
@@ -245,7 +246,9 @@
     "empty": "Photos are on their way.",
     "subtitle": "Photographs from our yatras, festivals and weekly programs.",
     "open_image": "Open photograph",
-    "close_image": "Close photograph"
+    "close_image": "Close photograph",
+    "previous_image": "Previous photograph",
+    "next_image": "Next photograph"
   },
   "playground": {
     "eyebrow": "Playground",

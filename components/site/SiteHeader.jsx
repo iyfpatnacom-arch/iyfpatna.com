@@ -1,8 +1,14 @@
 "use client";
 
-import { useTranslations } from "next-intl";
-import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
-import { ArrowUpRight, HandHeart } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
+import {
+  Show,
+  SignInButton,
+  SignUpButton,
+  UserButton,
+  useUser,
+} from "@clerk/nextjs";
+import { ArrowUpRight, HandHeart, ShieldCheck } from "lucide-react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { BrandMark } from "@/components/site/BrandMark";
 import { IskconBand } from "@/components/site/IskconBand";
@@ -15,6 +21,7 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
+import { isAllowlistedAdmin } from "@/lib/admin-users";
 import { DONATE_NAV, MAIN_NAV } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
 
@@ -155,9 +162,7 @@ export function SiteHeader({ clerkConfigured = false, whatsappUrl }) {
                   </SignUpButton>
                 </Show>
                 <Show when="signed-in">
-                  <UserButton
-                    appearance={{ elements: { avatarBox: "h-8 w-8" } }}
-                  />
+                  <AccountMenu />
                 </Show>
               </>
             ) : (
@@ -173,5 +178,36 @@ export function SiteHeader({ clerkConfigured = false, whatsappUrl }) {
         </div>
       </header>
     </>
+  );
+}
+
+/**
+ * Clerk's avatar menu, plus an "Admin" item for the accounts that can use it.
+ *
+ * Its own component because `useUser` needs the ClerkProvider, which only
+ * exists behind the `clerkConfigured` branch above. Hiding the item is for
+ * tidiness only — /admin checks again on the server via `getAdminUser`.
+ * Clerk renders the link as a plain navigation, outside next-intl's Link, so
+ * the locale prefix is added here by hand.
+ */
+function AccountMenu() {
+  const t = useTranslations("nav");
+  const locale = useLocale();
+  const { user } = useUser();
+  const isAdmin =
+    isAllowlistedAdmin(user?.id) || user?.publicMetadata?.role === "admin";
+
+  return (
+    <UserButton appearance={{ elements: { avatarBox: "h-8 w-8" } }}>
+      {isAdmin && (
+        <UserButton.MenuItems>
+          <UserButton.Link
+            label={t("admin")}
+            labelIcon={<ShieldCheck className="size-4" aria-hidden="true" />}
+            href={`/${locale}/admin`}
+          />
+        </UserButton.MenuItems>
+      )}
+    </UserButton>
   );
 }

@@ -1,5 +1,7 @@
+import { Suspense } from "react";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { GalleryGrid } from "@/components/gallery/GalleryGrid";
+import { GalleryGridSkeleton } from "@/components/gallery/GallerySkeleton";
 import { routing } from "@/i18n/routing";
 import { GALLERY_IMAGES } from "@/lib/site-config";
 
@@ -38,12 +40,25 @@ async function loadGallery() {
   }
 }
 
+/**
+ * Waits on the database separately from the heading, so the page shell
+ * paints straight away and the grid streams in behind a skeleton.
+ */
+async function GallerySection() {
+  const t = await getTranslations("gallery");
+  const items = await loadGallery();
+
+  if (items.length === 0) {
+    return <p className="mt-12 text-center text-muted-foreground">{t("empty")}</p>;
+  }
+  return <GalleryGrid items={items} />;
+}
+
 export default async function GalleryPage({ params }) {
   const { locale } = await params;
   setRequestLocale(locale);
 
   const t = await getTranslations("gallery");
-  const items = await loadGallery();
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
@@ -57,11 +72,9 @@ export default async function GalleryPage({ params }) {
         {t("subtitle")}
       </p>
 
-      {items.length === 0 ? (
-        <p className="mt-12 text-center text-muted-foreground">{t("empty")}</p>
-      ) : (
-        <GalleryGrid items={items} />
-      )}
+      <Suspense fallback={<GalleryGridSkeleton />}>
+        <GallerySection />
+      </Suspense>
     </div>
   );
 }
