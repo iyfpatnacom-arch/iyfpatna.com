@@ -112,7 +112,14 @@ jobs:
         timeout-minutes: 6
         run: |
           cp -r .next/standalone "$RUNNER_TEMP/smoke"
-          PORT=3000 HOSTNAME=127.0.0.1 node "$RUNNER_TEMP/smoke/server.js" \
+          # CLERK_SECRET_KEY is blanked for this server only, which switches the
+          # Clerk middleware off in proxy.js. The build carries the production
+          # Clerk key, and Clerk's production-instance handling on a non-
+          # production host (127.0.0.1) ends in the middleware rewriting the
+          # request to an origin Next treats as external, proxying it to itself
+          # forever — every page hangs. Clerk on the real domain is covered by
+          # the production smoke test after the swap.
+          CLERK_SECRET_KEY= PORT=3000 HOSTNAME=127.0.0.1 node "$RUNNER_TEMP/smoke/server.js" \
             < /dev/null > "$RUNNER_TEMP/smoke.log" 2>&1 &
           server=$!
           status=1
