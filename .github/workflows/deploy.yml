@@ -4,6 +4,19 @@ name: Deploy to VPS
 # cannot reliably run `npm ci` or `next build` itself — both time out. The
 # build therefore happens here, and the server only ever receives a finished
 # standalone bundle and restarts PM2.
+#
+# Order of the gates — any failure stops the run before production is touched,
+# except the last, which puts the previous release back:
+#   1. lint                      eslint must be clean
+#   2. build                     `next build` must succeed
+#   3. smoke test the build      the built server is booted here and
+#                                scripts/smoke-test.mjs checks pages, every
+#                                CSS/JS chunk they reference, and the contacts
+#                                and hero from lib/site-config.js
+#   4. deploy                    upload to a staging dir, snapshot the live
+#                                release, stop, swap, start
+#   5. smoke test production     the same script against https://iyfpatna.in
+#   6. roll back (on failure)    restore the snapshot and restart
 
 on:
   push:
@@ -24,7 +37,33 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
+
+    # NEXT_PUBLIC_* is inlined into the bundle at build time, so the yatra flag
+    # has to be set here — adding it to the server's .env.production would do
+    # nothing, because by then the value is already baked into the JS. Unset
+    # means off, which is what hides the yatra today. To show it: set the
+    # YATRA_ENABLED repository variable to true (Settings > Secrets and
+    # variables > Actions > Variables) and re-run this workflow; the flip only
+    # takes effect on the next build.
+    #
+    # Clerk is the same trap twice over. The publishable key is inlined, and
+    # `clerkConfigured` (lib/auth-config.js) also needs CLERK_SECRET_KEY —
+    # which the prerendered layout evaluates at build time. Without both here
+    # the site ships with sign-in switched off, whatever the server's
+    # .env.production says. The secret key is still read again at runtime from
+    # .env.production by the proxy and API routes.
+    #
+    # These live at job level, not on the Build step, because the smoke-test
+    # server has to run with exactly what the build saw.
+    env:
+      NEXT_PUBLIC_YATRA_ENABLED: ${{ vars.YATRA_ENABLED }}
+      NEXT_PUBLIC_SITE_URL: ${{ vars.SITE_URL || 'https://iyfpatna.in' }}
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ vars.CLERK_PUBLISHABLE_KEY }}
+      NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL: ${{ vars.CLERK_SIGN_IN_FALLBACK_REDIRECT_URL || '/' }}
+      NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL: ${{ vars.CLERK_SIGN_UP_FALLBACK_REDIRECT_URL || '/' }}
+      CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+
     steps:
       - uses: actions/checkout@v4
 
@@ -46,32 +85,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Lint
+        run: npm run lint
+
       # Building on Linux is also what fixes `sharp`: npm resolves the
       # linux-x64 binary here, where a Windows-built bundle carried the
       # win32 one and next/image failed at runtime.
-      # NEXT_PUBLIC_* is inlined into the bundle here, at build time, so the
-      # yatra flag has to be set on this step — adding it to the server's
-      # .env.production would do nothing, because by then the value is already
-      # baked into the JS. Unset means off, which is what hides the yatra
-      # today. To show it: set the YATRA_ENABLED repository variable to true
-      # (Settings > Secrets and variables > Actions > Variables) and re-run
-      # this workflow; the flip only takes effect on the next build.
-      #
-      # Clerk is the same trap twice over. The publishable key is inlined, and
-      # `clerkConfigured` (lib/auth-config.js) also needs CLERK_SECRET_KEY —
-      # which the prerendered layout evaluates here, at build time. Without
-      # both on this step the site ships with sign-in switched off, whatever
-      # the server's .env.production says. The secret key is still read again
-      # at runtime from .env.production by the proxy and API routes.
       - name: Build
         run: npm run build
-        env:
-          NEXT_PUBLIC_YATRA_ENABLED: ${{ vars.YATRA_ENABLED }}
-          NEXT_PUBLIC_SITE_URL: ${{ vars.SITE_URL || 'https://iyfpatna.in' }}
-          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ vars.CLERK_PUBLISHABLE_KEY }}
-          NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL: ${{ vars.CLERK_SIGN_IN_FALLBACK_REDIRECT_URL || '/' }}
-          NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL: ${{ vars.CLERK_SIGN_UP_FALLBACK_REDIRECT_URL || '/' }}
-          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
 
       - name: Assemble standalone bundle
         run: |
@@ -80,6 +101,27 @@ jobs:
           cp -r public .next/standalone/public
           echo "bundle size: $(du -sh .next/standalone | cut -f1)"
 
+      # Boots the exact bundle that is about to ship, with no MONGODB_URI —
+      # public pages must survive the database being unreachable — and runs
+      # the smoke test against it. The server is started from a throwaway copy
+      # so the pages it writes back to its ISR cache never reach the upload.
+      - name: Smoke test the build
+        run: |
+          cp -r .next/standalone "$RUNNER_TEMP/smoke"
+          PORT=3000 HOSTNAME=127.0.0.1 node "$RUNNER_TEMP/smoke/server.js" > "$RUNNER_TEMP/smoke.log" 2>&1 &
+          server=$!
+          for i in $(seq 1 60); do
+            curl -s -o /dev/null http://127.0.0.1:3000/en && break
+            sleep 1
+          done
+          status=0
+          node scripts/smoke-test.mjs http://127.0.0.1:3000 || status=$?
+          if [ "$status" != 0 ]; then
+            echo "--- server log ---"; cat "$RUNNER_TEMP/smoke.log"
+          fi
+          kill $server || true
+          exit $status
+
       - name: Configure SSH
         run: |
           mkdir -p ~/.ssh
@@ -87,18 +129,24 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           printf '%s\n' "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
+          # Key and timeouts in one place, so every ssh and rsync below is plain.
+          printf '%s\n' 'Host *' '  IdentityFile ~/.ssh/id_ed25519' \
+            '  ConnectTimeout 30' '  ServerAliveInterval 15' > ~/.ssh/config
+          chmod 600 ~/.ssh/config
 
-      # --delete keeps the remote free of files dropped from the build, but
-      # .env.production holds the runtime secrets and start.sh is written by
-      # the server side, so both are excluded from the sync and the delete.
+      # Upload to a staging directory beside the app, never into the live one.
+      # The running server is ISR: when a cached page goes stale it re-renders
+      # it with the code it has in memory and writes the result back to
+      # .next/server/app/*.html. Uploading into the live directory while the
+      # old process was still running let it overwrite freshly uploaded pages
+      # with old-build HTML, which pointed at CSS/JS chunks --delete had just
+      # removed — /en came up unstyled and with the old contacts and hero.
       - name: Upload bundle
         run: |
           for attempt in 1 2 3 4 5; do
             if rsync -az --delete --partial --timeout=60 \
-                 --exclude='.env.production' --exclude='start.sh' \
-                 -e "ssh -i ~/.ssh/id_ed25519 -o ConnectTimeout=30 -o ServerAliveInterval=15" \
                  .next/standalone/ \
-                 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:$REMOTE_DIR/"; then
+                 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:$REMOTE_DIR.release/"; then
               echo "uploaded on attempt $attempt"; exit 0
             fi
             echo "attempt $attempt failed (the link to this host drops often); retrying"
@@ -106,11 +154,29 @@ jobs:
           done
           echo "rsync failed after 5 attempts" >&2; exit 1
 
-      - name: Restart app
+      # A copy of the release that is live right now, for the rollback step.
+      # Everything in it, env file included, is what production is running.
+      - name: Snapshot current release
+        id: snapshot
         run: |
-          ssh -i ~/.ssh/id_ed25519 -o ConnectTimeout=30 \
-            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" bash -s <<REMOTE
+          ssh "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" bash -s <<REMOTE
           set -e
+          rsync -a --delete "$REMOTE_DIR/" "$REMOTE_DIR.prev/"
+          echo "snapshot taken"
+          REMOTE
+
+      - name: Swap in the new release
+        id: swap
+        run: |
+          ssh "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" bash -s <<REMOTE
+          set -e
+          # Stop first, so nothing can write old pages back mid-swap, then copy
+          # the staged bundle in over local disk (seconds, not minutes).
+          # .env.production holds the runtime secrets and start.sh is written
+          # by the server side, so both are kept out of the copy and --delete.
+          pm2 stop $APP || true
+          rsync -a --delete --exclude='.env.production' --exclude='start.sh' \
+            "$REMOTE_DIR.release/" "$REMOTE_DIR/"
           cd "$REMOTE_DIR"
           # Recreate the launcher if it went missing. It sources the env file
           # before exec'ing node, because Next's standalone server reads
@@ -126,14 +192,35 @@ jobs:
           pm2 save
           REMOTE
 
-      - name: Verify site is serving
+      # The same checks as against the build, now against the public site
+      # through nginx: the new contacts and hero must be what is served, and
+      # every chunk the live pages reference must exist.
+      - name: Smoke test production
         run: |
           sleep 12
-          for attempt in 1 2 3 4 5; do
-            code=$(curl -s -o /dev/null -w '%{http_code}' -L --max-time 45 "https://$DOMAIN/" || echo 000)
-            echo "attempt $attempt: HTTP $code"
-            [ "$code" = "200" ] && { echo "https://$DOMAIN is live"; exit 0; }
-            sleep 10
+          for attempt in 1 2 3; do
+            if node scripts/smoke-test.mjs "https://$DOMAIN"; then
+              echo "https://$DOMAIN is live and healthy"; exit 0
+            fi
+            echo "attempt $attempt failed; giving the server time to warm up"
+            sleep 20
           done
-          echo "site did not return 200 after deploy" >&2
+          echo "production smoke test failed after deploy" >&2
           exit 1
+
+      # Anything that went wrong after the swap started — a failed restart or
+      # a failed production smoke test — puts the previous release back. The
+      # run still ends red, so the failure is not missed.
+      - name: Roll back to the previous release
+        if: failure() && steps.snapshot.outcome == 'success' && (steps.swap.outcome == 'success' || steps.swap.outcome == 'failure')
+        run: |
+          ssh "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" bash -s <<REMOTE
+          set -e
+          pm2 stop $APP || true
+          rsync -a --delete --exclude='.env.production' --exclude='start.sh' \
+            "$REMOTE_DIR.prev/" "$REMOTE_DIR/"
+          chown -R iyfpatna:iyfpatna /home/iyfpatna/htdocs
+          pm2 restart $APP --update-env
+          pm2 save
+          echo "rolled back to the previous release"
+          REMOTE

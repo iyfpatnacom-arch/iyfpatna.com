@@ -1,19 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
 import { useTranslations } from "next-intl";
 import { Moon, Sun } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+const noopSubscribe = () => () => {};
+
 export function ThemeToggle({ className }) {
   const t = useTranslations("nav");
   const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
   // The server renders with the default theme, so hold the icon back until the
-  // client knows which theme actually applies.
-  useEffect(() => setMounted(true), []);
+  // client knows which theme actually applies. `useSyncExternalStore` reports
+  // false on the server and during hydration, true on the client after it.
+  const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
 
   const isDark = mounted && resolvedTheme === "dark";
   const label = isDark ? t("theme_light") : t("theme_dark");
