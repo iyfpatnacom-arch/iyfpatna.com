@@ -36,7 +36,7 @@ import {
   isEnrollmentOpen,
   pricingOf,
 } from "@/lib/courses/catalog";
-import { paymentMode } from "@/lib/payments/ccavenue";
+import { paymentMode } from "@/lib/payments/razorpay";
 import { Panel } from "@/components/site/Panel";
 import { EnrollButton, EnrollProvider, StickyEnrollBar } from "@/components/courses/Enroll";
 

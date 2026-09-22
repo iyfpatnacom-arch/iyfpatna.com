@@ -6,7 +6,7 @@ import { dbConnect } from "@/lib/db/connect";
 import { getOptionalAuth } from "@/lib/auth-config";
 import Enrollment from "@/models/Enrollment";
 import { formatINR, getCourse, modeOf, whatsappGroupFor } from "@/lib/courses/catalog";
-import { paymentMode } from "@/lib/payments/ccavenue";
+import { paymentMode } from "@/lib/payments/razorpay";
 import { orderToken, receiptPath, verifyOrderToken } from "@/lib/payments/order-link";
 import { receiptFilename } from "@/lib/payments/receipt";
 import { Panel } from "@/components/site/Panel";

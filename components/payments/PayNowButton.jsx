@@ -10,7 +10,7 @@ import { startPayment } from "@/lib/payments/redirect";
 const KNOWN_ERRORS = ["rate_limited", "not_found", "payment_unavailable", "network", "generic"];
 
 /**
- * Re-opens the billing page for an order that has not been paid for — a
+ * Re-opens the checkout for an order that has not been paid for — a
  * declined card, a cancelled checkout, a dropped connection. The order and its
  * ID stay the same; only the payment attempt is new.
  */
@@ -27,6 +27,7 @@ export function PayNowButton({ orderId, token, label }) {
     // rather than flashing back to idle.
     if (result.ok) return;
     setBusy(false);
+    if (result.cancelled) return;
     const key = KNOWN_ERRORS.includes(result.error) ? result.error : "generic";
     toast.error(tc(`errors.${key}`));
   }

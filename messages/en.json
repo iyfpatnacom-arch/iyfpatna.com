@@ -180,7 +180,7 @@
     "submit": "Pay {price} & reserve my seat",
     "submitting": "Saving your details…",
     "redirecting": "Opening secure payment…",
-    "secure_gateway": "Payments are processed securely by CCAvenue — UPI, cards and net banking.",
+    "secure_gateway": "Payments are processed securely by Razorpay — UPI, cards and net banking.",
     "secure_test": "Test mode — no real money is charged on this machine.",
     "secure_offline": "Your seat is saved now; online payment opens shortly.",
     "terms": "By continuing you agree to our <terms>terms</terms> and <privacy>privacy policy</privacy>.",

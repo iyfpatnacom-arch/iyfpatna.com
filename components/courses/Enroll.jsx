@@ -315,7 +315,10 @@ function CheckoutDialog({ open, onOpenChange, checkout, clerkConfigured }) {
     const payment = await startPayment({ orderId: result.orderId, token: result.token, lang: locale });
     if (!payment.ok) {
       setStage("form");
-      setError(KNOWN_ERRORS.includes(payment.error) ? payment.error : "generic");
+      // Closing the checkout is a choice, not an error; the seat stays saved.
+      if (!payment.cancelled) {
+        setError(KNOWN_ERRORS.includes(payment.error) ? payment.error : "generic");
+      }
     }
   }
 
@@ -323,7 +326,7 @@ function CheckoutDialog({ open, onOpenChange, checkout, clerkConfigured }) {
     errors[name] ? t(`field_errors.${errors[name].message || name}`) : null;
 
   const secureLine =
-    checkout.paymentMode === "ccavenue"
+    checkout.paymentMode === "razorpay"
       ? t("secure_gateway")
       : checkout.paymentMode === "simulate"
         ? t("secure_test")

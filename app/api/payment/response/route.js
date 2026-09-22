@@ -1,71 +1,83 @@
-import { getCcavenueConfig, parseGatewayResponse } from "@/lib/payments/ccavenue";
-import { gatewayReturn, recordGatewayResponse } from "@/lib/payments/result";
+import { getRazorpayConfig, settlePayment, verifyCheckoutSignature } from "@/lib/payments/razorpay";
+import { gatewayReturn, recordPaymentOutcome } from "@/lib/payments/result";
 
 export const dynamic = "force-dynamic";
 
 /**
- * CCAvenue's redirect_url.
+ * Razorpay checkout's callback_url.
  *
- * The customer's browser arrives here as a cross-site POST carrying `encResp`.
- * Nothing about this request is authenticated by a cookie — it cannot be, the
- * customer may be returning in a different browser session entirely. The
- * ciphertext is the credential: only CCAvenue holds the working key needed to
- * produce a response that decrypts into a well-formed result.
+ * The customer's browser arrives here as a cross-site POST. Nothing about this
+ * request is authenticated by a cookie — it cannot be, the customer may be
+ * returning from a UPI app in a different browser session entirely.
  *
- * This URL must be registered with CCAvenue and be absolute HTTPS, which is
- * why real payments cannot be exercised against localhost.
+ * On success the body carries razorpay_payment_id, razorpay_order_id and
+ * razorpay_signature; on failure it carries error[…] fields with the IDs in
+ * error[metadata]. Neither is trusted as-is: the signature is checked where
+ * there is one, and the outcome itself is always re-read from Razorpay's API.
  */
-async function handle(request, encResp) {
-  let config = null;
-  try {
-    config = getCcavenueConfig();
-  } catch (error) {
-    console.error("[payment] bad CCAvenue configuration", error);
-  }
-  if (!config) {
-    console.error("[payment] response received while CCAvenue is unconfigured");
-    return gatewayReturn(request);
-  }
-  if (!encResp) {
-    console.error("[payment] response had no encResp");
-    return gatewayReturn(request);
-  }
-
-  let response;
-  try {
-    response = parseGatewayResponse(encResp, config);
-  } catch (error) {
-    console.error("[payment] could not decrypt response", error);
-    return gatewayReturn(request);
+function paymentIdFrom(form) {
+  const paymentId = form.get("razorpay_payment_id");
+  if (paymentId) {
+    return {
+      paymentId: String(paymentId),
+      orderId: String(form.get("razorpay_order_id") || ""),
+      signature: String(form.get("razorpay_signature") || ""),
+    };
   }
 
   try {
-    const result = await recordGatewayResponse(response);
-    if (!result) {
-      console.error(`[payment] response for unknown order ${response.order_id || "(none)"}`);
-      return gatewayReturn(request);
-    }
-    return gatewayReturn(request, result.lang, result.orderId);
-  } catch (error) {
-    // The payment itself may well have succeeded, so the customer still goes
-    // to their status page; the row stays pending for reconciliation.
-    console.error("[payment] failed to record response", error);
-    return gatewayReturn(request, response.merchant_param3, response.order_id || null);
+    const metadata = JSON.parse(String(form.get("error[metadata]") || "{}"));
+    if (metadata.payment_id) return { paymentId: String(metadata.payment_id), failed: true };
+  } catch {
+    /* No usable metadata — nothing to settle. */
   }
+  return null;
 }
 
 export async function POST(request) {
-  let encResp = null;
+  const lang = request.nextUrl.searchParams.get("lang") === "en" ? "en" : "hi";
+
+  const config = getRazorpayConfig();
+  if (!config) {
+    console.error("[payment] response received while Razorpay is unconfigured");
+    return gatewayReturn(request, lang);
+  }
+
+  let ids = null;
   try {
-    const form = await request.formData();
-    encResp = form.get("encResp");
+    ids = paymentIdFrom(await request.formData());
   } catch (error) {
     console.error("[payment] unreadable response body", error);
   }
-  return handle(request, encResp);
+  if (!ids) {
+    console.error("[payment] response named no payment");
+    return gatewayReturn(request, lang);
+  }
+
+  if (!ids.failed && !verifyCheckoutSignature(ids, config)) {
+    console.error(`[payment] bad checkout signature for ${ids.paymentId}`);
+    return gatewayReturn(request, lang);
+  }
+
+  let outcome = null;
+  try {
+    outcome = await settlePayment(ids.paymentId, config);
+    if (!outcome) {
+      console.error(`[payment] ${ids.paymentId} is not for an order we created`);
+      return gatewayReturn(request, lang);
+    }
+    const result = await recordPaymentOutcome({ ...outcome, lang });
+    return gatewayReturn(request, result?.lang || lang, result?.orderId || outcome.orderId);
+  } catch (error) {
+    // The payment itself may well have succeeded, so the customer still goes
+    // to their status page; the webhook or "pay now" reconciles the row.
+    console.error("[payment] failed to record response", error);
+    return gatewayReturn(request, lang, outcome?.orderId || null);
+  }
 }
 
-/** Some merchant configurations return the customer over GET. */
+/** A customer who lands here by hand (a bookmark, the back button). */
 export async function GET(request) {
-  return handle(request, request.nextUrl.searchParams.get("encResp"));
+  const lang = request.nextUrl.searchParams.get("lang") === "en" ? "en" : "hi";
+  return gatewayReturn(request, lang);
 }

@@ -8,7 +8,7 @@ import { getCourse, isEnrollmentOpen, modeOf, pricingOf } from "@/lib/courses/ca
 import { generateOrderId } from "@/lib/courses/enrollment";
 import { normalizePhone, PHONE_PATTERN } from "@/lib/courses/phone";
 import { orderStatusPath, orderToken } from "@/lib/payments/order-link";
-import { paymentMode } from "@/lib/payments/ccavenue";
+import { paymentMode } from "@/lib/payments/razorpay";
 import { check, clientKey } from "@/lib/rate-limit";
 
 /**

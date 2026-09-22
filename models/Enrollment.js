@@ -23,7 +23,11 @@ const PaymentSchema = new mongoose.Schema(
       enum: ["pending", "success", "failed", "aborted"],
       default: "pending",
     },
-    provider: { type: String, default: "ccavenue" },
+    provider: { type: String, default: "razorpay" },
+    /* The Razorpay Order (order_…) and its amount in paise, reused across
+       retries so a second "pay now" can see an earlier payment landed. */
+    gatewayOrderId: { type: String, default: null },
+    gatewayAmount: { type: Number, default: null },
     trackingId: { type: String, default: null },
     bankRefNo: { type: String, default: null },
     paymentMode: { type: String, default: null },
@@ -31,7 +35,7 @@ const PaymentSchema = new mongoose.Schema(
     paidAt: { type: Date, default: null },
     amountMismatch: { type: Boolean, default: false },
     reconciledAt: { type: Date, default: null },
-    // The whole decrypted gateway response, for reconciliation by hand.
+    // What the gateway said about the payment, for reconciliation by hand.
     raw: { type: mongoose.Schema.Types.Mixed, default: null },
   },
   { _id: false }

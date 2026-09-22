@@ -6,7 +6,8 @@
  *   node scripts/sync-env.mjs --dry-run          # show which keys would change
  *   node scripts/sync-env.mjs                    # merge .env.local, restart
  *   node scripts/sync-env.mjs --only CLERK_SECRET_KEY,MONGODB_URI
- *   node scripts/sync-env.mjs --set CCAVENUE_ENV=production
+ *   node scripts/sync-env.mjs --only RAZORPAY_KEY_ID,RAZORPAY_KEY_SECRET,RAZORPAY_WEBHOOK_SECRET
+ *   node scripts/sync-env.mjs --unset CCAVENUE_MERCHANT_ID
  *   node scripts/sync-env.mjs --unset SOME_KEY
  *   node scripts/sync-env.mjs --list             # key names on the server
  *
@@ -110,8 +111,11 @@ const removed = [...unset].filter((k) => remote.has(k));
 
 for (const k of changed) console.log(`${remote.has(k) ? "update" : "add   "} ${k}`);
 for (const k of removed) console.log(`remove ${k}`);
-if (updates.has("CCAVENUE_ENV") || remote.has("CCAVENUE_ENV")) {
-  console.log(`\nCCAVENUE_ENV will be: ${updates.get("CCAVENUE_ENV") ?? remote.get("CCAVENUE_ENV")}`);
+// The key ID is public (it is sent to every browser at checkout), so naming
+// its mode is safe; it is also the only thing that decides live vs test.
+const razorpayKey = updates.get("RAZORPAY_KEY_ID") ?? remote.get("RAZORPAY_KEY_ID");
+if (razorpayKey) {
+  console.log(`\nRazorpay will run in ${razorpayKey.startsWith("rzp_live_") ? "LIVE" : "test"} mode.`);
 }
 if (!changed.length && !removed.length) {
   console.log("Nothing to change.");
