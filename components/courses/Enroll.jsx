@@ -478,6 +478,11 @@ function CheckoutDialog({ open, onOpenChange, checkout, clerkConfigured }) {
                     {chunks}
                   </Link>
                 ),
+                refund: (chunks) => (
+                  <Link href="/refund" className="underline underline-offset-2 hover:text-foreground">
+                    {chunks}
+                  </Link>
+                ),
                 privacy: (chunks) => (
                   <Link href="/privacy" className="underline underline-offset-2 hover:text-foreground">
                     {chunks}

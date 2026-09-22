@@ -39,6 +39,10 @@ const PAGES = [
   "/en/donate",
   "/en/privacy",
   "/en/terms",
+  "/en/refund",
+  "/en/shipping",
+  "/en/contact",
+  "/hi/refund",
 ];
 const HOME_PAGES = new Set(["/en", "/hi"]);
 

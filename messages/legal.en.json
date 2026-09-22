@@ -18,13 +18,15 @@
         "body": [
           "Information you give us: when you register for a program, course or festival, or create an account, we collect your name, email address, phone number and, where relevant to the activity, your college or city.",
           "Information collected automatically: basic technical data such as your browser type, device type, approximate region and the pages you visit. This is used to keep the site working and secure, not to build a profile of you.",
-          "We do not knowingly collect information from children under 13. We do not collect biometric, health or financial information on this website."
+          "We do not knowingly collect information from children under 13. We do not collect biometric or health information, and we never see or store your card, UPI or bank details."
         ]
       },
       {
         "heading": "Payments",
         "body": [
-          "iyfpatna.in does not process payments and does not collect card, UPI or bank details. Where a paid activity such as a yatra is offered, registration and payment happen on that activity's own website, which publishes its own privacy, refund and terms pages and uses its own payment gateway.",
+          "Fees for paid courses and workshops, such as the Discover Yourself (DYS) workshop, are collected on this site through Razorpay, an RBI-authorised payment gateway. Your card, UPI or bank details are entered on Razorpay's secure checkout and are never seen or stored by iyfpatna.in. We receive only the payment status, the amount, the transaction reference and the payment method type (for example UPI or card), which we keep with your enrolment as the record of payment.",
+          "Razorpay handles your payment details under its own privacy policy, published at razorpay.com.",
+          "Vrindavan Yatra bookings are taken on the yatra's own website, which publishes its own privacy, refund and terms pages.",
           "Donations offered through our donate page are received by ISKCON Patna, not by iyfpatna.in: each donate button opens ISKCON Patna's own donation page at iskconpatna.in, where the payment is completed on the temple's gateway and where your name, contact details and PAN are collected for the receipt."
         ]
       },
@@ -47,7 +49,7 @@
       {
         "heading": "Service providers",
         "body": [
-          "We rely on a small number of trusted providers to run this site: a database host to store registrations, an authentication provider to manage sign-in, and an email provider to send confirmation messages. These providers process data only on our instructions and only to deliver their part of the service.",
+          "We rely on a small number of trusted providers to run this site: a database host to store registrations, an authentication provider to manage sign-in, an email provider to send confirmation messages, and Razorpay to process course payments. These providers process data only on our instructions and only to deliver their part of the service.",
           "We do not sell your personal information to anyone."
         ]
       },
@@ -78,7 +80,7 @@
     ]
   },
   "terms": {
-    "title": "Terms of Use",
+    "title": "Terms & Conditions",
     "intro": "These terms govern your use of iyfpatna.in. By using the site you agree to them.",
     "sections": [
       {
@@ -92,7 +94,15 @@
         "body": [
           "When you register for a program, course or festival, please give accurate information — we use it to contact you about that activity.",
           "A registration is confirmed only when we confirm it. We may close registrations, change a schedule or venue, or cancel an activity when circumstances require it, and we will make reasonable effort to inform registered participants.",
-          "Most of our weekly activities are free to attend. Where an activity carries a fee, that fee, and the refund terms attached to it, are stated on the page or the site where you register for it."
+          "Most of our weekly activities are free to attend. Where a course or workshop carries a fee, the fee is shown on its page before you pay."
+        ]
+      },
+      {
+        "heading": "Fees and payments",
+        "body": [
+          "Course fees are stated in Indian Rupees (INR) and are inclusive of any applicable taxes. The amount charged is the amount shown on the course page at checkout.",
+          "Payments are processed securely by Razorpay. An enrolment is confirmed only once the payment gateway confirms the payment to us. You will then see a confirmation page with your order ID, receive a confirmation email, and be able to download a receipt.",
+          "Cancellations and refunds are governed by our Refund & Cancellation Policy, and how a course is delivered is described in our Shipping & Delivery Policy. Both form part of these terms."
         ]
       },
       {
@@ -173,7 +183,7 @@
       {
         "heading": "Donations and payments",
         "body": [
-          "This website does not collect donations or process payments. Where a paid activity such as a yatra is offered, it is handled on that activity's own website, which publishes its own terms, refund and cancellation policies and uses its own payment gateway.",
+          "Fees for paid courses and workshops are collected on this website through the Razorpay payment gateway, and are refunded, where applicable, under our Refund & Cancellation Policy. The Vrindavan Yatra is booked on its own website, which publishes its own terms, refund and cancellation policies.",
           "Donations are received by ISKCON Patna, not by IYF Patna. Our donate page describes the sevas and the amounts the temple publishes, and every donate button opens ISKCON Patna's own donation page at iskconpatna.in. The payment is completed on the temple's gateway, and the receipt, the 80G certificate and any refund are issued by ISKCON Patna under the terms, refund and privacy policies published on its site.",
           "Please be cautious of anyone soliciting payments in the name of IYF Patna through channels other than those published on this site. If in doubt, call or write to us using the contact details below before paying anything."
         ]
@@ -192,5 +202,105 @@
         ]
       }
     ]
+  },
+  "refund": {
+    "title": "Refund & Cancellation Policy",
+    "intro": "How cancellations and refunds work for courses and workshops paid for on iyfpatna.in, such as the Discover Yourself (DYS) workshop.",
+    "sections": [
+      {
+        "heading": "What this policy covers",
+        "body": [
+          "This policy applies to fees paid on iyfpatna.in for IYF Patna courses and workshops. Most IYF Patna programs are free and involve no payment.",
+          "Donations are not covered: they are received by ISKCON Patna on its own website and refunded, where applicable, under ISKCON Patna's refund policy. Vrindavan Yatra bookings are covered by the refund policy published on the yatra website."
+        ]
+      },
+      {
+        "heading": "Cancelling your enrolment",
+        "body": [
+          "You may cancel by writing to us or calling us (see Contact Us) with your order ID, from the email address or phone number you enrolled with.",
+          "Cancelled at least 48 hours before the first session: the full fee is refunded.",
+          "Cancelled less than 48 hours before the first session, or after the course has started: the fee is not refunded. On request, we will instead move your enrolment once to the next batch of the same course.",
+          "Not attending without cancelling is treated as a cancellation after the course has started."
+        ]
+      },
+      {
+        "heading": "If we cancel or reschedule",
+        "body": [
+          "If we cancel a batch, the full fee is refunded to every enrolled participant. You do not need to ask for it.",
+          "If we change the dates of a batch and the new dates do not suit you, you may choose either a full refund or a place in the new batch."
+        ]
+      },
+      {
+        "heading": "Failed and duplicate payments",
+        "body": [
+          "If money was debited but your enrolment was not confirmed, the payment gateway normally reverses the payment automatically within 5–7 working days. If it has not, write to us with the transaction reference and we will refund it in full.",
+          "If you were charged more than once for the same enrolment, every extra payment is refunded in full."
+        ]
+      },
+      {
+        "heading": "How refunds are paid",
+        "body": [
+          "Approved refunds are initiated within 7 working days of approval, to the original payment method only: the same card, UPI ID or bank account the payment came from. We do not refund in cash or to a different account.",
+          "Once a refund is initiated, banks usually take 5–7 working days to credit it. We will share the refund reference so you can trace it with your bank."
+        ]
+      },
+      {
+        "heading": "Changes to this policy",
+        "body": [
+          "We may update this policy from time to time. The version in force on the date of your payment applies to that payment."
+        ]
+      }
+    ]
+  },
+  "shipping": {
+    "title": "Shipping & Delivery Policy",
+    "intro": "IYF Patna courses and workshops are services. Nothing is shipped, and no shipping or delivery charge is ever collected.",
+    "sections": [
+      {
+        "heading": "No physical goods",
+        "body": [
+          "iyfpatna.in does not sell or ship physical products. Every fee paid on this site is for taking part in a course or workshop, delivered in person at the temple or live online."
+        ]
+      },
+      {
+        "heading": "What you receive after paying",
+        "body": [
+          "Your enrolment is confirmed on screen as soon as the payment succeeds, with an order ID you should keep.",
+          "A confirmation email is sent to the address you enrolled with, usually within a few minutes.",
+          "A payment receipt can be downloaded at any time from your order page."
+        ]
+      },
+      {
+        "heading": "How the course is delivered",
+        "body": [
+          "In person: at Sri Sri Radha Banke Bihari Temple, Buddha Marg, Patna, on the dates and at the times shown on the course page.",
+          "Online: live on Zoom. The joining link is shared in the batch's WhatsApp group, which you are invited to after enrolling, before the first session."
+        ]
+      },
+      {
+        "heading": "Exchanges",
+        "body": [
+          "A course is a service, not a product, so exchanges do not apply. If you cannot attend your batch, you may ask to move to a later batch of the same course, as set out in our Refund & Cancellation Policy."
+        ]
+      },
+      {
+        "heading": "If something goes wrong",
+        "body": [
+          "If your payment succeeded but you have not received a confirmation within 24 hours, contact us with your order ID or transaction reference and we will resolve it."
+        ]
+      }
+    ]
+  },
+  "contact": {
+    "title": "Contact Us",
+    "intro": "Reach ISKCON Youth Forum Patna with questions about courses, programs, payments or refunds.",
+    "email_heading": "Email",
+    "email_note": "We reply within 3 working days.",
+    "phone_heading": "Phone",
+    "phone_note": "Call us, or message us on WhatsApp.",
+    "address_heading": "Address",
+    "hours_heading": "Hours",
+    "hours": "Every day, 9:00 AM to 8:00 PM (IST)",
+    "payments_note": "For anything about a payment or refund, please mention your order ID."
   }
 }

@@ -8,13 +8,16 @@ import { ORG } from "@/lib/site-config";
  * `{ heading, body[] }` sections — so the three legal routes are one
  * component with a different `doc` rather than three near-identical pages.
  * Adding a section is a translation edit, not a code change.
+ *
+ * A page that is not prose — the contact page — passes `children`, which take
+ * the place of the numbered sections inside the same frame.
  */
-export function PolicyPage({ doc }) {
+export function PolicyPage({ doc, children }) {
   const t = useTranslations(`legal.${doc}`);
   const tl = useTranslations("legal");
   const locale = useLocale();
 
-  const sections = t.raw("sections");
+  const sections = children ? [] : t.raw("sections");
 
   const updated = new Intl.DateTimeFormat(
     locale === "hi" ? "hi-IN" : "en-IN",
@@ -35,7 +38,9 @@ export function PolicyPage({ doc }) {
         </p>
       </header>
 
-      <div className="mt-10 space-y-9">
+      {children ? <div className="mt-10">{children}</div> : null}
+
+      <div className="mt-10 space-y-9 empty:hidden">
         {sections.map((section, index) => (
           <section key={section.heading}>
             <h2 className="text-lg font-semibold tracking-tight">

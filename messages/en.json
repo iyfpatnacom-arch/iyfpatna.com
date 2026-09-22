@@ -18,16 +18,18 @@
     "primary_nav": "Main navigation",
     "yatra": "Vrindavan Yatra",
     "privacy": "Privacy Policy",
-    "terms": "Terms of Use",
+    "terms": "Terms & Conditions",
     "legal": "Legal Information",
-    "contact": "Contact",
+    "contact": "Contact Us",
     "menu": "Menu",
     "close_menu": "Close menu",
     "open_menu": "Open menu",
     "external_hint": "opens in a new tab",
     "schedule": "Schedule",
     "donate": "Donate",
-    "campus": "Campus"
+    "campus": "Campus",
+    "refund": "Refund & Cancellation",
+    "shipping": "Shipping & Delivery"
   },
   "home": {
     "badge": "The youth wing of ISKCON Patna",
@@ -183,7 +185,7 @@
     "secure_gateway": "Payments are processed securely by Razorpay — UPI, cards and net banking.",
     "secure_test": "Test mode — no real money is charged on this machine.",
     "secure_offline": "Your seat is saved now; online payment opens shortly.",
-    "terms": "By continuing you agree to our <terms>terms</terms> and <privacy>privacy policy</privacy>.",
+    "terms": "By continuing you agree to our <terms>terms</terms>, <refund>refund policy</refund> and <privacy>privacy policy</privacy>.",
     "already_title": "You're already registered",
     "already_body": "Taking you to your receipt.",
     "field_errors": {
