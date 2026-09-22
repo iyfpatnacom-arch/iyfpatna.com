@@ -14,6 +14,7 @@ import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { AppDock } from "@/components/site/AppDock";
 import { WhatsappFab } from "@/components/site/WhatsappFab";
+import { YatraPromoModal } from "@/components/site/YatraPromoModal";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { PageTransition } from "@/components/PageTransition";
 import { PwaInstallGate } from "@/components/pwa/PwaInstallGate";
@@ -129,6 +130,7 @@ export default async function LocaleLayout({ children, params }) {
         <AppDock />
         <WhatsappFab href={whatsappUrl} />
         <PwaInstallGate />
+        <YatraPromoModal />
         <Toaster position="top-center" />
       </TooltipProvider>
     </NextIntlClientProvider>

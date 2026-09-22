@@ -13,6 +13,7 @@ import { Link, usePathname } from "@/i18n/navigation";
 import { BrandMark } from "@/components/site/BrandMark";
 import { IskconBand } from "@/components/site/IskconBand";
 import { LocaleToggle } from "@/components/site/LocaleToggle";
+import { YatraTicker } from "@/components/site/YatraTicker";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import {
@@ -177,6 +178,9 @@ export function SiteHeader({ clerkConfigured = false, whatsappUrl }) {
           </div>
         </div>
       </header>
+      {/* Under the sticky row rather than inside it: like the band above, it
+          scrolls away instead of costing phone height on every page. */}
+      <YatraTicker />
     </>
   );
 }

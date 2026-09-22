@@ -41,6 +41,26 @@ const PaymentSchema = new mongoose.Schema(
   { _id: false }
 );
 
+/**
+ * One day this person was admitted at the venue.
+ *
+ * Per day rather than a single "attended" flag because a batch runs over more
+ * than one day, and the pass is scanned at the door each time. `dayKey` is the
+ * IST calendar date, so a second scan on the same day is recognised as the
+ * same admission rather than counted twice.
+ */
+const AttendanceSchema = new mongoose.Schema(
+  {
+    dayKey: { type: String, required: true },
+    at: { type: Date, default: Date.now },
+    /** Clerk id of the admin who scanned or ticked them. */
+    markedBy: { type: String, default: null },
+    /** "qr" from a scanned pass, "manual" from the dashboard or a typed ID. */
+    source: { type: String, enum: ["qr", "manual"], default: "qr" },
+  },
+  { _id: false }
+);
+
 const EnrollmentSchema = new mongoose.Schema(
   {
     /** DYS-101 — short enough to read down a phone line. */
@@ -72,6 +92,8 @@ const EnrollmentSchema = new mongoose.Schema(
     locale: { type: String, enum: ["hi", "en"], default: "hi" },
 
     payment: { type: PaymentSchema, default: () => ({}) },
+
+    attendance: { type: [AttendanceSchema], default: [] },
 
     notifications: {
       emailSent: { type: Boolean, default: false },

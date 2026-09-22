@@ -5,6 +5,7 @@ import { batchDateLabel, getCourse, modeOf } from "@/lib/courses/catalog";
 import { buildReceiptPdf, receiptFilename } from "@/lib/payments/receipt";
 import { verifyOrderToken } from "@/lib/payments/order-link";
 import { check, clientKey } from "@/lib/rate-limit";
+import { passQrPng } from "@/lib/courses/pass";
 
 export const dynamic = "force-dynamic";
 
@@ -85,6 +86,11 @@ export async function GET(request, { params }) {
           .join("  |  ")
       : null,
     modeLabel: course ? modeOf(course, enrollment.mode)?.label?.en : enrollment.mode,
+    // A receipt without its pass page is still a receipt; never fail on it.
+    passPng: await passQrPng(orderId, 600).catch((error) => {
+      console.error(`[receipt] could not draw the pass for ${orderId}`, error);
+      return null;
+    }),
   };
 
   let pdf;

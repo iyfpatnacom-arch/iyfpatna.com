@@ -2,7 +2,14 @@ import { useFormatter, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { IkImage } from "@/components/media/IkImage";
-import { HERO_IMAGE, ORG } from "@/lib/site-config";
+import { ArrowUpRight } from "lucide-react";
+import {
+  HERO_IMAGE,
+  ORG,
+  YATRA_ENABLED,
+  YATRA_URL,
+  yatraIsExternal,
+} from "@/lib/site-config";
 import { TodayPills } from "./TodayPills";
 
 /**
@@ -128,11 +135,56 @@ export function Hero({ darshan = null }) {
                 })}
               </p>
             ) : null}
+            <YatraPill />
             <TodayPills variant="overlay" className="md:hidden" />
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+/**
+ * "Book Vrindavan Yatra", pinned to the darshan photo.
+ *
+ * The darshan is the one picture people come back to every morning, so it is
+ * where a standing offer gets seen. Top right, opposite the date caption, so
+ * the two never overlap and the panchang card at the bottom stays clear.
+ */
+function YatraPill() {
+  const t = useTranslations("yatra_promo");
+
+  if (!YATRA_ENABLED) return null;
+
+  const className =
+    "group absolute top-3 right-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-brand-gold py-1.5 pr-2.5 pl-3 text-xs font-semibold text-brand-ink shadow-[0_8px_24px_-6px_rgba(242,166,59,0.95)] ring-1 ring-white/40 transition-transform hover:scale-[1.04] active:scale-[0.97]";
+  const content = (
+    <>
+      <span className="relative flex size-2" aria-hidden="true">
+        <span className="absolute inline-flex size-full animate-ping rounded-full bg-brand-ink/50" />
+        <span className="relative inline-flex size-2 rounded-full bg-brand-ink" />
+      </span>
+      {t("darshan_pill")}
+      <ArrowUpRight
+        className="size-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+        aria-hidden="true"
+      />
+    </>
+  );
+
+  return yatraIsExternal ? (
+    <a
+      href={YATRA_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={className}
+    >
+      {content}
+    </a>
+  ) : (
+    <Link href={YATRA_URL} className={className}>
+      {content}
+    </Link>
   );
 }
 

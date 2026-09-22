@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { ArrowLeft, Ban, Bookmark, CircleCheck, CircleX, Clock3, FlaskConical, Mail } from "lucide-react";
+import { ArrowLeft, Ban, Bookmark, CircleCheck, CircleX, Clock3, FlaskConical, Mail, Ticket } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { dbConnect } from "@/lib/db/connect";
 import { getOptionalAuth } from "@/lib/auth-config";
@@ -9,6 +9,7 @@ import { formatINR, getCourse, modeOf, whatsappGroupFor } from "@/lib/courses/ca
 import { paymentMode } from "@/lib/payments/razorpay";
 import { orderToken, receiptPath, verifyOrderToken } from "@/lib/payments/order-link";
 import { receiptFilename } from "@/lib/payments/receipt";
+import { passQrSvg } from "@/lib/courses/pass";
 import { Panel } from "@/components/site/Panel";
 import { WhatsappIcon } from "@/components/site/WhatsappIcon";
 import { PayNowButton } from "@/components/payments/PayNowButton";
@@ -73,10 +74,11 @@ export default async function OrderPage({ params, searchParams }) {
   const view = PRESENTATION[status] ?? PRESENTATION.pending;
   const canPay = status !== "success" && Boolean(paymentMode());
 
-  const [receipt, whatsappUrl, payToken] = await Promise.all([
+  const [receipt, whatsappUrl, payToken, passSvg] = await Promise.all([
     status === "success" ? receiptPath(orderId) : null,
     status === "success" ? whatsappGroupFor(course) : null,
     canPay ? orderToken(orderId) : null,
+    status === "success" ? passQrSvg(orderId).catch(() => null) : null,
   ]);
 
   const firstName = enrollment.name.split(" ")[0];
@@ -204,6 +206,25 @@ export default async function OrderPage({ params, searchParams }) {
                 <Mail className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
                 {t("email_note")}
               </p>
+            )}
+            {passSvg && (
+              <div className="mt-5 rounded-2xl border-2 border-dashed border-primary/35 p-5 text-center">
+                <p className="flex items-center justify-center gap-2 text-sm font-semibold">
+                  <Ticket className="size-4 text-primary" aria-hidden="true" />
+                  {t("pass_title")}
+                </p>
+                {/* The SVG is drawn by the qrcode library from our own URL. */}
+                <div
+                  className="mx-auto mt-4 w-56 max-w-full rounded-xl bg-white p-2 [&_svg]:block [&_svg]:h-auto [&_svg]:w-full"
+                  role="img"
+                  aria-label={t("pass_alt", { orderId: enrollment.orderId })}
+                  dangerouslySetInnerHTML={{ __html: passSvg }}
+                />
+                <p className="mt-3 font-mono text-sm font-semibold tracking-tight">{enrollment.orderId}</p>
+                <p className="mx-auto mt-2 max-w-xs text-xs leading-relaxed text-muted-foreground">
+                  {t("pass_body")}
+                </p>
+              </div>
             )}
             <p className="mt-3 flex items-start gap-2 rounded-lg bg-primary/8 px-3 py-2.5 text-xs leading-relaxed text-muted-foreground">
               <Bookmark className="mt-0.5 size-3.5 shrink-0 text-primary" aria-hidden="true" />

@@ -42,10 +42,9 @@ jobs:
     # NEXT_PUBLIC_* is inlined into the bundle at build time, so the yatra flag
     # has to be set here — adding it to the server's .env.production would do
     # nothing, because by then the value is already baked into the JS. Unset
-    # means off, which is what hides the yatra today. To show it: set the
-    # YATRA_ENABLED repository variable to true (Settings > Secrets and
-    # variables > Actions > Variables) and re-run this workflow; the flip only
-    # takes effect on the next build.
+    # means on. To hide the yatra: set the YATRA_ENABLED repository variable
+    # to false (Settings > Secrets and variables > Actions > Variables) and
+    # re-run this workflow; the flip only takes effect on the next build.
     #
     # Clerk is the same trap twice over. The publishable key is inlined, and
     # `clerkConfigured` (lib/auth-config.js) also needs CLERK_SECRET_KEY —
