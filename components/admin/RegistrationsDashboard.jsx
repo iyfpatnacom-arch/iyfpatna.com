@@ -123,6 +123,7 @@ function buildCsv(rows, days, modes) {
     "Payment ID",
     "Bank reference",
     "Gateway order ID",
+    "Coupon",
     "Provider",
     "Paid at (IST)",
     "Registered at (IST)",
@@ -159,6 +160,7 @@ function buildCsv(rows, days, modes) {
       row.trackingId,
       row.bankRefNo,
       row.gatewayOrderId,
+      row.coupon,
       row.provider,
       csvTime(row.paidAt),
       csvTime(row.createdAt),
@@ -689,6 +691,7 @@ export function RegistrationsDashboard({ rows: initialRows, loadedAt, today, mod
                             <Detail label={t("reg_d_language")} value={row.locale === "hi" ? "हिन्दी" : row.locale === "en" ? "English" : null} />
                             <Detail label={t("reg_d_batch")} value={row.batchId} mono />
                             <Detail label={t("reg_d_mrp")} value={row.mrp ? inr(row.mrp) : null} />
+                            <Detail label={t("reg_d_coupon")} value={row.coupon} mono />
                             <Detail label={t("reg_d_paid_at")} value={row.paidAt ? dateTime.format(new Date(row.paidAt)) : null} />
                             <Detail label={t("reg_d_paid_via")} value={row.paymentMode} />
                             <Detail label={t("reg_d_payment_id")} value={row.trackingId} mono />

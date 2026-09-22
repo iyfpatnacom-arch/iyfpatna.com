@@ -41,6 +41,7 @@ function toRow(doc) {
     batchId: doc.batchId,
     amount: doc.amount,
     mrp: doc.mrp ?? null,
+    coupon: doc.coupon?.code ? `${doc.coupon.code} (${doc.coupon.percentOff}%)` : null,
     currency: doc.currency || "INR",
     status: payment.status || "pending",
     provider: payment.provider || null,

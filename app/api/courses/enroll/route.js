@@ -7,8 +7,10 @@ import Enrollment from "@/models/Enrollment";
 import { getCourse, isEnrollmentOpen, modeOf, pricingOf } from "@/lib/courses/catalog";
 import { generateOrderId } from "@/lib/courses/enrollment";
 import { normalizePhone, PHONE_PATTERN } from "@/lib/courses/phone";
+import { applyCoupon, findUsableCoupon } from "@/lib/courses/coupons";
 import { orderStatusPath, orderToken } from "@/lib/payments/order-link";
 import { paymentMode } from "@/lib/payments/razorpay";
+import { recordPaymentOutcome } from "@/lib/payments/result";
 import { check, clientKey } from "@/lib/rate-limit";
 
 /**
@@ -19,7 +21,9 @@ import { check, clientKey } from "@/lib/rate-limit";
  * network dropped finishes paying without filling the form again.
  *
  * The price is read from the course catalog and stored on the row — the body
- * of this request never gets a say in what is charged.
+ * of this request never gets a say in what is charged. A coupon code is the
+ * one input that moves it, and only by the percentage stored against that code.
+ * A code worth 100% confirms the seat right here, with no gateway involved.
  */
 
 const optionalAge = z.preprocess(
@@ -36,6 +40,7 @@ const bodySchema = z.object({
   occupation: z.enum(["student", "working", "other"]),
   mode: z.string().trim().min(1).max(40),
   locale: z.enum(["hi", "en"]).default("hi"),
+  coupon: z.string().trim().max(40).optional(),
 });
 
 function fail(status, error, headers) {
@@ -89,7 +94,15 @@ export async function POST(request) {
     }
 
     const { userId } = await getOptionalAuth();
-    const { amount, mrp, currency } = pricingOf(course);
+    const { mrp, currency } = pricingOf(course);
+    let { amount } = pricingOf(course);
+
+    let coupon = null;
+    if (data.coupon) {
+      const found = await findUsableCoupon(data.coupon);
+      if (!found) return fail(400, "coupon_invalid");
+      ({ amount, snapshot: coupon } = applyCoupon(amount, found));
+    }
 
     const details = {
       name: data.name,
@@ -105,13 +118,15 @@ export async function POST(request) {
     };
     if (data.age !== undefined) details.age = data.age;
     if (userId) details.clerkId = userId;
+    if (coupon) details.coupon = coupon;
 
     /* An unpaid attempt for the same phone is picked up again rather than
        left behind as a second row: the admin list should hold one line per
        person, and the order ID they may already have noted keeps working. */
     let enrollment = await Enrollment.findOneAndUpdate(
       { ...scope, "payment.status": { $ne: "success" } },
-      { $set: details },
+      // A retry without the code must not keep the discount from the last try.
+      coupon ? { $set: details } : { $set: details, $unset: { coupon: 1 } },
       { sort: { createdAt: -1 }, returnDocument: "after" }
     ).lean();
 
@@ -126,6 +141,27 @@ export async function POST(request) {
       orderToken(enrollment.orderId),
       orderStatusPath(enrollment.orderId, data.locale),
     ]);
+
+    /* Free after the coupon: confirm the seat through the same writer a real
+       payment goes through, so the email, the receipt PDF and the pass all
+       come out exactly as they do for a paid seat. */
+    if (amount === 0) {
+      await recordPaymentOutcome({
+        orderId: enrollment.orderId,
+        lang: data.locale,
+        status: "success",
+        amount: 0,
+        currency,
+        provider: "coupon",
+        paymentMode: "Coupon",
+        trackingId: null,
+        bankRefNo: null,
+      });
+      return NextResponse.json(
+        { ok: true, orderId: enrollment.orderId, token, statusUrl, next: "status", free: true },
+        { status: 201 }
+      );
+    }
 
     return NextResponse.json(
       {

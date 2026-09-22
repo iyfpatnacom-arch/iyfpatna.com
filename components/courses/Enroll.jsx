@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useLocale, useTranslations } from "next-intl";
 import { useUser } from "@clerk/nextjs";
-import { ArrowRight, LoaderCircle, Lock, ShieldCheck, UserRound } from "lucide-react";
+import { ArrowRight, Gift, LoaderCircle, Lock, ShieldCheck, TicketPercent, UserRound, X } from "lucide-react";
 import { toast } from "sonner";
 import { Modal } from "@/components/site/Modal";
 import { Button } from "@/components/ui/button";
@@ -43,10 +43,14 @@ const KNOWN_ERRORS = [
   "not_found",
   "closed",
   "sold_out",
+  "coupon_invalid",
   "payment_unavailable",
   "network",
   "generic",
 ];
+
+const inr = (amount) =>
+  new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(amount);
 
 /* Messages are keys into `checkout.field_errors`, so a validation error reads
    in the visitor's language rather than zod's English. */
@@ -195,6 +199,8 @@ function CheckoutDialog({ open, onOpenChange, checkout, clerkConfigured }) {
   // form → submitting (saving the order) → redirecting (leaving for payment)
   const [stage, setStage] = useState("form");
   const [error, setError] = useState(null);
+  // A code the server has checked: { code, percentOff, amount }.
+  const [coupon, setCoupon] = useState(null);
 
   const {
     register,
@@ -283,6 +289,7 @@ function CheckoutDialog({ open, onOpenChange, checkout, clerkConfigured }) {
           phone: normalizePhone(values.phone),
           slug: checkout.slug,
           locale,
+          coupon: coupon?.code,
         }),
       });
       result = await response.json().catch(() => null);
@@ -294,12 +301,21 @@ function CheckoutDialog({ open, onOpenChange, checkout, clerkConfigured }) {
 
     if (!response.ok || !result?.ok) {
       setStage("form");
+      // Used up or switched off since it was applied: drop it so the price
+      // shown is the price that would be charged.
+      if (result?.error === "coupon_invalid") setCoupon(null);
       setError(KNOWN_ERRORS.includes(result?.error) ? result.error : "generic");
       return;
     }
 
     remember(values);
-    setStage("redirecting");
+    setStage(result.free ? "confirming" : "redirecting");
+
+    if (result.free) {
+      toast.success(t("free_title"), { description: t("free_body") });
+      window.location.assign(result.statusUrl);
+      return;
+    }
 
     if (result.already) {
       toast.success(t("already_title"), { description: t("already_body") });
@@ -325,8 +341,12 @@ function CheckoutDialog({ open, onOpenChange, checkout, clerkConfigured }) {
   const fieldError = (name) =>
     errors[name] ? t(`field_errors.${errors[name].message || name}`) : null;
 
-  const secureLine =
-    checkout.paymentMode === "razorpay"
+  const free = coupon?.amount === 0;
+  const priceLabel = coupon ? inr(coupon.amount) : checkout.priceLabel;
+
+  const secureLine = free
+    ? t("secure_free")
+    : checkout.paymentMode === "razorpay"
       ? t("secure_gateway")
       : checkout.paymentMode === "simulate"
         ? t("secure_test")
@@ -345,7 +365,7 @@ function CheckoutDialog({ open, onOpenChange, checkout, clerkConfigured }) {
       {clerkConfigured && <ClerkAutofillBridge onAutofill={handleAutofill} />}
 
       <div className="flex flex-col gap-5 pt-1">
-        <OrderSummary checkout={checkout} />
+        <OrderSummary checkout={checkout} coupon={coupon} />
 
         {clerkConfigured && <AccountRow />}
 
@@ -442,6 +462,16 @@ function CheckoutDialog({ open, onOpenChange, checkout, clerkConfigured }) {
             </fieldset>
           )}
 
+          <CouponField
+            slug={checkout.slug}
+            coupon={coupon}
+            onChange={(next) => {
+              setCoupon(next);
+              if (error === "coupon_invalid") setError(null);
+            }}
+            disabled={stage !== "form"}
+          />
+
           {error && (
             <p role="alert" className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
               {t(`errors.${error}`)}
@@ -455,8 +485,12 @@ function CheckoutDialog({ open, onOpenChange, checkout, clerkConfigured }) {
           >
             {stage === "form" ? (
               <>
-                <Lock className="size-4" aria-hidden="true" />
-                {t("submit", { price: checkout.priceLabel })}
+                {free ? (
+                  <Gift className="size-4" aria-hidden="true" />
+                ) : (
+                  <Lock className="size-4" aria-hidden="true" />
+                )}
+                {free ? t("submit_free") : t("submit", { price: priceLabel })}
               </>
             ) : (
               <>
@@ -513,8 +547,122 @@ function Field({ id, label, hint, error, children }) {
   );
 }
 
-function OrderSummary({ checkout }) {
+/**
+ * "Have a coupon code?" — folded away by default, because almost nobody has
+ * one and an open empty box makes everyone else wonder what they're missing.
+ * Codes are handed out by hand and never listed anywhere.
+ */
+function CouponField({ slug, coupon, onChange, disabled }) {
   const t = useTranslations("checkout");
+  const [open, setOpen] = useState(false);
+  const [code, setCode] = useState("");
+  const [checking, setChecking] = useState(false);
+  const [error, setError] = useState(null);
+
+  async function apply() {
+    const value = code.trim();
+    if (!value) return;
+    setChecking(true);
+    setError(null);
+    try {
+      const response = await fetch("/api/courses/coupon", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug, code: value }),
+      });
+      const result = await response.json().catch(() => null);
+      if (response.ok && result?.ok) {
+        onChange({ code: result.code, percentOff: result.percentOff, amount: result.amount });
+        setCode("");
+      } else {
+        setError(KNOWN_ERRORS.includes(result?.error) ? result.error : "generic");
+      }
+    } catch {
+      setError("network");
+    } finally {
+      setChecking(false);
+    }
+  }
+
+  if (coupon) {
+    return (
+      <div className="flex items-center gap-3 rounded-xl border border-emerald-500/35 bg-emerald-500/[0.07] px-3 py-2.5">
+        <TicketPercent className="size-5 shrink-0 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
+        <p className="min-w-0 flex-1 text-sm">
+          <span className="font-mono font-semibold">{coupon.code}</span>{" "}
+          <span className="text-muted-foreground">
+            {t("coupon_applied", { percent: coupon.percentOff })}
+          </span>
+        </p>
+        <button
+          type="button"
+          onClick={() => onChange(null)}
+          disabled={disabled}
+          aria-label={t("coupon_remove")}
+          className="grid size-7 shrink-0 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+        >
+          <X className="size-4" aria-hidden="true" />
+        </button>
+      </div>
+    );
+  }
+
+  if (!open) {
+    return (
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="flex items-center gap-1.5 self-start text-sm font-medium text-primary underline-offset-4 hover:underline"
+      >
+        <TicketPercent className="size-4" aria-hidden="true" />
+        {t("coupon_toggle")}
+      </button>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-1.5">
+      <Label htmlFor="checkout-coupon" className="text-muted-foreground">
+        {t("coupon_label")}
+      </Label>
+      <div className="flex gap-2">
+        <Input
+          id="checkout-coupon"
+          autoComplete="off"
+          autoCapitalize="characters"
+          spellCheck={false}
+          autoFocus
+          value={code}
+          disabled={checking || disabled}
+          aria-invalid={Boolean(error)}
+          onChange={(event) => setCode(event.target.value.toUpperCase())}
+          onKeyDown={(event) => {
+            // Enter here applies the code rather than submitting the form.
+            if (event.key === "Enter") {
+              event.preventDefault();
+              apply();
+            }
+          }}
+          className="h-11 flex-1 font-mono uppercase"
+        />
+        <Button
+          type="button"
+          variant="outline"
+          onClick={apply}
+          disabled={checking || disabled || !code.trim()}
+          className="h-11 rounded-lg px-4"
+        >
+          {checking ? <LoaderCircle className="size-4 animate-spin" aria-hidden="true" /> : t("coupon_apply")}
+        </Button>
+      </div>
+      {error && <p className="text-xs text-destructive">{t(`errors.${error}`)}</p>}
+    </div>
+  );
+}
+
+function OrderSummary({ checkout, coupon }) {
+  const t = useTranslations("checkout");
+  const struck = coupon ? checkout.priceLabel : checkout.mrpLabel;
   return (
     <div className="rounded-xl border border-primary/25 bg-primary/[0.06] p-4">
       <div className="flex items-start justify-between gap-4">
@@ -524,13 +672,13 @@ function OrderSummary({ checkout }) {
         </div>
         <div className="shrink-0 text-end">
           <p className="text-[11px] text-muted-foreground">{t("summary_total")}</p>
-          <p className="text-xl leading-tight font-bold">{checkout.priceLabel}</p>
-          {checkout.mrpLabel && (
-            <p className="text-xs text-muted-foreground line-through">{checkout.mrpLabel}</p>
-          )}
+          <p className="text-xl leading-tight font-bold">
+            {coupon?.amount === 0 ? t("summary_free") : coupon ? inr(coupon.amount) : checkout.priceLabel}
+          </p>
+          {struck && <p className="text-xs text-muted-foreground line-through">{struck}</p>}
         </div>
       </div>
-      {checkout.saveLabel && (
+      {!coupon && checkout.saveLabel && (
         <p className="mt-3 inline-flex rounded-full bg-emerald-500/12 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-400">
           {t("summary_save", { amount: checkout.saveLabel })}
         </p>

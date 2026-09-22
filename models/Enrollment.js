@@ -76,6 +76,20 @@ const EnrollmentSchema = new mongoose.Schema(
     mrp: { type: Number },
     currency: { type: String, default: "INR" },
 
+    /* The coupon applied at enrolment, if any. `amount` above is already the
+       price after it; `originalAmount` is what it would have been. */
+    coupon: {
+      type: new mongoose.Schema(
+        {
+          code: { type: String },
+          percentOff: { type: Number },
+          originalAmount: { type: Number },
+        },
+        { _id: false }
+      ),
+      default: undefined,
+    },
+
     /* Set when the person was signed in with Clerk. Optional by design: an
        account is never a precondition for paying, but when there is one the
        dashboard can later list "my courses" by it. */

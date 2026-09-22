@@ -204,8 +204,20 @@
       "sold_out": "This batch is full.",
       "payment_unavailable": "Online payment is paused right now — please try again shortly.",
       "network": "No connection — check your internet and try again.",
-      "generic": "Something went wrong — please try again."
-    }
+      "generic": "Something went wrong — please try again.",
+      "coupon_invalid": "That coupon code isn't valid or has been used up."
+    },
+    "coupon_toggle": "Have a coupon code?",
+    "coupon_label": "Coupon code",
+    "coupon_apply": "Apply",
+    "coupon_applied": "applied — {percent}% off",
+    "coupon_remove": "Remove coupon",
+    "summary_free": "Free",
+    "submit_free": "Confirm my free seat",
+    "secure_free": "Your coupon covers the full amount — no payment needed.",
+    "confirming": "Confirming your seat…",
+    "free_title": "Seat confirmed",
+    "free_body": "Your coupon covered it. Downloading your receipt and entry pass."
   },
   "order": {
     "success_title": "You're in, {name}!",
@@ -245,7 +257,9 @@
     "test_payment": "Test payment — made in development mode. No real money was charged.",
     "pass_title": "Your entry pass",
     "pass_alt": "Entry pass QR code for {orderId}",
-    "pass_body": "Show this at the entrance — it is scanned to mark your attendance each day. It is also on page 2 of your receipt. Please don’t share it."
+    "pass_body": "Show this at the entrance — it is scanned to mark your attendance each day. It is also on page 2 of your receipt. Please don’t share it.",
+    "coupon": "Coupon",
+    "coupon_value": "{code} ({percent}% off)"
   },
   "gallery": {
     "eyebrow": "Gallery",
@@ -828,7 +842,37 @@
     "admit_online_note": "Registered for the online batch — admitted in person anyway.",
     "admit_days": "{count, plural, one {# day attended} other {# days attended}}",
     "admit_scan_next": "Scan next",
-    "admit_not_admin": "This is an entry pass. It is scanned by the volunteers at the door — please show it there."
+    "admit_not_admin": "This is an entry pass. It is scanned by the volunteers at the door — please show it there.",
+    "nav_coupons": "Coupons",
+    "nav_coupons_hint": "Discount codes for course registrations.",
+    "coupons_title": "Coupons",
+    "coupons_subtitle": "Codes are never shown on the site — share them by hand. A 100% code confirms the seat without payment.",
+    "coupon_new": "New coupon",
+    "coupon_code": "Code",
+    "coupon_percent": "% off",
+    "coupon_max": "Max uses",
+    "coupon_unlimited": "Unlimited",
+    "coupon_note": "Note",
+    "coupon_note_placeholder": "Who it's for — e.g. Volunteers",
+    "coupon_hint": "Letters, numbers and dashes, 3–32 characters. Codes can't be edited later — switch one off and make another.",
+    "coupon_create": "Create coupon",
+    "coupon_created": "Coupon {code} created.",
+    "coupon_empty": "No coupons yet.",
+    "coupon_discount": "Discount",
+    "coupon_used": "Used",
+    "coupon_used_up": "used up",
+    "coupon_active": "Active",
+    "coupon_free": "Free",
+    "coupon_copy": "Copy code",
+    "coupon_copied": "Code copied.",
+    "coupon_delete": "Delete coupon",
+    "coupon_delete_confirm": "Delete coupon {code}?",
+    "coupon_err_code": "Use 3–32 letters, numbers or dashes.",
+    "coupon_err_percent": "Discount must be a whole number from 1 to 100.",
+    "coupon_err_max": "Max uses must be a whole number, 1 or more — or leave it empty.",
+    "coupon_err_taken": "That code already exists.",
+    "coupon_err_used": "This code has been used, so it can only be switched off.",
+    "reg_d_coupon": "Coupon"
   },
   "auth": {
     "sign_in": "Sign in",

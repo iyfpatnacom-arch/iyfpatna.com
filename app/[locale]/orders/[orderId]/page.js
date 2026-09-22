@@ -195,6 +195,13 @@ export default async function OrderPage({ params, searchParams }) {
               <Row label={t("course")} value={courseTitle} />
               <Row label={t("participant")} value={enrollment.name} />
               <Row label={t("attending")} value={mode?.label?.[locale]} />
+              <Row
+                label={t("coupon")}
+                value={
+                  enrollment.coupon?.code &&
+                  t("coupon_value", { code: enrollment.coupon.code, percent: enrollment.coupon.percentOff })
+                }
+              />
               <Row label={status === "success" ? t("amount_paid") : t("amount_due")} value={amount} />
               <Row label={t("paid_on")} value={paidOn} />
               <Row label={t("payment_mode")} value={enrollment.payment?.paymentMode} />

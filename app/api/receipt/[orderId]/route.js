@@ -47,6 +47,7 @@ export async function GET(request, { params }) {
       courseTitle: 1,
       amount: 1,
       mrp: 1,
+      coupon: 1,
       name: 1,
       email: 1,
       phone: 1,
