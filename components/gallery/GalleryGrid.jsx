@@ -6,22 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { ChevronLeft, ChevronRight, Loader2, X } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-
-/**
- * ImageKit resizes on its own CDN, so photos hosted there skip the Next
- * optimizer entirely — on the VPS that optimizer is CPU-bound and was what
- * made the grid crawl in. Anything else still goes through next/image.
- */
-function imagekitLoader({ src, width, quality }) {
-  const url = new URL(src);
-  url.searchParams.set("tr", `w-${width},q-${quality || 75}`);
-  return url.toString();
-}
-
-const loaderFor = (src) =>
-  typeof src === "string" && src.startsWith("https://ik.imagekit.io/")
-    ? imagekitLoader
-    : undefined;
+import { loaderFor } from "@/lib/imagekit-loader";
 
 const srcOf = (item) => item.src ?? item.image;
 

@@ -1,6 +1,6 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { ArrowRight, Flag, Link2, QrCode } from "lucide-react";
+import { ArrowRight, Flag, ImageUp, Link2, QrCode } from "lucide-react";
 import {
   clerkConfigured,
   getAdminUser,
@@ -20,6 +20,7 @@ import { Panel } from "@/components/site/Panel";
 export const dynamic = "force-dynamic";
 
 const SECTIONS = [
+  { key: "darshan", href: "/admin/darshan", Icon: ImageUp },
   { key: "settings", href: "/admin/settings", Icon: Link2 },
   { key: "checkin", href: "/admin/check-in", Icon: QrCode },
   { key: "flags", href: "/admin/flags", Icon: Flag },

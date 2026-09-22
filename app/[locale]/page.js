@@ -8,6 +8,7 @@ import { JoinCta } from "@/components/home/JoinCta";
 import { routing } from "@/i18n/routing";
 import { ORG } from "@/lib/site-config";
 import { getWhatsappGroupUrl } from "@/lib/settings";
+import { getLatestDarshan } from "@/lib/darshan";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -42,11 +43,14 @@ export default async function HomePage({ params }) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const whatsappUrl = await getWhatsappGroupUrl();
+  const [whatsappUrl, darshan] = await Promise.all([
+    getWhatsappGroupUrl(),
+    getLatestDarshan(),
+  ]);
 
   return (
     <>
-      <Hero />
+      <Hero darshan={darshan} />
       <Pillars />
       <WhatsappJoin href={whatsappUrl} />
       <YatraCallout />

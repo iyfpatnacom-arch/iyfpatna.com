@@ -1,7 +1,7 @@
-import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
+import { IkImage } from "@/components/media/IkImage";
 import { HERO_IMAGE, ORG } from "@/lib/site-config";
 import { TodayPills } from "./TodayPills";
 
@@ -29,9 +29,16 @@ import { TodayPills } from "./TodayPills";
  * visitor looks for it; on a phone it is a plain line *under* the headline,
  * where a bordered pill would be one box too many. Only one of the two is ever
  * in the layout, so only one is ever in the accessibility tree.
+ *
+ * `darshan` is this morning's deity photo, uploaded at /admin/darshan. When
+ * there is one it takes the photograph's place, with its date on it — always
+ * the date rather than "today", because this page is cached and a label
+ * computed at render would still say "today" for a while after midnight. With
+ * no upload ever made, the group photo stays.
  */
-export function Hero() {
+export function Hero({ darshan = null }) {
   const t = useTranslations("home");
+  const format = useFormatter();
 
   return (
     <section className="relative overflow-hidden border-b border-border/70">
@@ -101,14 +108,26 @@ export function Hero() {
           />
 
           <div className="relative aspect-4/5 w-full overflow-hidden rounded-2xl border border-border bg-muted">
-            <Image
-              src={HERO_IMAGE}
-              alt={t("hero_image_alt")}
+            <IkImage
+              src={darshan?.url ?? HERO_IMAGE}
+              alt={darshan ? t("darshan_image_alt") : t("hero_image_alt")}
               fill
               priority
               sizes="(min-width: 1024px) 42vw, 100vw"
               className="object-cover"
             />
+            {darshan ? (
+              <p className="absolute top-3 left-3 z-10 flex items-center gap-1.5 rounded-full bg-black/45 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
+                <span className="size-1.5 rounded-full bg-brand-gold" aria-hidden="true" />
+                {t("darshan_caption", {
+                  date: format.dateTime(new Date(`${darshan.date}T00:00:00+05:30`), {
+                    day: "numeric",
+                    month: "short",
+                    timeZone: "Asia/Kolkata",
+                  }),
+                })}
+              </p>
+            ) : null}
             <TodayPills variant="overlay" className="md:hidden" />
           </div>
         </div>

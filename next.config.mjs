@@ -23,6 +23,12 @@ const nextConfig = {
   // mongodb-memory-server is a local-dev-only dependency that shells out to a
   // downloaded mongod binary; keep it out of the server bundle entirely.
   serverExternalPackages: ["mongodb-memory-server"],
+  experimental: {
+    // The daily darshan upload goes through a server action. The form
+    // shrinks photos in the browser first, so this is headroom for a browser
+    // that can't; it must stay above MAX_BYTES in admin/darshan/actions.js.
+    serverActions: { bodySizeLimit: "9mb" },
+  },
   images: {
     remotePatterns: [{ protocol: "https", hostname: "**" }],
   },
