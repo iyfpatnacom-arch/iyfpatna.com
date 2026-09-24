@@ -19,7 +19,7 @@
  *
  * Exits non-zero, listing every failure, if anything is wrong.
  */
-import { readFile } from "node:fs/promises";
+import { readdir, readFile } from "node:fs/promises";
 
 const base = (process.argv[2] || "http://localhost:3000").replace(/\/$/, "");
 // Per request. Production goes through a slow VPS link, so its default is
@@ -43,6 +43,19 @@ const PAGES = [
   "/en/shipping",
   "/en/contact",
   "/hi/refund",
+  "/en/courses",
+  "/hi/courses",
+  // Every paid course's landing page, in both languages. These are the pages
+  // money arrives through and the ones shared in WhatsApp groups, and a
+  // release once served them as 404s while /courses still linked to them —
+  // nothing here noticed, because the list above stopped at /courses. Read
+  // from content/courses so the next course is covered the day it is added.
+  ...(await readdir(new URL("../content/courses", import.meta.url)))
+    .filter((file) => file.endsWith(".json"))
+    .flatMap((file) => {
+      const slug = file.replace(/\.json$/, "");
+      return [`/en/courses/${slug}`, `/hi/courses/${slug}`];
+    }),
 ];
 const HOME_PAGES = new Set(["/en", "/hi"]);
 

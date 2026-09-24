@@ -52,9 +52,17 @@ import { EnrollButton, EnrollProvider, StickyEnrollBar } from "@/components/cour
  *
  * Prerendered and revalidated every five minutes, which is as fresh as the
  * seat count needs to be; the enrolment route re-checks capacity for real.
+ *
+ * `dynamicParams` is deliberately left at its default (true). It used to be
+ * false, and that turned a deploy that shipped without this route's static
+ * params into a hard 404 on /courses/discover-yourself while /courses still
+ * advertised the link — the router rejects an unlisted param before the page
+ * ever runs, so there is nothing to fall back to. With the default, a slug the
+ * build did not prerender is simply rendered on demand, and the `notFound()`
+ * below stays the only thing that can 404 a course: one that is not in the
+ * catalog.
  */
 export const revalidate = 300;
-export const dynamicParams = false;
 
 const ICONS = {
   book: BookOpenCheck,
