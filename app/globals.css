@@ -249,6 +249,32 @@
   letter-spacing: normal;
 }
 
+/* The display face on the course landing pages.
+   Kept separate from `.instrument-serif` rather than swapped into it: that
+   class still dresses the yatra promo modal, and the two surfaces are not the
+   same size problem — these lines run to 3rem and up.
+
+   Fraunces carries no Devanagari, so Mukta sits next in the stack and picks up
+   those glyphs per-character rather than dropping to a system serif, exactly
+   as the Instrument Serif rule above does. */
+.fraunces-display {
+  font-family: var(--font-fraunces), var(--font-mukta), ui-serif, Georgia, serif;
+  font-weight: 500;
+  /* Softened terminals and Fraunces' quirky alternates — the `g` and `y` are
+     the ones that show. Both axes are requested in the layout's font loader;
+     without that this line would do nothing at all. */
+  font-variation-settings: "SOFT" 60, "WONK" 1;
+  letter-spacing: -0.02em;
+}
+
+/* Devanagari matras detach from their consonants at negative tracking, and the
+   variation axes belong to a face that has no Devanagari to apply them to — so
+   Hindi gets Mukta on its own default metrics. */
+[lang="hi"] .fraunces-display {
+  font-variation-settings: normal;
+  letter-spacing: normal;
+}
+
 @layer components {
   .iskcon-band {
     background-color: var(--band-bg);
@@ -331,6 +357,37 @@
   .animate-float-slow,
   .animate-glow-pulse,
   .animate-mandala {
+    animation: none;
+  }
+}
+
+/* Course landing hero.
+   The eyebrow, headline, sub-line, buttons and proof row rise in sequence the
+   first time the page paints — the one piece of motion on a page that is
+   otherwise still, and what makes a centred hero read as composed rather than
+   stacked. Each element carries its own `--rise-delay`, so the stagger is a
+   number on the element instead of a class per step. */
+@keyframes heroRise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 1.5rem, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.hero-rise {
+  animation: heroRise 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--rise-delay, 0ms);
+}
+
+/* `both` above holds the invisible from-state through the delay, so dropping
+   the animation is not optional here — without this rule a reader who asked
+   for less motion would be left staring at a hero that never arrives. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-rise {
     animation: none;
   }
 }

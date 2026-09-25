@@ -1,4 +1,4 @@
-import { Plus_Jakarta_Sans, Mukta, Instrument_Serif } from "next/font/google";
+import { Plus_Jakarta_Sans, Mukta, Instrument_Serif, Fraunces } from "next/font/google";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -39,6 +39,20 @@ const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
   weight: "400",
   style: ["normal", "italic"],
+});
+
+// The display face on the course landing pages, where the editorial lines run
+// far larger than anywhere else on the site and Instrument Serif's high
+// contrast turned thin. Fraunces is variable on four axes, and the three named
+// here are the reason it is worth a second display font: `opsz` is what stops
+// it looking spindly at 3rem, while SOFT and WONK are the warmth. Asking for
+// them explicitly matters — Google's API serves only the weight axis unless
+// the other axes are named, and `font-variation-settings` for an axis that was
+// never downloaded is silently ignored.
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
+  subsets: ["latin"],
+  axes: ["SOFT", "WONK", "opsz"],
 });
 
 export const metadata = {
@@ -139,7 +153,7 @@ export default async function LocaleLayout({ children, params }) {
   return (
     <html
       lang={locale}
-      className={`${jakarta.variable} ${mukta.variable} ${instrumentSerif.variable} h-full antialiased`}
+      className={`${jakarta.variable} ${mukta.variable} ${instrumentSerif.variable} ${fraunces.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
