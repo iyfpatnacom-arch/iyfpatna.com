@@ -39,6 +39,7 @@ import {
 import { paymentMode } from "@/lib/payments/razorpay";
 import { Panel } from "@/components/site/Panel";
 import { CourseNav } from "@/components/courses/CourseNav";
+import { HeroVideo } from "@/components/courses/HeroVideo";
 import { StatsMarquee } from "@/components/courses/StatsMarquee";
 import { EnrollButton, EnrollProvider, StickyEnrollBar } from "@/components/courses/Enroll";
 
@@ -274,165 +275,206 @@ export default async function CoursePage({ params }) {
             <div className="absolute top-1/2 -right-24 size-80 rounded-full bg-brand-gold/10 blur-3xl" />
           </div>
 
-          <div className="relative mx-auto w-full max-w-5xl px-4 pt-6 pb-12 text-center sm:px-6 sm:pt-10 sm:pb-16">
-            <Link
-              href="/courses"
-              style={rise(0)}
-              className="hero-rise inline-flex items-center gap-2 rounded-full border border-border bg-muted/40 px-3 py-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <ArrowLeft className="size-3.5" aria-hidden="true" />
-              {t("back")}
-            </Link>
-
-            <p
-              style={rise(70)}
-              className="hero-rise mx-auto mt-7 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1.5 text-xs font-semibold text-primary"
-            >
-              <Sparkles className="size-3.5" aria-hidden="true" />
-              {L(course.eyebrow)}
-            </p>
-
-            <h1
-              style={rise(140)}
-              className="hero-rise mt-6 text-5xl leading-[1.02] font-semibold tracking-tight text-balance sm:text-6xl lg:text-7xl"
-            >
-              {L(course.title)}
-            </h1>
-
-            <p
-              style={rise(210)}
-              className="fraunces-display hero-rise mx-auto mt-5 max-w-3xl text-2xl leading-[1.2] text-balance text-foreground/85 sm:text-4xl"
-            >
-              {L(course.headline)}
-            </p>
-
-            <p
-              style={rise(280)}
-              className="hero-rise mx-auto mt-6 max-w-2xl text-[15px] leading-relaxed text-muted-foreground sm:text-base"
-            >
-              {L(course.summary)}
-            </p>
-
-            <div style={rise(350)} className="hero-rise mt-9">
-              <p className="flex items-end justify-center gap-2.5">
-                <span className="text-4xl leading-none font-bold tracking-tight sm:text-5xl">
-                  {price}
-                </span>
-                {mrpLabel && (
-                  <span className="pb-0.5 text-lg leading-none text-muted-foreground line-through decoration-2">
-                    {mrpLabel}
-                  </span>
-                )}
-                {discountPercent > 0 && (
-                  <span className="mb-0.5 rounded-full bg-emerald-500/12 px-2.5 py-0.5 text-xs font-bold text-emerald-700 dark:text-emerald-400">
-                    {t("save", { percent: discountPercent })}
-                  </span>
-                )}
-              </p>
-              <p className="mt-2.5 text-xs text-muted-foreground">{t("price_note")}</p>
-            </div>
-
-            <div
-              style={rise(410)}
-              className="hero-rise mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row"
-            >
-              <EnrollButton id="enroll-hero-cta" className="w-full sm:w-auto" />
-              <a
-                href="#details"
-                className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full border border-border bg-card px-6 text-base font-semibold transition-colors hover:border-primary/40 hover:bg-muted sm:w-auto"
+          {/* Name, then the clip, then the price. The pitch that used to sit
+              between the title and the price — the promise line and the
+              paragraph under it — is the clip's job now, so the copy here is
+              only what the video cannot say: what this is called and what it
+              costs. The words still exist in the course JSON and still go out
+              as the meta description and the JSON-LD, which is where a search
+              result and a WhatsApp preview read them from; they are gone from
+              the page, not from the page's description of itself. */}
+          <div className="relative mx-auto w-full max-w-6xl px-4 pt-6 pb-14 text-center sm:px-6 sm:pt-10 sm:pb-20">
+            <div className="mx-auto w-full max-w-5xl">
+              <Link
+                href="/courses"
+                style={rise(0)}
+                className="hero-rise inline-flex items-center gap-2 rounded-full border border-border bg-muted/40 px-3 py-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
-                {t("hero_secondary")}
-              </a>
+                <ArrowLeft className="size-3.5" aria-hidden="true" />
+                {t("back")}
+              </Link>
+
+              <p
+                style={rise(70)}
+                className="hero-rise mx-auto mt-7 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1.5 text-xs font-semibold text-primary"
+              >
+                <Sparkles className="size-3.5" aria-hidden="true" />
+                {L(course.eyebrow)}
+              </p>
+
+              {/* Fluid below `sm` so the title holds one line on a phone.
+                  "Discover Yourself" measures 8.08em in Jakarta at 600 with
+                  `tracking-tight`, so at the old flat 3rem it wanted 388px of
+                  a 390px phone's 358px of usable width — hence the wrap. The
+                  binding case is a 320px screen, which fits 11.1vw; 10.5vw
+                  keeps a margin, and the 3rem ceiling means nothing changes
+                  from 457px up, where `sm:text-6xl` soon takes over anyway.
+
+                  Tuned to this title's length, deliberately: a longer course
+                  name still wraps rather than overflowing, which is the right
+                  failure. Nothing here can overflow the gutters. */}
+              <h1
+                style={rise(140)}
+                className="hero-rise mt-6 text-[clamp(1.75rem,10.5vw,3rem)] leading-[1.02] font-semibold tracking-tight text-balance sm:text-6xl lg:text-7xl"
+              >
+                {L(course.title)}
+              </h1>
             </div>
 
-            <p
-              style={rise(470)}
-              className="hero-rise mt-4 flex items-center justify-center gap-1.5 text-xs text-muted-foreground"
-            >
-              <Lock className="size-3.5 shrink-0" aria-hidden="true" />
-              {t("secure_note")}
-            </p>
-
-            <div
-              style={rise(530)}
-              className="hero-rise mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4"
-            >
-              <div className="flex -space-x-2" aria-hidden="true">
-                {course.testimonials.slice(0, 4).map((person) => (
-                  <span
-                    key={person.name}
-                    className="grid size-9 place-items-center rounded-full border-2 border-background bg-primary/15 text-[11px] font-bold text-primary"
-                  >
-                    {initials(person.name)}
-                  </span>
-                ))}
-              </div>
-              <div className="text-center sm:text-start">
-                <p className="flex justify-center gap-0.5 text-brand-gold sm:justify-start" aria-hidden="true">
-                  {Array.from({ length: 5 }, (_, i) => (
-                    <Star key={i} className="size-3.5 fill-current" />
-                  ))}
-                </p>
-                <p className="mt-0.5 text-xs text-muted-foreground">{L(course.socialProof)}</p>
-              </div>
-            </div>
-
-            <ul
-              style={rise(590)}
-              className="hero-rise mt-9 flex flex-wrap items-center justify-center gap-2"
-            >
-              {facts.slice(0, 4).map(({ Icon, label, value }) => (
-                <li
-                  key={label}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium"
-                >
-                  <Icon className="size-3.5 text-primary" aria-hidden="true" />
-                  <span className="sr-only">{label}: </span>
-                  {value}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* The photograph, wide and under the copy rather than beside it.
-              Its own max width is one step past the text column's, so it reads
-              as the page opening out rather than a card dropped into it. */}
-          <div className="relative mx-auto w-full max-w-6xl px-4 pb-14 sm:px-6 sm:pb-20">
-            <div
-              style={rise(660)}
-              className="hero-rise relative"
-            >
-              <div
-                className="animate-glow-pulse pointer-events-none absolute -inset-3 rounded-[2.5rem] bg-brand-gold/20 blur-3xl dark:bg-brand-gold/15"
-                aria-hidden="true"
-              />
-              <div className="relative aspect-4/3 w-full overflow-hidden rounded-3xl border border-border bg-muted sm:aspect-video">
-                {course.media?.image && (
-                  <Image
-                    src={course.media.image}
-                    alt={t("media_alt")}
-                    fill
-                    priority
-                    sizes="(min-width: 1280px) 72rem, 100vw"
-                    className="object-cover"
+            <div style={rise(210)} className="hero-rise mt-9 sm:mt-12">
+              {/* Two nested positioning contexts, not one: the outer is what
+                  the strip anchors to when it lifts onto the clip at `sm`,
+                  the inner is sized to the clip alone so the glow hugs it.
+                  Flattened into one, the glow would stretch to cover the card
+                  below the clip on a phone and halo the wrong thing. */}
+              <div className="relative">
+                <div className="relative">
+                  <div
+                    className="animate-glow-pulse pointer-events-none absolute -inset-3 rounded-[2.5rem] bg-brand-gold/20 blur-3xl dark:bg-brand-gold/15"
+                    aria-hidden="true"
                   />
-                )}
-                <div className="absolute inset-x-0 bottom-0 h-2/3 bg-linear-to-t from-black/75 via-black/30 to-transparent" />
-                <div className="absolute inset-x-4 bottom-4 flex flex-wrap items-end justify-between gap-3 text-start text-white sm:inset-x-8 sm:bottom-7">
+
+                  {/* 16:9 at every width, because the clip is 1920x1080 and the
+                      4:3 crop this frame used to take on phones would cut a
+                      third of it away. A course that ships only a still falls
+                      back to the image — this file lays out every course, not
+                      just the one that happens to have a video. */}
+                  <div className="relative aspect-video w-full overflow-hidden rounded-3xl border border-border bg-muted">
+                    {course.media?.video ? (
+                      <HeroVideo
+                        src={course.media.video}
+                        poster={course.media.image}
+                        label={t("media_alt")}
+                        className="absolute inset-0 size-full object-cover"
+                      />
+                    ) : (
+                      course.media?.image && (
+                        <Image
+                          src={course.media.image}
+                          alt={t("media_alt")}
+                          fill
+                          priority
+                          sizes="(min-width: 1280px) 72rem, 100vw"
+                          className="object-cover"
+                        />
+                      )
+                    )}
+
+                    {/* The scrim exists only where the strip sits on the clip.
+                        Below `sm` the strip has moved off it, and a gradient
+                        there would be dimming the picture for nothing. */}
+                    <div
+                      className="absolute inset-x-0 bottom-0 hidden h-2/3 bg-linear-to-t from-black/80 via-black/35 to-transparent sm:block"
+                      aria-hidden="true"
+                    />
+                  </div>
+                </div>
+
+                {/* The batch facts: a card under the clip on a phone, the same
+                    words laid over it from `sm` up — one copy, repositioned,
+                    rather than two blocks kept in sync by hand. Four lines of
+                    white text over a pale sky on a 360px screen was what read
+                    as a mess, and no amount of scrim fixes copy that has
+                    nowhere to go. */}
+                <div className="mt-3 flex flex-col items-start gap-2 rounded-2xl border border-border bg-card p-4 text-start sm:absolute sm:inset-x-8 sm:bottom-7 sm:mt-0 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between sm:gap-3 sm:rounded-none sm:border-0 sm:bg-transparent sm:p-0 sm:text-white">
                   <div className="min-w-0">
-                    <p className="text-[11px] font-semibold tracking-wider text-brand-gold-light uppercase">
+                    <p className="text-[11px] font-semibold tracking-wider text-primary uppercase sm:text-brand-gold-light">
                       {t("next_batch")}
                     </p>
-                    <p className="mt-1 text-lg leading-snug font-semibold sm:text-2xl">{dateLabel}</p>
-                    <p className="text-sm text-white/80">
+                    <p className="mt-1 text-base leading-snug font-semibold text-balance sm:text-2xl">
+                      {dateLabel}
+                    </p>
+                    <p className="mt-0.5 text-xs text-muted-foreground sm:text-sm sm:text-white/80">
                       {L(course.batch.time)} · {t("language_badge", { language: L(course.language) })}
                     </p>
                   </div>
-                  <span className="shrink-0 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold backdrop-blur-sm">
+                  <span className="shrink-0 rounded-full bg-muted px-3 py-1 text-xs font-semibold sm:bg-white/15 sm:backdrop-blur-sm">
                     {seatLine}
                   </span>
                 </div>
               </div>
+            </div>
+
+            <div className="mx-auto w-full max-w-5xl">
+              <div style={rise(280)} className="hero-rise mt-10 sm:mt-12">
+                <p className="flex items-end justify-center gap-2.5">
+                  <span className="text-4xl leading-none font-bold tracking-tight sm:text-5xl">
+                    {price}
+                  </span>
+                  {mrpLabel && (
+                    <span className="pb-0.5 text-lg leading-none text-muted-foreground line-through decoration-2">
+                      {mrpLabel}
+                    </span>
+                  )}
+                  {discountPercent > 0 && (
+                    <span className="mb-0.5 rounded-full bg-emerald-500/12 px-2.5 py-0.5 text-xs font-bold text-emerald-700 dark:text-emerald-400">
+                      {t("save", { percent: discountPercent })}
+                    </span>
+                  )}
+                </p>
+                <p className="mt-2.5 text-xs text-muted-foreground">{t("price_note")}</p>
+              </div>
+
+              <div
+                style={rise(340)}
+                className="hero-rise mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row"
+              >
+                <EnrollButton id="enroll-hero-cta" className="w-full sm:w-auto" />
+                <a
+                  href="#details"
+                  className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full border border-border bg-card px-6 text-base font-semibold transition-colors hover:border-primary/40 hover:bg-muted sm:w-auto"
+                >
+                  {t("hero_secondary")}
+                </a>
+              </div>
+
+              <p
+                style={rise(400)}
+                className="hero-rise mt-4 flex items-center justify-center gap-1.5 text-xs text-muted-foreground"
+              >
+                <Lock className="size-3.5 shrink-0" aria-hidden="true" />
+                {t("secure_note")}
+              </p>
+
+              <div
+                style={rise(460)}
+                className="hero-rise mt-8 flex flex-col items-center justify-center gap-3 sm:mt-9 sm:flex-row sm:gap-4"
+              >
+                <div className="flex -space-x-2" aria-hidden="true">
+                  {course.testimonials.slice(0, 4).map((person) => (
+                    <span
+                      key={person.name}
+                      className="grid size-9 place-items-center rounded-full border-2 border-background bg-primary/15 text-[11px] font-bold text-primary"
+                    >
+                      {initials(person.name)}
+                    </span>
+                  ))}
+                </div>
+                <div className="text-center sm:text-start">
+                  <p className="flex justify-center gap-0.5 text-brand-gold sm:justify-start" aria-hidden="true">
+                    {Array.from({ length: 5 }, (_, i) => (
+                      <Star key={i} className="size-3.5 fill-current" />
+                    ))}
+                  </p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">{L(course.socialProof)}</p>
+                </div>
+              </div>
+
+              <ul
+                style={rise(520)}
+                className="hero-rise mt-8 flex flex-wrap items-center justify-center gap-2 sm:mt-9"
+              >
+                {facts.slice(0, 4).map(({ Icon, label, value }) => (
+                  <li
+                    key={label}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium"
+                  >
+                    <Icon className="size-3.5 text-primary" aria-hidden="true" />
+                    <span className="sr-only">{label}: </span>
+                    {value}
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </section>
