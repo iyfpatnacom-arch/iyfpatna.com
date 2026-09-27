@@ -233,6 +233,16 @@
   font-family: var(--font-hindi), var(--font-sans);
 }
 
+/* Card, dialog and sheet titles carry `font-heading`, which resolves to the
+   Latin sans. A font utility on the element beats the [lang="hi"] rule the
+   page inherits from <html>, so those titles were the one place Hindi copy
+   dropped out of Mukta and into the browser's system Devanagari face —
+   visible on the donate route, where a dialog title sits above body text that
+   is still Mukta. */
+[lang="hi"] .font-heading {
+  font-family: var(--font-hindi), var(--font-sans);
+}
+
 .instrument-serif {
   /* Instrument Serif carries no Devanagari, so Mukta sits next in the stack and
      picks up those glyphs per-character rather than dropping to a system serif. */

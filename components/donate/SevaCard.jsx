@@ -3,18 +3,18 @@
 import { useId, useState } from "react";
 import { useFormatter, useTranslations } from "next-intl";
 import {
-  ArrowUpRight,
   BookOpen,
   CalendarDays,
   Flower2,
   Landmark,
   PartyPopper,
   Repeat,
+  Shirt,
   Soup,
   Sprout,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { sevaDonateHref } from "@/lib/site-config";
+import { IkImage } from "@/components/media/IkImage";
+import { DonateButton } from "@/components/donate/DonateProvider";
 import { cn } from "@/lib/utils";
 
 /**
@@ -25,6 +25,7 @@ import { cn } from "@/lib/utils";
 const ICONS = {
   festival: PartyPopper,
   meal: Soup,
+  cloth: Shirt,
   flower: Flower2,
   cow: Sprout,
   book: BookOpen,
@@ -35,16 +36,20 @@ const ICONS = {
 /**
  * One seva, with the amount the visitor picks.
  *
- * This is the only interactive piece of the donate page, and it exists for a
- * single reason: an amount means nothing on its own, but "₹1,100 feeds 28
- * people" does. Choosing a chip re-reads the impact line and re-points the
- * donate link, so the visitor arrives at the temple's gateway with the seva
- * and the amount already chosen rather than starting over.
+ * An amount means nothing on its own, but "₹1,100 feeds 28 people" does.
+ * Choosing a chip re-reads the impact line and re-aims the donate button, so
+ * the form opens on the seva and the amount the visitor already picked rather
+ * than asking them to pick twice.
  *
  * Both numbers in the impact line are ICU arguments, so next-intl formats
  * them for the active locale and the sentence can be reordered freely in
  * translation — Hindi puts the verb last, and hardcoding "feeds" between two
  * spans would have made that impossible.
+ *
+ * A seva carrying an `image` heads its card with that photograph; one without
+ * keeps the icon alone. Both shapes sit in the same grid on purpose — the
+ * temple has photographs of two of these sevas and stock photography of the
+ * rest would be a picture of somebody else's kitchen.
  *
  * `dateLabel` is passed in already formatted and already filtered: the page
  * decides whether a dated festival is still ahead of us, so this component
@@ -64,7 +69,38 @@ export function SevaCard({ seva, dateLabel }) {
   const units = Math.max(1, Math.round(amount / seva.unit));
 
   return (
-    <article className="flex flex-col rounded-2xl border border-border bg-card p-5 transition-colors hover:border-border/60 sm:p-6">
+    <article className="flex flex-col overflow-hidden rounded-2xl border border-border bg-card p-5 transition-colors hover:border-border/60 sm:p-6">
+      {/* The seva's own photograph, where the temple has supplied one. Bled
+          out to the card's edge with negative margins rather than sitting
+          inside the padding, so it reads as the card's head and not as a
+          picture pasted into the body. Lazy by default: this grid sits well
+          below the fold on every screen size.
+
+          16/9, matching the page's other banners: both photographs are
+          portrait, and a wide crop of a tall frame is the shortest band that
+          still holds the subject — checked against the actual crops, not
+          assumed. A taller card head pushed the amount chips, the thing the
+          visitor is here to press, off a phone screen.
+
+          `sizes` is deliberately narrower than the box: a card is at most
+          355px wide, and declaring that honestly makes a 3x phone ask for a
+          1200px-wide file for a 358px slot. Understating it caps what the
+          densest screens fetch at roughly 2x, which on a photograph this
+          size is not a difference anyone can see — a phone pulls ~35KB here
+          instead of ~90KB. Same reason for q-60 over the default 75. */}
+      {seva.image && (
+        <div className="relative -mx-5 -mt-5 mb-5 aspect-video border-b border-border/70 sm:-mx-6 sm:-mt-6">
+          <IkImage
+            src={seva.image}
+            alt={t(`seva.${seva.key}.photo_alt`)}
+            fill
+            quality={60}
+            sizes="(min-width: 1152px) 352px, (min-width: 640px) 25vw, 55vw"
+            className="object-cover"
+          />
+        </div>
+      )}
+
       <div className="flex items-start justify-between gap-3">
         <span className="grid size-10 shrink-0 place-items-center rounded-full border border-primary/25 bg-primary/10 text-primary">
           <Icon className="size-[18px]" aria-hidden="true" />
@@ -150,21 +186,9 @@ export function SevaCard({ seva, dateLabel }) {
       {/* `mt-auto` keeps the buttons on one line across a row of cards whose
           descriptions differ in length. */}
       <div className="mt-auto pt-5">
-        <Button
-          size="lg"
-          className="w-full rounded-full"
-          render={
-            <a
-              href={sevaDonateHref(seva.slug, amount)}
-              target="_blank"
-              rel="noopener noreferrer"
-            />
-          }
-        >
+        <DonateButton sevaSlug={seva.slug} amount={amount} className="w-full">
           {t("seva_cta", { amount })}
-          <ArrowUpRight className="size-4 opacity-80" aria-hidden="true" />
-          <span className="sr-only"> ({t("external_note")})</span>
-        </Button>
+        </DonateButton>
       </div>
     </article>
   );

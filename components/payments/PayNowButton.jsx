@@ -13,8 +13,11 @@ const KNOWN_ERRORS = ["rate_limited", "not_found", "payment_unavailable", "netwo
  * Re-opens the checkout for an order that has not been paid for — a
  * declined card, a cancelled checkout, a dropped connection. The order and its
  * ID stay the same; only the payment attempt is new.
+ *
+ * Serves a course seat and a donation alike; `kind` says which, and only so the
+ * server can skip a lookup.
  */
-export function PayNowButton({ orderId, token, label }) {
+export function PayNowButton({ orderId, token, label, kind = "course" }) {
   const t = useTranslations("order");
   const tc = useTranslations("checkout");
   const locale = useLocale();
@@ -22,7 +25,7 @@ export function PayNowButton({ orderId, token, label }) {
 
   async function pay() {
     setBusy(true);
-    const result = await startPayment({ orderId, token, lang: locale });
+    const result = await startPayment({ orderId, token, kind, lang: locale });
     // On success the browser is already leaving, so the button stays busy
     // rather than flashing back to idle.
     if (result.ok) return;

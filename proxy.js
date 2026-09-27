@@ -26,6 +26,29 @@ function isApiPath(pathname) {
   return /^\/(api|trpc)(\/|$)/.test(pathname);
 }
 
+// Giving opens in Hindi.
+//
+// next-intl's detection reads the NEXT_LOCALE cookie first and the browser's
+// Accept-Language header second. The cookie is a real choice — only the locale
+// toggle writes it — but the header is not: most phones sold here ship set to
+// English, so a donate link shared on WhatsApp or printed as a QR code in the
+// temple was opening the seva list in English for people who read Hindi.
+//
+// So on the donation routes, and only when nobody has chosen, the default wins
+// over the header. /en/donate still works and the toggle still switches; this
+// decides nothing except what an unprefixed link resolves to.
+const HINDI_FIRST = /^\/(donate|donation)(\/|$)/;
+
+function hindiFirstRedirect(req) {
+  const { pathname } = req.nextUrl;
+  if (!HINDI_FIRST.test(pathname)) return null;
+  if (req.cookies.get("NEXT_LOCALE")) return null;
+
+  const url = req.nextUrl.clone();
+  url.pathname = `/${routing.defaultLocale}${pathname}`;
+  return NextResponse.redirect(url);
+}
+
 function localeFromPath(pathname) {
   const [, maybeLocale] = pathname.split("/");
   return routing.locales.includes(maybeLocale) ? maybeLocale : routing.defaultLocale;
@@ -55,6 +78,12 @@ const clerkConfigured = Boolean(
 );
 
 export default function proxy(req, event) {
+  /* Ahead of Clerk because it is a routing decision and needs no session:
+     the redirected request comes back through this same middleware with a
+     locale prefix, and picks up its auth context then. */
+  const hindiFirst = hindiFirstRedirect(req);
+  if (hindiFirst) return hindiFirst;
+
   if (clerkConfigured) return withClerk(req, event);
   if (isApiPath(req.nextUrl.pathname)) return NextResponse.next();
   return intlMiddleware(req);

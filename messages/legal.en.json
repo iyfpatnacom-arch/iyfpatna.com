@@ -24,10 +24,10 @@
       {
         "heading": "Payments",
         "body": [
-          "Donations for courses and workshops, such as the Discover Yourself (DYS) workshop, are collected on this site through Razorpay, an RBI-authorised payment gateway. Your card, UPI or bank details are entered on Razorpay's secure checkout and are never seen or stored by iyfpatna.in. We receive only the payment status, the amount, the transaction reference and the payment method type (for example UPI or card), which we keep with your enrolment as the record of payment.",
+          "Course donations and seva offerings are collected on this site through Razorpay, an RBI-authorised payment gateway. Your card, UPI or bank details are entered on Razorpay's secure checkout and are never seen or stored by iyfpatna.in. We receive only the payment status, the amount, the transaction reference and the payment method type (for example UPI or card), which we keep with your enrolment or donation as the record of payment.",
           "Razorpay handles your payment details under its own privacy policy, published at razorpay.com.",
           "Vrindavan Yatra bookings are taken on the yatra's own website, which publishes its own privacy, refund and terms pages.",
-          "Donations offered through our donate page are received by ISKCON Patna, not by iyfpatna.in: each donate button opens ISKCON Patna's own donation page at iskconpatna.in, where the payment is completed on the temple's gateway and where your name, contact details and PAN are collected for the receipt."
+          "When you make a seva offering on our donate page, we ask for your name, mobile number, email address, postal address and PIN code, and optionally your PAN. These are not optional extras: a donation receipt is a tax document, and the address and PAN are what allow the 80G receipt and Form 10BE to be issued in your name. The money itself is received by ISKCON Patna, the registered public trust, and we collect it on the temple's behalf."
         ]
       },
       {
@@ -49,7 +49,7 @@
       {
         "heading": "Service providers",
         "body": [
-          "We rely on a small number of trusted providers to run this site: a database host to store registrations, an authentication provider to manage sign-in, an email provider to send confirmation messages, and Razorpay to process course donations. These providers process data only on our instructions and only to deliver their part of the service.",
+          "We rely on a small number of trusted providers to run this site: a database host to store registrations, an authentication provider to manage sign-in, an email provider to send confirmation messages and receipts, and Razorpay to process course donations and seva offerings. These providers process data only on our instructions and only to deliver their part of the service.",
           "We do not sell your personal information to anyone."
         ]
       },
@@ -100,7 +100,7 @@
       {
         "heading": "Donations and payments",
         "body": [
-          "Course donations are stated in Indian Rupees (INR) and are inclusive of any applicable taxes. The amount charged is the amount shown on the course page at checkout.",
+          "Course donations and seva offerings are stated in Indian Rupees (INR) and are inclusive of any applicable taxes. For a course, the amount charged is the amount shown on the course page at checkout. For a seva, it is the amount you choose on the donate form before paying.",
           "Payments are processed securely by Razorpay. An enrolment is confirmed only once the payment gateway confirms the payment to us. You will then see a confirmation page with your order ID, receive a confirmation email, and be able to download a receipt.",
           "Cancellations and refunds are governed by our Refund & Cancellation Policy, and how a course is delivered is described in our Shipping & Delivery Policy. Both form part of these terms."
         ]
@@ -183,8 +183,8 @@
       {
         "heading": "Donations and payments",
         "body": [
-          "Donations for courses and workshops are collected on this website through the Razorpay payment gateway, and are refunded, where applicable, under our Refund & Cancellation Policy. The Vrindavan Yatra is booked on its own website, which publishes its own terms, refund and cancellation policies.",
-          "General donations and seva offerings are received by ISKCON Patna, not by IYF Patna. Our donate page describes the sevas and the amounts the temple publishes, and every donate button opens ISKCON Patna's own donation page at iskconpatna.in. The payment is completed on the temple's gateway, and the receipt, the 80G certificate and any refund are issued by ISKCON Patna under the terms, refund and privacy policies published on its site.",
+          "Course donations and seva offerings are both collected on this website through the Razorpay payment gateway, and are refunded, where applicable, under our Refund & Cancellation Policy. The Vrindavan Yatra is booked on its own website, which publishes its own terms, refund and cancellation policies.",
+          "Seva offerings are received by ISKCON Patna, the registered public trust that runs Sri Sri Radha Banke Bihari Temple, and are collected on this site on the temple's behalf — IYF Patna is its youth wing and has no separate legal personality. Your 80G receipt is issued immediately and carries the trust's PAN and 80G Unique Registration Number; Form No. 10BE follows from the trust by 31st May of the next financial year.",
           "Please be cautious of anyone soliciting payments in the name of IYF Patna through channels other than those published on this site. If in doubt, call or write to us using the contact details below before paying anything."
         ]
       },
@@ -205,13 +205,13 @@
   },
   "refund": {
     "title": "Refund & Cancellation Policy",
-    "intro": "How cancellations and refunds work for courses and workshops paid for on iyfpatna.in, such as the Discover Yourself (DYS) workshop.",
+    "intro": "How cancellations and refunds work for course donations and seva offerings paid for on iyfpatna.in.",
     "sections": [
       {
         "heading": "What this policy covers",
         "body": [
-          "This policy applies to donations paid on iyfpatna.in for IYF Patna courses and workshops. Most IYF Patna programs are free and involve no payment.",
-          "General donations and seva offerings made to ISKCON Patna through our donate page are not covered: they are received by ISKCON Patna on its own website and refunded, where applicable, under ISKCON Patna's refund policy. Vrindavan Yatra bookings are covered by the refund policy published on the yatra website."
+          "This policy applies to every payment made on iyfpatna.in: donations for IYF Patna courses and workshops, such as the Discover Yourself (DYS) workshop, and seva offerings made on our donate page. Most IYF Patna programs are free and involve no payment.",
+          "A seva offering is a voluntary donation to ISKCON Patna and is not refundable once its 80G receipt has been issued, because that receipt is a tax document the trust has already accounted for. The exception is a mistake: a duplicate payment, or an amount clearly not intended, reported to us within 7 days of the donation. Write to us with your receipt number and, where the claim is verified, the amount is refunded to the original payment method and the receipt is cancelled. Vrindavan Yatra bookings are covered by the refund policy published on the yatra website."
         ]
       },
       {
@@ -254,12 +254,12 @@
   },
   "shipping": {
     "title": "Shipping & Delivery Policy",
-    "intro": "IYF Patna courses and workshops are services. Nothing is shipped, and no shipping or delivery charge is ever collected.",
+    "intro": "IYF Patna courses, workshops and sevas are services. Nothing is shipped, and no shipping or delivery charge is ever collected.",
     "sections": [
       {
         "heading": "No physical goods",
         "body": [
-          "iyfpatna.in does not sell or ship physical products. Every donation paid on this site is for taking part in a course or workshop, delivered in person at the temple or live online."
+          "iyfpatna.in does not sell or ship physical products. Every payment made on this site is either for taking part in a course or workshop, delivered in person at the temple or live online, or a seva offering to ISKCON Patna, for which the only thing delivered is a receipt, sent by email."
         ]
       },
       {

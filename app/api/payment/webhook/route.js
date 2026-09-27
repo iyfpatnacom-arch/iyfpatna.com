@@ -6,8 +6,12 @@ export const dynamic = "force-dynamic";
 
 /**
  * Razorpay webhook — the backstop for a customer who pays and then closes the
- * tab, loses signal, or never makes it back from their UPI app. Without it
- * that seat stays "pending" until they press "pay now" again.
+ * tab, loses signal, or never makes it back from their UPI app. Without it that
+ * seat, or that donation, stays "pending" until they press "pay now" again.
+ *
+ * One endpoint covers both kinds: the payment names its order, the order's notes
+ * name its kind, and `recordPaymentOutcome` settles it against the right
+ * collection. Nothing here changes when another kind is added.
  *
  * Register https://iyfpatna.in/api/payment/webhook in the Razorpay dashboard
  * for payment.captured, payment.failed and order.paid, with the same secret

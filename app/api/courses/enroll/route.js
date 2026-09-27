@@ -148,6 +148,7 @@ export async function POST(request) {
     if (amount === 0) {
       await recordPaymentOutcome({
         orderId: enrollment.orderId,
+        kind: "course",
         lang: data.locale,
         status: "success",
         amount: 0,

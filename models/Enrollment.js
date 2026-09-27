@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { paymentSchema } from "./payment-schema";
 
 /**
  * A paid seat on a course — one row per person per batch.
@@ -15,31 +16,6 @@ import mongoose from "mongoose";
  * enrolment, so a later price change or a renamed course never rewrites what
  * someone was actually charged.
  */
-
-const PaymentSchema = new mongoose.Schema(
-  {
-    status: {
-      type: String,
-      enum: ["pending", "success", "failed", "aborted"],
-      default: "pending",
-    },
-    provider: { type: String, default: "razorpay" },
-    /* The Razorpay Order (order_…) and its amount in paise, reused across
-       retries so a second "pay now" can see an earlier payment landed. */
-    gatewayOrderId: { type: String, default: null },
-    gatewayAmount: { type: Number, default: null },
-    trackingId: { type: String, default: null },
-    bankRefNo: { type: String, default: null },
-    paymentMode: { type: String, default: null },
-    failureMessage: { type: String, default: null },
-    paidAt: { type: Date, default: null },
-    amountMismatch: { type: Boolean, default: false },
-    reconciledAt: { type: Date, default: null },
-    // What the gateway said about the payment, for reconciliation by hand.
-    raw: { type: mongoose.Schema.Types.Mixed, default: null },
-  },
-  { _id: false }
-);
 
 /**
  * One day this person was admitted at the venue.
@@ -105,7 +81,7 @@ const EnrollmentSchema = new mongoose.Schema(
     mode: { type: String },
     locale: { type: String, enum: ["hi", "en"], default: "hi" },
 
-    payment: { type: PaymentSchema, default: () => ({}) },
+    payment: { type: paymentSchema(), default: () => ({}) },
 
     attendance: { type: [AttendanceSchema], default: [] },
 

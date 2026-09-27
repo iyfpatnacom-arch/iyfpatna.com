@@ -1094,7 +1094,7 @@
       "mahalaya": "Sarva Pitru Amavasya — the final day",
       "hero_eyebrow": "Pitru Paksha · Shraddha Paksha",
       "hero_title": "Serve Krishna in Your Ancestors' Name",
-      "hero_subtitle": "For this one fortnight of the year, the Vedic calendar turns towards those who came before us. Offer anna-daan, Gita-daan or deity seva at Sri Sri Radha Banke Bihari Temple in the name of your forefathers — prasadam offered first to the Lord and then shared is the shraddha the Bhagavatam itself describes. All donations to ISKCON Patna are eligible for 80G tax exemption.",
+      "hero_subtitle": "For this one fortnight of the year, the Vedic calendar turns towards those who came before us. Offer anna-daan, vastra-daan or deity seva at Sri Sri Radha Banke Bihari Temple in the name of your forefathers — prasadam offered first to the Lord and then shared is the shraddha the Bhagavatam itself describes. All donations to ISKCON Patna are eligible for 80G tax exemption.",
       "title": "Earn the blessings of your ancestors",
       "photo_alt": "A family performing tarpan at a river ghat at sunrise — water poured from the hands into the river, with marigolds, lamps and brass pots set out on the steps.",
       "verse_sanskrit": "देशे काले च सम्प्राप्ते मुन्यन्नं हरिदैवतम् । श्रद्धया विधिवत्पात्रे न्यस्तं कामधुगक्षयम् ॥",
@@ -1108,35 +1108,56 @@
           "scripture": "One should offer prasada to the demigods, the saintly persons, one's forefathers, the people in general, one's family members, one's relatives and one's friends, seeing them all as devotees of the Supreme Personality of Godhead.",
           "source": "Srimad-Bhagavatam 7.15.6"
         },
-        "gita_daan": {
-          "title": "Gita-daan for their onward journey",
-          "scripture": "One who is engaged in devotional service can deliver hundreds and thousands of forefathers from all kinds of misery.",
-          "source": "Srila Prabhupada, purport to Bhagavad-gita 1.41"
+        "vastra_daan": {
+          "title": "Vastra-daan given with the meal",
+          "scripture": "Charity given out of duty, without expectation of return, at the proper time and place, and to a worthy person is considered to be in the mode of goodness.",
+          "source": "Bhagavad-gita 17.20"
         }
       },
-      "seva_note": "During Pitru Paksha, anna-daan and Gita-daan are listed first. Any of the sevas below may be offered with your ancestors in mind — if you would like a name mentioned with the offering, please speak to the temple donation desk.",
+      "vigraha": {
+        "title": "Sri Vigraha Seva Avsar",
+        "title_hi": "श्री विग्रह सेवा अवसर",
+        "intro": "Choose from dhoop, aarti, itra, payal, bansuri, mukut, singhasan, pushpamala, abhishek, aabhushan and phool bangla seva — each offered to Sri Sri Radha Banke Bihari in your ancestors' name.",
+        "scripture": "If one offers Me with love and devotion a leaf, a flower, a fruit or water, I will accept it.",
+        "source": "Bhagavad-gita 9.26",
+        "note": "Each offering is made at the temple on the day it is received. The photograph above is the darshan published on this site that morning.",
+        "cta": "See all deity sevas",
+        "options": {
+          "dhoop": "Dhoop Seva",
+          "aarti": "Aarti Seva",
+          "itra": "Itra Seva",
+          "payal": "Payal Seva",
+          "bansuri": "Bansuri Seva",
+          "mukut": "Mukut Seva",
+          "singhasan": "Singhasan Seva",
+          "pushpamala": "Pushpamala Seva",
+          "abhishek": "Abhishek Seva",
+          "aabhushan": "Aabhushan Seva",
+          "phool_bangla": "Phool Bangla Seva"
+        }
+      },
+      "seva_note": "During Pitru Paksha, anna-daan, vastra-daan and deity seva are listed first. Any of the sevas below may be offered with your ancestors in mind — if you would like a name mentioned with the offering, please speak to the temple donation desk.",
       "note": "This page is for seva offered at Sri Sri Radha Banke Bihari Temple during Pitru Paksha. To arrange shraddha, tarpan or pind daan itself — at the temple or at Gaya — please call the temple donation desk below rather than booking anything here."
     },
     "cta": "Donate now",
     "cta_secondary": "Choose a seva",
-    "external_note": "Opens ISKCON Patna's donation page in a new tab",
     "trust": {
       "tax": "80G tax benefit",
-      "receipt": "Instant email receipt",
+      "receipt": "Instant 80G receipt",
       "methods": "UPI · Cards · Netbanking",
       "registered": "Registered public trust"
     },
     "who_title": "Who receives your donation",
-    "who_body": "IYF Patna is the youth wing of ISKCON Patna, not a separate legal entity. It holds no bank account and no payment gateway of its own, so this website neither collects donations nor processes payments.",
+    "who_body": "IYF Patna is the youth wing of ISKCON Patna, not a separate legal entity. Your donation is taken on this website and reaches the temple's own account — we collect it on the trust's behalf, and the receipt says so in those words.",
     "who_points": [
-      "Your donation is received by ISKCON Patna — the registered public trust that runs Sri Sri Radha Banke Bihari Temple ",
-      "Every payment is completed on iyfpatna.in never asks for, sees or stores a card number, UPI ID or bank detail.",
-      "The receipt, the 80G certificate and any refund are issued by ISKCON Patna under the policies published on its site."
+      "Your donation is received by ISKCON Patna — the registered public trust that runs Sri Sri Radha Banke Bihari Temple.",
+      "The payment itself is taken on Razorpay's secure checkout. iyfpatna.in never asks for, sees or stores a card number, UPI ID or bank detail.",
+      "Your 80G receipt is issued the moment the payment succeeds, under the trust's own PAN and 80G registration number."
     ],
     "who_address_label": "Registered address",
     "festival_badge": "Upcoming festival",
     "seva_title": "Ways to serve",
-    "seva_subtitle": "Pick a seva, choose an amount, and complete your donation securely on ISKCON Patna's donation page. A receipt is emailed to you immediately.",
+    "seva_subtitle": "Pick a seva, choose an amount, and complete your donation here. Your 80G receipt downloads straight away and is emailed to you as well.",
     "amount_label": "Choose an amount",
     "seva_cta": "Donate ₹{amount}",
     "seva": {
@@ -1152,7 +1173,15 @@
         "tag": "Most loved",
         "name": "Anna Daan Seva",
         "body": "Sanctified prasadam served free to devotees, visitors, and those in need across Patna.",
-        "impact": "₹<b>{amount}</b> feeds <b>{units}</b> {units, plural, one {person} other {people}} a sanctified meal"
+        "impact": "₹<b>{amount}</b> feeds <b>{units}</b> {units, plural, one {person} other {people}} a sanctified meal",
+        "photo_alt": "A bowl of khichdi garnished with curry leaves, peanuts and coriander, with curd, pickle and papad set around it."
+      },
+      "vastra_daan": {
+        "eyebrow": "Cloth as an offering",
+        "name": "Vastra Daan Seva",
+        "body": "New cloth offered to sadhus and brahmacharis, and warm clothing given to those who have none through the winter.",
+        "impact": "₹<b>{amount}</b> clothes <b>{units}</b> {units, plural, one {person} other {people}}",
+        "photo_alt": "A devotee offering folded saffron cloth with both hands to a sadhu seated in a temple courtyard."
       },
       "deity_seva": {
         "eyebrow": "Vigraha seva",
@@ -1191,19 +1220,19 @@
     "how_steps": [
       {
         "title": "Choose a seva",
-        "body": "Pick the service you want to support and the amount you wish to offer."
+        "body": "Pick the service you want to support and the amount you wish to offer — one of the suggested amounts, or your own."
+      },
+      {
+        "title": "Enter your details",
+        "body": "Your name, mobile, email and postal address. The address is what lets the 80G receipt be issued in your name, so it is asked for once and remembered on your device."
       },
       {
         "title": "Pay securely",
-        "body": "You are taken to ISKCON Patna's donation page, where the payment is completed by UPI, card or netbanking on the temple's own gateway."
+        "body": "Payment is completed by UPI, card or netbanking on Razorpay's secure checkout. Your card and bank details never reach this website."
       },
       {
         "title": "Get your receipt",
-        "body": "A donation receipt is emailed to you immediately, at the address you enter while donating."
-      },
-      {
-        "title": "Claim your 80G",
-        "body": "Form No. 10BE, the certificate used to claim the deduction, follows by 31st May of the next financial year."
+        "body": "Your 80G receipt downloads automatically and is emailed to you as a PDF. Form No. 10BE, used to claim the deduction, follows by 31st May of the next financial year."
       }
     ],
     "tax_title": "80G tax exemption",
@@ -1213,15 +1242,88 @@
     "help_title": "Other ways to give",
     "help_body": "For cheque, cash, corpus donations or corporate CSR contributions, call the temple donation desk. For anything about IYF Patna itself, write to us.",
     "policies_title": "Policies that govern your donation",
-    "policies_body": "The payment is completed on iskconpatna.in, so the temple's own documents apply to it.",
+    "policies_body": "The payment is taken on this website, so these are the documents that apply to it.",
     "policies": {
       "terms": "Terms & Conditions",
       "refund": "Refund Policy",
       "privacy": "Privacy Policy"
     },
-    "caution": "Please be cautious of anyone soliciting donations in the name of IYF Patna through any channel other than the temple page linked here. If in doubt, call the temple before paying anything.",
+    "caution": "Please be cautious of anyone soliciting donations in the name of IYF Patna anywhere other than this page. We will never ask for a donation by UPI to a personal number, and we never ask for your card number, PIN or an OTP. If in doubt, call the temple before paying anything.",
     "final_title": "Ready to offer your seva?",
-    "final_body": "You will be taken to ISKCON Patna's secure donation page to complete your contribution."
+    "final_body": "It takes a minute, and your 80G receipt is in your inbox before you close the tab.",
+    "form": {
+      "title": "Offer your seva",
+      "description": "Your donation is received by ISKCON Patna. An 80G receipt is emailed and downloaded the moment your payment succeeds.",
+      "seva": "Seva",
+      "amount": "Amount",
+      "amount_other": "Other amount",
+      "amount_hint": "Any amount from ₹{min} to ₹{max}. For a larger offering, please call the donation desk.",
+      "name": "Full name",
+      "phone": "Mobile number",
+      "email": "Email address",
+      "address": "Postal address",
+      "address_hint": "House or flat, street, locality, city, state and PIN code — as you would write it on an envelope. It is printed on your 80G receipt.",
+      "pan": "PAN",
+      "pan_hint": "Needed only to issue your Form 10BE.",
+      "optional": "optional",
+      "submit": "Donate {amount}",
+      "submitting": "Saving your offering…",
+      "redirecting": "Opening secure payment…",
+      "secure": "Payment is taken on Razorpay's secure checkout. Your card, UPI ID and bank details never reach this website.",
+      "receipt_note": "Your 80G receipt downloads automatically and is emailed to you as a PDF.",
+      "terms": "By donating you accept our <terms>Terms</terms>, <refund>Refund Policy</refund> and <privacy>Privacy Policy</privacy>.",
+      "field_errors": {
+        "name": "Please enter your full name.",
+        "phone": "Enter a 10-digit Indian mobile number.",
+        "email": "Enter a valid email address — your receipt is sent here.",
+        "address": "Please enter your full postal address.",
+        "address_pincode": "Please include your 6-digit PIN code in the address.",
+        "pan": "A PAN looks like ABCDE1234F. Leave it blank if you would rather not give it."
+      },
+      "errors": {
+        "amount": "Please choose or enter a valid amount.",
+        "rate_limited": "Too many attempts. Please wait a few minutes and try again.",
+        "invalid": "Please check the details you have entered.",
+        "not_found": "That seva is no longer listed. Please pick another.",
+        "closed": "Online donations are paused just now. Please call the donation desk — the number is on this page.",
+        "payment_unavailable": "Payment is unavailable at the moment. Please try again shortly.",
+        "network": "We could not reach the server. Please check your connection and try again.",
+        "generic": "Something went wrong. Please try again, or call the donation desk."
+      }
+    }
+  },
+  "donation": {
+    "success_title": "Thank you, {name}",
+    "success_body": "Your {seva} offering has reached the temple. Your 80G receipt is downloading now, and a copy is on its way to {email}.",
+    "pending_title": "Your offering is saved",
+    "pending_body": "No payment has reached us yet. You can complete it right here — nothing needs typing again.",
+    "pending_wait_title": "Your offering is saved",
+    "pending_wait_body": "Online payment opens shortly. We will email you as soon as it does, and your details are already with us.",
+    "failed_title": "That payment did not go through",
+    "failed_body": "No money has left your account. You can try again below — your details are still saved.",
+    "aborted_title": "Payment was cancelled",
+    "aborted_body": "Nothing was charged. Whenever you are ready, you can finish from here.",
+    "receipt_no": "Receipt number",
+    "seva": "Seva",
+    "donor": "Donor",
+    "amount_paid": "Amount donated",
+    "amount_due": "Amount",
+    "paid_on": "Paid on",
+    "payment_mode": "Paid by",
+    "payment_ref": "Payment reference",
+    "address": "Address",
+    "pan": "PAN",
+    "receipt": "Download 80G receipt",
+    "receipt_auto": "Your receipt has been downloaded. Tap the button above if you need it again.",
+    "pay_now": "Donate {amount} now",
+    "retry": "Try the payment again",
+    "tax_title": "Claiming your 80G deduction",
+    "tax_body": "The receipt above is your acknowledgement. Form No. 10BE, the certificate used to claim the deduction, is issued by 31st May of the next financial year. Recipient PAN {pan}, 80G URN {urn}.",
+    "tax_no_pan": "You did not give a PAN, which the trust needs to file Form 10BE against your donation. Email it to {email} quoting your receipt number and it will be added.",
+    "email_note": "Your receipt has also been emailed to you as a PDF attachment.",
+    "save_note": "Bookmark this page — it is your private link to this donation and its receipt. Please do not share it.",
+    "test_payment": "This was a test payment. No real money moved.",
+    "back_donate": "Back to donations"
   },
   "sarathi": {
     "eyebrow": "Sarathi AI",

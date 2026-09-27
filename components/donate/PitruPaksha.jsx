@@ -1,26 +1,29 @@
 import { getLocale, getTranslations } from "next-intl/server";
-import { ArrowUpRight, BookOpen, Flame, Soup, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Flame, Shirt, Soup, Sparkles } from "lucide-react";
 import { IkImage } from "@/components/media/IkImage";
-import { SEVA_LIST, sevaDonateHref } from "@/lib/site-config";
+import { VigrahaSevaCard } from "@/components/donate/VigrahaSevaCard";
+import { DonateButton } from "@/components/donate/DonateProvider";
+import { SEVA_LIST } from "@/lib/site-config";
 
 /**
- * The two sevas this fortnight is pointed at, and why those two.
+ * The two sevas this fortnight is pointed at, and why those two. Deity seva
+ * follows them in a card of its own — see `VigrahaSevaCard`, which is a
+ * priced list rather than a single offering and so does not fit this shape.
  *
  * Both are sevas the temple already publishes — the amounts, slugs and impact
  * arithmetic stay exactly as they are in `SEVA_LIST`, because Pitru Paksha is
  * a reason to give, not a different price list. Anna-daan is the shraddha
  * offering itself in Vaishnava practice (SB 7.15.5–6: food offered to the
- * Deity, then shared as prasadam in the forefathers' name); Gita-daan is the
- * other half of the same debt, the one Srila Prabhupada's purport to Bg. 1.41
- * says a devotee repays for "hundreds and thousands of forefathers".
+ * Deity, then shared as prasadam in the forefathers' name); vastra-daan is
+ * the other half of the same rite, cloth given with the meal to the sadhus
+ * and brahmanas who receive it.
  *
  * Only the keys live here. Every word is in `donate.pitru.card.<key>`, so
  * Hindi is a translation and not a second hardcoded pair that can drift.
  */
 const CARDS = [
   { key: "anna_daan", Icon: Soup },
-  { key: "gita_daan", Icon: BookOpen },
+  { key: "vastra_daan", Icon: Shirt },
 ];
 
 /*
@@ -69,7 +72,7 @@ function dayLabel(dayKey, locale) {
  *
  * It sits directly under the hero because that is the whole point of it: a
  * visitor arriving during Shraddha Paksha should be told what this fortnight
- * is for before being shown a list of seven sevas. The two cards deep-link
+ * is for before being shown the full list of sevas. The two cards deep-link
  * into the existing donation flow with the seva and amount already chosen.
  */
 export async function PitruPaksha({ window }) {
@@ -116,14 +119,19 @@ export async function PitruPaksha({ window }) {
 
       {/* --------------------------------------------------- the pramana */}
       {/* Near enough the top of the page to be the LCP element, so it is
-          fetched with priority rather than lazily. */}
-      <div className="relative mt-6 aspect-[16/9] w-full overflow-hidden rounded-xl border border-border/70 sm:aspect-[2/1]">
+          fetched with priority rather than lazily — which is also why the
+          phone breakpoint asks for less than the full viewport width: being
+          the LCP, this is the one image whose bytes are the wait, and 65vw
+          holds a 3x screen to a 750px file (~35KB) instead of a 1200px one
+          (~68KB) for a slot barely 360px wide. */}
+      <div className="relative mt-6 aspect-video w-full overflow-hidden rounded-xl border border-border/70 sm:aspect-2/1">
         <IkImage
           src={PHOTO}
           alt={t("photo_alt")}
           fill
           priority
-          sizes="(min-width: 1152px) 1088px, 100vw"
+          quality={65}
+          sizes="(min-width: 1152px) 1088px, 65vw"
           className="object-cover"
         />
       </div>
@@ -159,8 +167,26 @@ export async function PitruPaksha({ window }) {
           return (
             <article
               key={key}
-              className="flex flex-col rounded-2xl border border-border bg-card p-5 sm:p-6"
+              className="flex flex-col overflow-hidden rounded-2xl border border-border bg-card p-5 sm:p-6"
             >
+              {/* The same photograph the seva's own card carries further down
+                  the page, cropped and bled the same way — one picture per
+                  seva, read from `SEVA_LIST`, so the two places cannot end up
+                  showing different food. The alt text lives with the seva's
+                  copy for the same reason. */}
+              {seva.image && (
+                <div className="relative -mx-5 -mt-5 mb-5 aspect-video border-b border-border/70 sm:-mx-6 sm:-mt-6">
+                  <IkImage
+                    src={seva.image}
+                    alt={tDonate(`seva.${key}.photo_alt`)}
+                    fill
+                    quality={60}
+                    sizes="(min-width: 1152px) 544px, (min-width: 640px) 35vw, 55vw"
+                    className="object-cover"
+                  />
+                </div>
+              )}
+
               <span className="grid size-10 shrink-0 place-items-center rounded-full border border-primary/25 bg-primary/10 text-primary">
                 <Icon className="size-[18px]" aria-hidden="true" />
               </span>
@@ -182,25 +208,22 @@ export async function PitruPaksha({ window }) {
               {/* `mt-auto` so both buttons sit on one line however long the
                   two descriptions turn out in either language. */}
               <div className="mt-auto pt-5">
-                <Button
-                  size="lg"
-                  className="w-full rounded-full"
-                  render={
-                    <a
-                      href={sevaDonateHref(seva.slug, seva.defaultAmount)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    />
-                  }
+                <DonateButton
+                  sevaSlug={seva.slug}
+                  amount={seva.defaultAmount}
+                  className="w-full"
                 >
                   {t("card_cta", { amount: seva.defaultAmount })}
-                  <ArrowUpRight className="size-4 opacity-80" aria-hidden="true" />
-                  <span className="sr-only"> ({tDonate("external_note")})</span>
-                </Button>
+                </DonateButton>
               </div>
             </article>
           );
         })}
+
+        {/* Third in the row, and the width of it: the deity sevas are a list
+            of eleven priced offerings rather than one ask, so the card spans
+            both columns underneath the other two. */}
+        <VigrahaSevaCard />
       </div>
 
       <p className="mt-6 border-t border-primary/15 pt-5 text-sm leading-relaxed text-muted-foreground">

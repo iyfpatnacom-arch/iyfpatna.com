@@ -4,7 +4,11 @@ import { gatewayReturn, recordPaymentOutcome } from "@/lib/payments/result";
 export const dynamic = "force-dynamic";
 
 /**
- * Razorpay checkout's callback_url.
+ * Razorpay checkout's callback_url — for a course seat and a donation alike.
+ *
+ * One callback URL for both, because the order's own notes say which it is (see
+ * `payables.js`). There is therefore a single address that has to keep working,
+ * and a single place where a returning customer could be lost.
  *
  * The customer's browser arrives here as a cross-site POST. Nothing about this
  * request is authenticated by a cookie — it cannot be, the customer may be
@@ -67,12 +71,15 @@ export async function POST(request) {
       return gatewayReturn(request, lang);
     }
     const result = await recordPaymentOutcome({ ...outcome, lang });
-    return gatewayReturn(request, result?.lang || lang, result?.orderId || outcome.orderId);
+    return gatewayReturn(request, result?.lang || lang, {
+      orderId: result?.orderId || outcome.orderId,
+      kind: result?.kind || outcome.kind,
+    });
   } catch (error) {
     // The payment itself may well have succeeded, so the customer still goes
     // to their status page; the webhook or "pay now" reconciles the row.
     console.error("[payment] failed to record response", error);
-    return gatewayReturn(request, lang, outcome?.orderId || null);
+    return gatewayReturn(request, lang, { orderId: outcome?.orderId, kind: outcome?.kind });
   }
 }
 
