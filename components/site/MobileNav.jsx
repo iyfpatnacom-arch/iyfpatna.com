@@ -10,6 +10,7 @@ import {
   Menu,
 } from "lucide-react";
 import { Show, SignInButton, SignUpButton } from "@clerk/nextjs";
+import NextLink from "next/link";
 import { Link, usePathname } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +21,8 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { WhatsappIcon } from "@/components/site/WhatsappIcon";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { DONATE_HREF } from "@/lib/donate-href";
 import {
   DONATE_NAV,
   LEGAL_NAV,
@@ -99,8 +102,19 @@ export function MobileNav({
           lose to those anyway — they are attribute-qualified and win on
           specificity. */}
       <SheetContent side="right" className="gap-0 overflow-y-auto">
-        <SheetHeader className="border-b border-border/70 px-4 py-4">
+        {/* The theme toggle lives here on a phone and in the header row above
+            from `sm` up. The row up there cannot hold it and a Donate button
+            that says "Donate", and between the two the toggle is the one a
+            reader looks for once, if ever — so it moves and Donate stays
+            legible. The language switch stays in the header either way: for a
+            bilingual audience that is not a preference to go hunting for.
+
+            `pr-14` keeps it clear of the sheet's own close button, which is
+            absolutely positioned at `top-3 right-3` and so sits outside this
+            row's layout entirely — at the plain `px-4` the two overlapped. */}
+        <SheetHeader className="flex-row items-center justify-between border-b border-border/70 px-4 py-4 pr-14 sm:block sm:pr-4">
           <SheetTitle>{t("menu")}</SheetTitle>
+          <ThemeToggle className="size-9 rounded-full sm:hidden" />
         </SheetHeader>
 
         <nav aria-label={t("primary_nav")} className="flex flex-col p-3">
@@ -181,10 +195,13 @@ export function MobileNav({
             </Show>
           ) : null}
 
+          {/* The seva list opens in Hindi from anywhere on the site, so this
+              href carries its own locale rather than the reader's — hence
+              Next's own `Link` and not the prefixing one above. */}
           <Button
             size="lg"
             className="w-full rounded-full"
-            render={<Link href={DONATE_NAV.href} onClick={close} />}
+            render={<NextLink href={DONATE_HREF} onClick={close} />}
           >
             <HandHeart className="size-4" aria-hidden="true" />
             {t(DONATE_NAV.key)}

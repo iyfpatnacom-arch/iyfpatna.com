@@ -29,20 +29,28 @@ function isApiPath(pathname) {
 // Giving opens in Hindi.
 //
 // next-intl's detection reads the NEXT_LOCALE cookie first and the browser's
-// Accept-Language header second. The cookie is a real choice — only the locale
-// toggle writes it — but the header is not: most phones sold here ship set to
-// English, so a donate link shared on WhatsApp or printed as a QR code in the
-// temple was opening the seva list in English for people who read Hindi.
+// Accept-Language header second, and neither is a good answer here: most
+// phones sold here ship set to English, so a donate link shared on WhatsApp or
+// printed as a QR code in the temple was opening the seva list in English for
+// people who read Hindi — and a reader who once tapped EN on some other page
+// carries that choice into the seva list too.
 //
-// So on the donation routes, and only when nobody has chosen, the default wins
-// over the header. /en/donate still works and the toggle still switches; this
-// decides nothing except what an unprefixed link resolves to.
+// So an unprefixed donation link resolves to Hindi, full stop: no cookie and
+// no header gets a say. It is the one route where the language is the
+// temple's decision rather than the browser's.
+//
+// Only *unprefixed* paths, though. `/en/donate` still renders English, which
+// is what keeps the header's locale toggle working on this page — the toggle
+// navigates to the prefixed path, and a redirect here would bounce it
+// straight back. Arriving in Hindi and being able to switch are different
+// questions; this answers the first. The links that point *into* the route
+// answer it too (see lib/donate-href.js), because those are prefixed with the
+// reader's current locale and never reach this function.
 const HINDI_FIRST = /^\/(donate|donation)(\/|$)/;
 
 function hindiFirstRedirect(req) {
   const { pathname } = req.nextUrl;
   if (!HINDI_FIRST.test(pathname)) return null;
-  if (req.cookies.get("NEXT_LOCALE")) return null;
 
   const url = req.nextUrl.clone();
   url.pathname = `/${routing.defaultLocale}${pathname}`;

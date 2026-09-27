@@ -1,7 +1,9 @@
 import { useTranslations } from "next-intl";
 import { ArrowUpRight, Mail, MapPin, Phone } from "lucide-react";
+import NextLink from "next/link";
 import { Link } from "@/i18n/navigation";
 import { BrandMark } from "@/components/site/BrandMark";
+import { DONATE_HREF } from "@/lib/donate-href";
 import {
   DONATE_NAV,
   LEGAL_NAV,
@@ -20,7 +22,10 @@ import {
  */
 const EXPLORE_NAV = [
   ...MAIN_NAV.filter((item) => item.key !== "home"),
-  DONATE_NAV,
+  // Donate is the one entry that names its own language: the seva list opens
+  // in Hindi from anywhere on the site (see lib/donate-href.js), so this href
+  // arrives already prefixed and must not be prefixed a second time.
+  { ...DONATE_NAV, href: DONATE_HREF, pinned: true },
 ];
 
 function FooterHeading({ children }) {
@@ -31,7 +36,7 @@ function FooterHeading({ children }) {
   );
 }
 
-function FooterLink({ href, external = false, children }) {
+function FooterLink({ href, external = false, pinned = false, children }) {
   const className =
     "inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground";
 
@@ -46,6 +51,16 @@ function FooterLink({ href, external = false, children }) {
         {children}
         <ArrowUpRight className="size-3 opacity-60" aria-hidden="true" />
       </a>
+    );
+  }
+
+  /* A pinned href already carries the locale it wants; next-intl's `Link`
+     would prefix the reader's on top of it. */
+  if (pinned) {
+    return (
+      <NextLink href={href} className={className}>
+        {children}
+      </NextLink>
     );
   }
 
@@ -96,7 +111,11 @@ export function SiteFooter() {
             <ul className="mt-3 space-y-2">
               {EXPLORE_NAV.map((item) => (
                 <li key={item.key}>
-                  <FooterLink href={item.href} external={item.external}>
+                  <FooterLink
+                    href={item.href}
+                    external={item.external}
+                    pinned={item.pinned}
+                  >
                     {tn(item.key)}
                   </FooterLink>
                 </li>
