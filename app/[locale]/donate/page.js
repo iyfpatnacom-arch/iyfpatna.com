@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SevaCard } from "@/components/donate/SevaCard";
+import { PitruPaksha } from "@/components/donate/PitruPaksha";
+import { istDayKey, pitruPaksha } from "@/lib/panchang";
 import { routing } from "@/i18n/routing";
 import {
   DONATION_COMPLIANCE,
@@ -26,11 +28,12 @@ import {
 } from "@/lib/site-config";
 
 /*
- * One dated card (Janmashtami) hides itself once the festival has passed, and
- * that decision is made at render time. A fully static page would freeze the
- * answer at build time and keep advertising the date for another year, so the
- * page re-renders hourly instead — far finer than the once-a-year granularity
- * the check actually needs.
+ * Two things on this page are decided by today's date rather than by the
+ * build: a dated seva card (Janmashtami) hides its date once the festival has
+ * passed, and the whole page turns towards Pitru Paksha for the fortnight
+ * that observance runs. A fully static page would freeze both at build time
+ * and keep advertising last year's answer, so the page re-renders hourly
+ * instead — far finer than the once-a-year granularity either check needs.
  */
 export const revalidate = 3600;
 
@@ -41,7 +44,13 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "donate" });
-  return { title: t("title"), description: t("subtitle") };
+  /* The title and description follow the same seasonal swap the hero does,
+     so a search result found during Shraddha Paksha reads like the page it
+     actually opens. */
+  const pitru = pitruPaksha(istDayKey());
+  return pitru
+    ? { title: t("pitru.hero_title"), description: t("pitru.hero_subtitle") }
+    : { title: t("title"), description: t("subtitle") };
 }
 
 const TRUST_ROW = [
@@ -50,6 +59,17 @@ const TRUST_ROW = [
   { key: "methods", Icon: CreditCard },
   { key: "registered", Icon: ShieldCheck },
 ];
+
+/*
+ * The two sevas the Pitru Paksha section names, lifted to the front of the
+ * seva grid while that fortnight runs.
+ *
+ * Only the order changes: the amounts, slugs and impact lines stay as the
+ * temple publishes them, because the fortnight is a reason to give and not a
+ * different price list. Without this the grid still opens on the Janmashtami
+ * card, which by Shraddha Paksha is five weeks stale.
+ */
+const PITRU_FIRST = ["anna_daan", "gita_daan"];
 
 /**
  * Donate page.
@@ -76,6 +96,28 @@ export default async function DonatePage({ params }) {
   const t = await getTranslations("donate");
   const format = await getFormatter();
 
+  /*
+   * Pitru Paksha is derived from tithi, not from a date typed in here, so
+   * the page turns towards the fortnight and back again on its own every
+   * year. `null` outside it, and every seasonal branch below reads as
+   * "ordinary donate page" in that case.
+   */
+  const pitru = pitruPaksha(istDayKey());
+
+  /* The hero says the same three things either way; only which copy it
+     reaches for changes. */
+  const heroKey = (key) => (pitru ? `pitru.hero_${key}` : key);
+
+  /* Stable sort, so everything outside `PITRU_FIRST` keeps the published
+     order and the two lifted sevas keep theirs relative to each other. */
+  const sevaList = pitru
+    ? [...SEVA_LIST].sort(
+        (a, b) =>
+          Number(PITRU_FIRST.includes(b.key)) -
+          Number(PITRU_FIRST.includes(a.key)),
+      )
+    : SEVA_LIST;
+
   const mapsHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
     ORG.address,
   )}`;
@@ -99,13 +141,13 @@ export default async function DonatePage({ params }) {
     <div className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
       {/* ---------------------------------------------------------- hero */}
       <p className="text-xs font-semibold tracking-wider text-primary uppercase">
-        {t("eyebrow")}
+        {t(heroKey("eyebrow"))}
       </p>
       <h1 className="mt-3 text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
-        {t("title")}
+        {t(heroKey("title"))}
       </h1>
       <p className="mt-5 max-w-2xl text-[15px] leading-relaxed text-muted-foreground sm:text-base">
-        {t("subtitle")}
+        {t(heroKey("subtitle"))}
       </p>
 
       <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -142,6 +184,11 @@ export default async function DonatePage({ params }) {
           </li>
         ))}
       </ul>
+
+      {/* ------------------------------------------------ pitru paksha */}
+      {/* Above "who takes the money" on purpose: during Shraddha Paksha the
+          reason to give comes before the governance detail. */}
+      {pitru && <PitruPaksha window={pitru} />}
 
       {/* ------------------------------------------ who takes the money */}
       <section className="mt-14 rounded-2xl border border-border bg-muted/30 p-6 sm:p-8">
@@ -191,9 +238,14 @@ export default async function DonatePage({ params }) {
         <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-muted-foreground">
           {t("seva_subtitle")}
         </p>
+        {pitru && (
+          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-muted-foreground">
+            {t("pitru.seva_note")}
+          </p>
+        )}
 
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {SEVA_LIST.map((seva) => (
+          {sevaList.map((seva) => (
             <SevaCard
               key={seva.key}
               seva={seva}

@@ -1087,6 +1087,36 @@
     "eyebrow": "Support the mission",
     "title": "Offer Your Seva",
     "subtitle": "Every contribution, big or small, sustains daily worship at Sri Sri Radha Banke Bihari Temple, feeds thousands, and shares Vedic knowledge across Bihar. All donations to ISKCON Patna are eligible for 80G tax exemption.",
+    "pitru": {
+      "eyebrow": "Pitru Paksha",
+      "range": "{start} – {end}",
+      "day_of": "Day {day} of {total}",
+      "mahalaya": "Sarva Pitru Amavasya — the final day",
+      "hero_eyebrow": "Pitru Paksha · Shraddha Paksha",
+      "hero_title": "Serve Krishna in Your Ancestors' Name",
+      "hero_subtitle": "For this one fortnight of the year, the Vedic calendar turns towards those who came before us. Offer anna-daan, Gita-daan or deity seva at Sri Sri Radha Banke Bihari Temple in the name of your forefathers — prasadam offered first to the Lord and then shared is the shraddha the Bhagavatam itself describes. All donations to ISKCON Patna are eligible for 80G tax exemption.",
+      "title": "Earn the blessings of your ancestors",
+      "photo_alt": "A family performing tarpan at a river ghat at sunrise — water poured from the hands into the river, with marigolds, lamps and brass pots set out on the steps.",
+      "verse_sanskrit": "देशे काले च सम्प्राप्ते मुन्यन्नं हरिदैवतम् । श्रद्धया विधिवत्पात्रे न्यस्तं कामधुगक्षयम् ॥",
+      "verse_roman": "deśe kāle ca samprāpte muny-annaṁ hari-daivatam / śraddhayā vidhivat pātre nyastaṁ kāmadhug akṣayam",
+      "verse_translation": "When one gets the opportunity of a suitable auspicious time and place, one should, with love, offer food prepared with ghee to the Deity of the Supreme Personality of Godhead and then offer the prasadam to a suitable person — a Vaishnava or a brahmana. This will be the cause of everlasting prosperity.",
+      "verse_source": "Srimad-Bhagavatam 7.15.5",
+      "card_cta": "Offer ₹{amount}",
+      "card": {
+        "anna_daan": {
+          "title": "Anna-daan in your ancestors' name",
+          "scripture": "One should offer prasada to the demigods, the saintly persons, one's forefathers, the people in general, one's family members, one's relatives and one's friends, seeing them all as devotees of the Supreme Personality of Godhead.",
+          "source": "Srimad-Bhagavatam 7.15.6"
+        },
+        "gita_daan": {
+          "title": "Gita-daan for their onward journey",
+          "scripture": "One who is engaged in devotional service can deliver hundreds and thousands of forefathers from all kinds of misery.",
+          "source": "Srila Prabhupada, purport to Bhagavad-gita 1.41"
+        }
+      },
+      "seva_note": "During Pitru Paksha, anna-daan and Gita-daan are listed first. Any of the sevas below may be offered with your ancestors in mind — if you would like a name mentioned with the offering, please speak to the temple donation desk.",
+      "note": "This page is for seva offered at Sri Sri Radha Banke Bihari Temple during Pitru Paksha. To arrange shraddha, tarpan or pind daan itself — at the temple or at Gaya — please call the temple donation desk below rather than booking anything here."
+    },
     "cta": "Donate now",
     "cta_secondary": "Choose a seva",
     "external_note": "Opens ISKCON Patna's donation page in a new tab",
