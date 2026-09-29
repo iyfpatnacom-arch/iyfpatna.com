@@ -23,7 +23,9 @@ import {
 } from "@/components/donate/DonateProvider";
 import { SevaCard } from "@/components/donate/SevaCard";
 import { PitruPaksha } from "@/components/donate/PitruPaksha";
+import { IkImage } from "@/components/media/IkImage";
 import { istDayKey, pitruPaksha } from "@/lib/panchang";
+import { PITRU_SEVA_KEYS, PITRU_SEVA_SLUGS } from "@/lib/donations/sevas";
 import { routing } from "@/i18n/routing";
 import { Link } from "@/i18n/navigation";
 import { getFlag } from "@/lib/flags";
@@ -69,15 +71,21 @@ const TRUST_ROW = [
 ];
 
 /*
- * The three sevas the Pitru Paksha section names, lifted to the front of the
- * seva grid while that fortnight runs.
+ * The hero's Pitru Paksha banner: a family performing tarpan at a river ghat.
  *
- * Only the order changes: the amounts, slugs and impact lines stay as the
- * temple publishes them, because the fortnight is a reason to give and not a
- * different price list. Without this the grid still opens on the Janmashtami
- * card, which by Shraddha Paksha is five weeks stale.
+ * It stands in for the seasonal hero paragraph rather than sitting beside it
+ * — during Shraddha Paksha the picture says what the paragraph said, and the
+ * rite it shows needs no explaining to the people it is addressed to. The
+ * wording itself is not lost: `pitru.hero_subtitle` still carries it as the
+ * page's meta description, which is where it does the work now.
+ *
+ * Served straight off IYF Patna's own ImageKit library, like every other
+ * photograph on this page — `IkImage` picks the ImageKit loader for these
+ * URLs and skips the Next optimizer, which on this VPS is CPU-bound. The
+ * intrinsic frame is 1408x768.
  */
-const PITRU_FIRST = ["anna_daan", "vastra_daan", "deity_seva"];
+const PITRU_BANNER =
+  "https://ik.imagekit.io/mnkh9j9dw/IYF/Gemini_Generated_Image_h8m56th8m56th8m5%20(1).png";
 
 /**
  * Donate page.
@@ -130,8 +138,8 @@ export default async function DonatePage({ params }) {
   const sevaList = pitru
     ? [...SEVA_LIST].sort(
         (a, b) =>
-          Number(PITRU_FIRST.includes(b.key)) -
-          Number(PITRU_FIRST.includes(a.key)),
+          Number(PITRU_SEVA_KEYS.includes(b.key)) -
+          Number(PITRU_SEVA_KEYS.includes(a.key)),
       )
     : SEVA_LIST;
 
@@ -164,12 +172,39 @@ export default async function DonatePage({ params }) {
         <h1 className="mt-3 text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
           {t(heroKey("title"))}
         </h1>
-        <p className="mt-5 max-w-2xl text-[15px] leading-relaxed text-muted-foreground sm:text-base">
-          {t(heroKey("subtitle"))}
-        </p>
+        {/* During the fortnight the picture is the subtitle. Being at the
+          top of the page it is the LCP element, so it is fetched with
+          priority; `sizes` asks for no more than the 1152px the container
+          ever gives it. */}
+        {pitru ? (
+          <div className="relative mt-6 aspect-video w-full overflow-hidden rounded-2xl border border-border/70 sm:aspect-2/1">
+            <IkImage
+              src={PITRU_BANNER}
+              alt={t("pitru.hero_photo_alt")}
+              fill
+              priority
+              quality={65}
+              sizes="(min-width: 1152px) 1152px, 100vw"
+              className="object-cover"
+            />
+          </div>
+        ) : (
+          <p className="mt-5 max-w-2xl text-[15px] leading-relaxed text-muted-foreground sm:text-base">
+            {t("subtitle")}
+          </p>
+        )}
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-          <DonateButton>
+          {/* During the fortnight this button opens the form on the three
+            Pitru Paksha sevas and offers only those in its select — the hero
+            above it has just asked for a seva in a forefather's name, and a
+            list still offering gau seva would be undoing that ask. Every
+            other Donate on the page names its own seva and is untouched; the
+            full list is a scroll away under "Browse sevas". */}
+          <DonateButton
+            animatedBorder
+            sevas={pitru ? PITRU_SEVA_SLUGS : undefined}
+          >
             <HandHeart className="size-4" aria-hidden="true" />
             {t("cta")}
           </DonateButton>

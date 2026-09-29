@@ -23,6 +23,7 @@ export function JoinCta() {
           </p>
           <Button
             size="lg"
+            animatedBorder
             className="mt-7 rounded-full px-5"
             render={
               <a href={mapsHref} target="_blank" rel="noopener noreferrer" />

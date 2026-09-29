@@ -48,6 +48,7 @@ export function YatraCallout() {
 
           <Button
             size="lg"
+            animatedBorder
             className="shrink-0 rounded-full px-5"
             render={
               yatraIsExternal ? (

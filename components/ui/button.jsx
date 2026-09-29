@@ -40,17 +40,41 @@ const buttonVariants = cva(
   }
 )
 
+/**
+ * @param {boolean} [animatedBorder]
+ *   Runs a comet of light around the button's rim — the site's mark for a
+ *   primary call to action, and nothing else. It is a prop rather than a
+ *   variant because it composes with all of them: the header's Donate is
+ *   `outline` and the hero's is filled, and both wear it.
+ *
+ *   The whole effect is CSS (`.cta-trace` in `app/globals.css`), so this stays
+ *   usable from server components — which is where every CTA on this site
+ *   lives. Buttons that are not pills must pass their own corner radius:
+ *   `style={{ "--cta-trace-radius": "0.5rem" }}`.
+ */
 function Button({
   className,
   variant = "default",
   size = "default",
+  animatedBorder = false,
+  children,
   ...props
 }) {
   return (
     <ButtonPrimitive
       data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
-      {...props} />
+      className={cn(
+        /* The rim is positioned against the button, so the button has to be
+           the containing block. First in the list, because `buttonVariants`
+           puts the caller's own `className` last and a caller that has
+           positioned this button itself should keep winning. */
+        animatedBorder && "relative",
+        buttonVariants({ variant, size, className }),
+      )}
+      {...props}>
+      {animatedBorder && <span aria-hidden="true" className="cta-trace" />}
+      {children}
+    </ButtonPrimitive>
   );
 }
 

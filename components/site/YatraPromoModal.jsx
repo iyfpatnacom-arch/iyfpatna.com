@@ -40,8 +40,20 @@ function daysToDeparture() {
 /**
  * Pages where a promo would get in the way of the job the visitor came to do:
  * signing in, paying, checking in at the door, or running the site.
+ *
+ * `/donate` is here for the same reason as the checkout paths: a visitor who
+ * opened the donate page has already chosen where their money is going, and
+ * a yatra ask thrown over it only competes with the seva they came to offer.
  */
-const QUIET_PATHS = ["/admin", "/dashboard", "/sign-in", "/sign-up", "/check-in", "/orders"];
+const QUIET_PATHS = [
+  "/admin",
+  "/dashboard",
+  "/sign-in",
+  "/sign-up",
+  "/check-in",
+  "/orders",
+  "/donate",
+];
 
 /**
  * "Vrindavan Yatra bookings are live" — shown once per browser session, a

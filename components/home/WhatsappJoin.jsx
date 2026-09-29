@@ -63,6 +63,7 @@ export function WhatsappJoin({ href = WHATSAPP_GROUP_URL }) {
 
           <Button
             size="lg"
+            animatedBorder
             className="mt-4 w-full rounded-full bg-[#25D366] px-5 text-white hover:bg-[#1da851] focus-visible:ring-[#25D366]/40 sm:w-auto"
             render={
               <a

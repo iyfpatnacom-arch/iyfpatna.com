@@ -125,6 +125,9 @@ export function DonateProvider({ open: openable = true, children }) {
         id: (previous?.id ?? 0) + 1,
         sevaSlug: next.sevaSlug || null,
         amount: Number(next.amount) || null,
+        /* Which sevas this button is willing to offer, if it cares. Null is
+           the usual answer and means the whole list. */
+        sevas: next.sevas?.length ? next.sevas : null,
       }));
       setOpen(true);
     },
@@ -161,6 +164,7 @@ export function DonateProvider({ open: openable = true, children }) {
 export function DonateButton({
   sevaSlug,
   amount,
+  sevas,
   className,
   variant,
   size = "lg",
@@ -175,7 +179,7 @@ export function DonateButton({
       size={size}
       variant={variant}
       disabled={!enabled}
-      onClick={() => openDonate({ sevaSlug, amount })}
+      onClick={() => openDonate({ sevaSlug, amount, sevas })}
       className={cn("rounded-full", className)}
       {...rest}
     >
@@ -222,10 +226,31 @@ function DonateDialog({ session, open, onClose }) {
   const [stage, setStage] = useState("form");
   const [error, setError] = useState(null);
 
+  /*
+   * What the select is allowed to offer.
+   *
+   * Normally the whole list. A button may hand over a shortlist instead — the
+   * donate page's hero does during Pitru Paksha, where the page around this
+   * dialog is asking for three specific sevas and a select still offering the
+   * other six would be undoing the ask the visitor just answered. An empty or
+   * unrecognised shortlist falls back to the full list rather than to a select
+   * with nothing in it.
+   */
+  const options = useMemo(() => {
+    const shortlist = SEVA_LIST.filter((seva) =>
+      session.sevas?.includes(seva.slug),
+    );
+    return shortlist.length ? shortlist : SEVA_LIST;
+  }, [session.sevas]);
+
   /* What the pressed button asked for. An amount it did not name falls back to
      the seva's own default rather than to whatever the last donor chose, which
      is how ₹51,000 used to end up offered against a ₹501 seva. */
-  const opening = getSeva(session.sevaSlug) || defaultSeva();
+  const wanted = getSeva(session.sevaSlug) || defaultSeva();
+  /* A shortlist the wanted seva is not on means the button named no seva of
+     its own (the hero's "Donate" is the case), so open on the first it does
+     offer — never on a seva the select cannot show. */
+  const opening = options.includes(wanted) ? wanted : options[0];
   const openingAmount = isValidAmount(session.amount)
     ? session.amount
     : opening.defaultAmount;
@@ -437,7 +462,7 @@ function DonateDialog({ session, open, onClose }) {
             onChange={(event) => pickSeva(event.target.value)}
             className="h-11 rounded-lg border border-input bg-transparent px-3 text-base outline-none focus:border-ring focus:ring-3 focus:ring-ring/50 md:text-sm dark:bg-input/30"
           >
-            {SEVA_LIST.map((option) => (
+            {options.map((option) => (
               <option key={option.key} value={option.slug}>
                 {tSeva(`${option.key}.name`)}
               </option>

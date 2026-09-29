@@ -223,6 +223,27 @@
   body {
     -webkit-tap-highlight-color: transparent;
   }
+
+  /* Native select popups, in dark mode.
+     The list a `<select>` drops open is painted by the browser, not by us, and
+     on Windows and Linux Chrome paints it in the select's own
+     `background-color`. Ours is `--input`, which in dark mode is translucent
+     white — composited against the popup's default white it came out white,
+     while the options kept inheriting the control's cream `color`. Cream on
+     white: the list was there and unreadable.
+
+     So the options are given opaque colours of their own rather than
+     inheriting them. `--popover` is the right pair to borrow: this list *is*
+     a popover, and every other one on the site is already that colour.
+
+     macOS draws this list itself and ignores both rules, but it follows
+     `color-scheme`, which `.dark` already sets — so between the two, every
+     platform lands somewhere readable. */
+  option,
+  optgroup {
+    background-color: var(--popover);
+    color: var(--popover-foreground);
+  }
 }
 
 [lang="hi"] {
@@ -465,5 +486,82 @@
   .yatra-countdown,
   .yatra-shimmer {
     animation: none;
+  }
+}
+
+/* CTA animated border.
+   A comet of light runs once around the border of the site's primary calls to
+   action — donate, enrol, join, book — so the one button a section is asking
+   for is never just another pill.
+
+   Pure CSS, and deliberately so: every CTA on this site is inside a server
+   component, and animating `offset-distance` from a keyframe keeps it that
+   way. Driving the same two properties from JS would have pulled the motion
+   library — and a `"use client"` boundary — into the header, the hero and
+   every page that carries a CTA, to move one 28px square.
+
+   The ring is the `liquid-glass` mask trick again: the element is padded by
+   its own thickness and its content box is punched out of its border box, so
+   only the rim paints. The comet rides `offset-path`, which is what keeps it
+   on the rim through the rounded corners; `offset-rotate` is left at `auto`
+   so the gradient's tail always points back the way it came.
+
+   Three knobs, all optional:
+     --cta-trace-radius    the button's own corner radius. 9999px is a pill,
+                           which is what every CTA here is. A `rounded-lg`
+                           button MUST set this or the path cuts its corners
+                           and the comet vanishes four times a lap.
+     --cta-trace-color     defaults to `currentColor`, which is the one colour
+                           guaranteed to read against the button's own
+                           background, filled or outline.
+     --cta-trace-duration  one lap.
+
+   Hidden outright where `offset-path: rect()` is not supported: without it
+   the comet has no path to ride and would sit parked in one corner. A CTA
+   with no ornament is the correct fallback. */
+@keyframes ctaTrace {
+  to {
+    offset-distance: 100%;
+  }
+}
+
+.cta-trace {
+  display: none;
+}
+
+@supports (offset-path: rect(0 auto auto 0 round 8px)) {
+  .cta-trace {
+    display: block;
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 2px;
+    pointer-events: none;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+
+  .cta-trace::before {
+    content: "";
+    position: absolute;
+    width: var(--cta-trace-size, 1.75rem);
+    aspect-ratio: 1;
+    background: linear-gradient(
+      to right,
+      transparent,
+      var(--cta-trace-color, currentColor)
+    );
+    offset-path: rect(0 auto auto 0 round var(--cta-trace-radius, 9999px));
+    animation: ctaTrace var(--cta-trace-duration, 4s) linear infinite;
+  }
+}
+
+/* Ornament, and this preference is about ornament: the button keeps its
+   shape and loses the comet entirely rather than parking it somewhere. */
+@media (prefers-reduced-motion: reduce) {
+  .cta-trace {
+    display: none;
   }
 }

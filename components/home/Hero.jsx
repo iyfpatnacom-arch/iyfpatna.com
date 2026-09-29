@@ -77,6 +77,7 @@ export function Hero({ darshan = null }) {
           <div className="mt-8 hidden flex-wrap items-center gap-3 md:flex">
             <Button
               size="lg"
+              animatedBorder
               className="rounded-full px-5"
               render={<Link href="/programs" />}
             >

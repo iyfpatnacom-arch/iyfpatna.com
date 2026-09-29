@@ -146,6 +146,7 @@ export function SiteHeader({ clerkConfigured = false, whatsappUrl }) {
             <Button
               size="lg"
               variant="outline"
+              animatedBorder
               className="rounded-full max-sm:border-transparent max-sm:bg-primary max-sm:px-3.5 max-sm:text-primary-foreground max-sm:hover:bg-primary/80 dark:max-sm:bg-brand-gold-deep dark:max-sm:text-white dark:max-sm:hover:bg-brand-gold-deep/85"
               render={<NextLink href={DONATE_HREF} />}
             >

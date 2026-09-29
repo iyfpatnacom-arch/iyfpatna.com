@@ -200,6 +200,7 @@ export function MobileNav({
               Next's own `Link` and not the prefixing one above. */}
           <Button
             size="lg"
+            animatedBorder
             className="w-full rounded-full"
             render={<NextLink href={DONATE_HREF} onClick={close} />}
           >

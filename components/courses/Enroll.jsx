@@ -127,6 +127,7 @@ export function EnrollButton({ id, className, children, showArrow = true }) {
     <Button
       id={id}
       type="button"
+      animatedBorder
       onClick={openCheckout}
       disabled={status !== "open"}
       className={cn(

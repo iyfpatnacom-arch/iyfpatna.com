@@ -38,6 +38,7 @@ export function PayNowButton({ orderId, token, label, kind = "course" }) {
   return (
     <Button
       type="button"
+      animatedBorder
       onClick={pay}
       disabled={busy}
       className="h-12 w-full rounded-full text-base font-semibold shadow-lg shadow-primary/25"

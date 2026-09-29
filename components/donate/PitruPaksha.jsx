@@ -118,18 +118,17 @@ export async function PitruPaksha({ window }) {
       </h2>
 
       {/* --------------------------------------------------- the pramana */}
-      {/* Near enough the top of the page to be the LCP element, so it is
-          fetched with priority rather than lazily — which is also why the
-          phone breakpoint asks for less than the full viewport width: being
-          the LCP, this is the one image whose bytes are the wait, and 65vw
-          holds a 3x screen to a 750px file (~35KB) instead of a 1200px one
-          (~68KB) for a slot barely 360px wide. */}
+      {/* Loaded lazily: the hero above now carries the fortnight's banner and
+          is the LCP, so claiming priority here would only make the two images
+          compete for the same first bytes. The phone breakpoint still asks
+          for less than the full viewport width — 65vw holds a 3x screen to a
+          750px file (~35KB) instead of a 1200px one (~68KB) for a slot barely
+          360px wide. */}
       <div className="relative mt-6 aspect-video w-full overflow-hidden rounded-xl border border-border/70 sm:aspect-2/1">
         <IkImage
           src={PHOTO}
           alt={t("photo_alt")}
           fill
-          priority
           quality={65}
           sizes="(min-width: 1152px) 1088px, 65vw"
           className="object-cover"

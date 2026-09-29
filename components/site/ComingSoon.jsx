@@ -43,6 +43,7 @@ export function ComingSoon({ eyebrow, title, body }) {
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
         <Button
           size="lg"
+          animatedBorder
           className="rounded-full px-5"
           render={<Link href="/programs" />}
         >
