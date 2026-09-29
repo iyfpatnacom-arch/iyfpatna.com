@@ -24,6 +24,7 @@ import {
   verifyOrderToken,
 } from "@/lib/payments/order-link";
 import { receiptFilename } from "@/lib/payments/pdf";
+import { DonationPurchase } from "@/components/analytics/DonationPurchase";
 import { Panel } from "@/components/site/Panel";
 import { PayNowButton } from "@/components/payments/PayNowButton";
 import { ReceiptDownload } from "@/components/payments/ReceiptDownload";
@@ -138,6 +139,21 @@ export default async function DonationPage({ params, searchParams }) {
 
   return (
     <div className="relative overflow-hidden">
+      {/* Only ever on a donation that is genuinely paid for, and only ever
+          with what the row says: the amount comes from the database and not
+          from anything the browser could have carried here, so a guessed URL
+          cannot report a conversion and a tampered one cannot inflate it.
+          A test payment is excluded too — simulated money is not a donation
+          and must not train a campaign. */}
+      {status === "success" && !simulated && (
+        <DonationPurchase
+          orderId={donation.orderId}
+          amount={donation.amount}
+          currency={donation.currency}
+          sevaSlug={donation.sevaSlug}
+        />
+      )}
+
       <div
         className={`pointer-events-none absolute -top-40 left-1/2 size-[36rem] -translate-x-1/2 rounded-full blur-3xl ${view.glow}`}
         aria-hidden="true"

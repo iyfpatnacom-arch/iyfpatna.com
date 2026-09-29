@@ -62,6 +62,16 @@ jobs:
       NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL: ${{ vars.CLERK_SIGN_IN_FALLBACK_REDIRECT_URL || '/' }}
       NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL: ${{ vars.CLERK_SIGN_UP_FALLBACK_REDIRECT_URL || '/' }}
       CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+      # The Meta Pixel is inlined at build time like everything else here, but
+      # unlike the Clerk key it does not need to be set: both values default in
+      # lib/analytics/meta.js, because a pixel ID that lived only in a
+      # repository variable would ship as "tracking off" the first time
+      # somebody deployed without it and nobody would notice for a month.
+      # Empty here means "use the default"; set the variables only if the
+      # temple's pixel changes. The Conversions API token is server-side and
+      # runtime, so it lives in .env.production on the VPS, not here.
+      NEXT_PUBLIC_META_PIXEL_ID: ${{ vars.META_PIXEL_ID }}
+      NEXT_PUBLIC_META_DOMAIN_VERIFICATION: ${{ vars.META_DOMAIN_VERIFICATION }}
 
     steps:
       - uses: actions/checkout@v4

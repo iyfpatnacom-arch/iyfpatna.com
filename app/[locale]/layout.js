@@ -7,6 +7,7 @@ import { shadcn } from "@clerk/ui/themes";
 import { clerkConfigured } from "@/lib/auth-config";
 import { routing } from "@/i18n/routing";
 import { ORG } from "@/lib/site-config";
+import { META_DOMAIN_VERIFICATION } from "@/lib/analytics/meta";
 import { getWhatsappGroupUrl } from "@/lib/settings";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
@@ -15,6 +16,7 @@ import { SiteFooter } from "@/components/site/SiteFooter";
 import { AppDock } from "@/components/site/AppDock";
 import { WhatsappFab } from "@/components/site/WhatsappFab";
 import { YatraPromoModal } from "@/components/site/YatraPromoModal";
+import { MetaPixel } from "@/components/analytics/MetaPixel";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { PageTransition } from "@/components/PageTransition";
 import { PwaInstallGate } from "@/components/pwa/PwaInstallGate";
@@ -64,6 +66,21 @@ export const metadata = {
     "ISKCON Youth Forum Patna is the youth wing of ISKCON Patna — a community of students and young professionals practising bhakti-yoga through kirtan, Bhagavad Gita study, seva and festivals.",
   metadataBase: new URL(ORG.siteUrl),
   manifest: "/manifest.webmanifest",
+  /*
+   * Meta's proof that iyfpatna.in belongs to the temple's Business Manager,
+   * without which the pixel cannot be used in a campaign.
+   *
+   * It lives in the layout's `metadata` rather than in a page, and rather than
+   * being appended by the pixel script, because Meta's crawler reads the HTML
+   * as served and rejects a tag that JavaScript put there. The Metadata API
+   * renders it server-side into <head> on every route under this layout, home
+   * page included, so it also survives someone verifying a different page
+   * later. Page-level `generateMetadata` merges field by field and none of
+   * them set `verification`, so nothing overrides this.
+   */
+  verification: {
+    other: { "facebook-domain-verification": META_DOMAIN_VERIFICATION },
+  },
 };
 
 export const viewport = {
@@ -168,6 +185,10 @@ export default async function LocaleLayout({ children, params }) {
             content
           )}
         </ThemeProvider>
+        {/* Outside ThemeProvider and Clerk: the pixel depends on neither, and
+            a layout this high up is the one place a client-side route change
+            can be noticed without the listener being remounted by it. */}
+        <MetaPixel />
       </body>
     </html>
   );

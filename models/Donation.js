@@ -71,8 +71,22 @@ const DonationSchema = new mongoose.Schema(
       attempts: { type: [mongoose.Schema.Types.Mixed], default: [] },
     },
 
+    /* Not the donor's data — the browser's. `userAgent` is kept for the same
+       reason a web server keeps one: telling a real donation from a scripted
+       one when a row looks wrong.
+
+       `fbp` and `fbc` are the Meta Pixel's own first-party cookies, copied
+       here when the form was submitted. They exist on this row because the
+       conversion is reported to Meta from the server, long after the browser
+       that held them may be gone (see `lib/analytics/meta-capi.js`) — `fbc`
+       in particular is the ad click itself, and without it a donation cannot
+       be attributed to the campaign that produced it. Both are Meta's
+       identifiers for a browser, not for a person, and neither is used for
+       anything on this site. */
     meta: {
       userAgent: { type: String },
+      fbp: { type: String },
+      fbc: { type: String },
     },
   },
   { timestamps: true },

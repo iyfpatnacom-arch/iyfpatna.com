@@ -70,6 +70,23 @@ function fail(status, error, headers) {
   return NextResponse.json({ ok: false, error }, { status, headers });
 }
 
+/**
+ * `_fbp` and `_fbc` as the Meta Pixel wrote them, if it wrote them.
+ *
+ * Read from the cookie header rather than taken from the request body: a
+ * browser cannot be asked to hand over its own ad attribution and be
+ * believed, and there is no need to ask. Capped in length because they are
+ * third-party strings on their way into our database.
+ */
+function fbCookies(request) {
+  const fbp = request.cookies.get("_fbp")?.value;
+  const fbc = request.cookies.get("_fbc")?.value;
+  return {
+    ...(fbp ? { fbp: fbp.slice(0, 200) } : {}),
+    ...(fbc ? { fbc: fbc.slice(0, 300) } : {}),
+  };
+}
+
 export async function POST(request) {
   /* Looser than enrolment's limit: a family giving from one phone on a
      festival evening is normal, and a donation cannot be "sold out" so there
@@ -124,6 +141,15 @@ export async function POST(request) {
       locale: data.locale,
       meta: {
         userAgent: request.headers.get("user-agent")?.slice(0, 300) || null,
+        /* The Meta Pixel's own cookies, taken here and nowhere else.
+           This request is the last same-site moment in a donation: the
+           gateway's callback arrives as a cross-site POST and the webhook
+           arrives from Razorpay's servers, so by the time the money is
+           confirmed — which is when the conversion is reported (see
+           `lib/analytics/meta-capi.js`) — no request carries them any more.
+           Absent when the pixel is blocked or the donor never came from an
+           ad, which is fine: the report is sent without them. */
+        ...fbCookies(request),
       },
     });
 

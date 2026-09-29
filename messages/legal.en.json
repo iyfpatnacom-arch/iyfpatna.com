@@ -17,7 +17,7 @@
         "heading": "Information we collect",
         "body": [
           "Information you give us: when you register for a program, course or festival, or create an account, we collect your name, email address, phone number and, where relevant to the activity, your college or city.",
-          "Information collected automatically: basic technical data such as your browser type, device type, approximate region and the pages you visit. This is used to keep the site working and secure, not to build a profile of you.",
+          "Information collected automatically: basic technical data such as your browser type, device type, approximate region and the pages you visit. We use this to keep the site working and secure, not to build a profile of you. Separately, the Meta Pixel described under \"Cookies and local storage\" below also records which pages you open here and reports that to Meta.",
           "We do not knowingly collect information from children under 13. We do not collect biometric or health information, and we never see or store your card, UPI or bank details."
         ]
       },
@@ -43,13 +43,16 @@
         "heading": "Cookies and local storage",
         "body": [
           "We use a small number of cookies and browser storage entries that are necessary for the site to work: your language preference (Hindi or English), your light or dark theme choice, and, if you sign in, a session cookie that keeps you signed in.",
-          "We do not use advertising cookies and we do not sell or share your data with advertisers."
+          "We also use the Meta Pixel, so that we can tell which of our Facebook and Instagram appeals actually lead to a seva offering, and so that the temple is not spending money advertising to people who have already given. It sets two cookies (_fbp and _fbc) that identify your browser to Meta, and it records which pages you open on this site and whether you completed a donation.",
+          "When a donation is completed we also report it to Meta from our own server, because a payment made in a UPI app often never returns to this website. That report contains the amount, the seva it was given towards and the receipt number, along with your name, email address, phone number and PIN code converted into an irreversible code (a hash). Meta uses the hashed details only to recognise whether you are someone who was shown one of our appeals; it cannot read the original values back from them. Your PAN and your postal address are never sent to Meta or to any other advertising service.",
+          "If you would rather not be measured this way, you can block advertising cookies in your browser settings, use any standard content blocker, or adjust your Meta ad preferences at facebook.com/adpreferences. Nothing on this site requires the pixel: every page, the seva list and the whole donation flow work exactly the same with it blocked.",
+          "We do not sell your data to advertisers, and we do not use any of it to advertise anything other than IYF Patna's own programs and seva appeals."
         ]
       },
       {
         "heading": "Service providers",
         "body": [
-          "We rely on a small number of trusted providers to run this site: a database host to store registrations, an authentication provider to manage sign-in, an email provider to send confirmation messages and receipts, and Razorpay to process course donations and seva offerings. These providers process data only on our instructions and only to deliver their part of the service.",
+          "We rely on a small number of trusted providers to run this site: a database host to store registrations, an authentication provider to manage sign-in, an email provider to send confirmation messages and receipts, Razorpay to process course donations and seva offerings, and Meta (Facebook and Instagram) to measure our own appeals as described under cookies above. These providers process data only on our instructions and only to deliver their part of the service.",
           "We do not sell your personal information to anyone."
         ]
       },

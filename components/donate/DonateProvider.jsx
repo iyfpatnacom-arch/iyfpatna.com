@@ -31,6 +31,7 @@ import {
   suggestedAmounts,
 } from "@/lib/donations/sevas";
 import { SEVA_LIST } from "@/lib/site-config";
+import { META_CURRENCY, trackMeta } from "@/lib/analytics/meta";
 import { startPayment } from "@/lib/payments/redirect";
 
 /**
@@ -117,6 +118,26 @@ export function DonateProvider({ open: openable = true, children }) {
    */
   const [session, setSession] = useState(null);
   const [open, setOpen] = useState(false);
+
+  /*
+   * The top of the donation funnel, reported once per visit to this page.
+   *
+   * It sits here rather than in the page because this provider is mounted
+   * only by /donate — it is the one client component that means "somebody is
+   * looking at the seva list" — and because the page itself must stay a
+   * server component.
+   *
+   * ViewContent is what Meta builds a retargeting audience from: someone who
+   * read the seva list and did not give is the single most worthwhile person
+   * to show the appeal to again.
+   */
+  useEffect(() => {
+    trackMeta("ViewContent", {
+      content_type: "product_group",
+      content_name: "seva-list",
+      content_category: "seva",
+    });
+  }, []);
 
   const openDonate = useCallback(
     (next = {}) => {
@@ -404,6 +425,31 @@ function DonateDialog({ session, open, onClose }) {
 
     remember(values);
     setStage("redirecting");
+
+    /*
+     * The middle of the funnel: an offering that now exists as a row, with a
+     * donor attached, about to be taken to the gateway.
+     *
+     * Fired here and not when the dialog opened, because opening the dialog is
+     * a tap and this is a decision — and because only now is there an order ID
+     * to name the event by. It is the number to watch against Purchase: the
+     * gap between the two is donors lost at the gateway, which is a thing the
+     * temple can actually fix.
+     */
+    trackMeta(
+      "InitiateCheckout",
+      {
+        value: amount,
+        currency: META_CURRENCY,
+        content_type: "product",
+        content_ids: [seva.slug],
+        content_name: seva.slug,
+        content_category: "seva",
+        num_items: 1,
+        order_id: result.orderId,
+      },
+      { eventId: result.orderId },
+    );
 
     if (result.next !== "payment") {
       window.location.assign(result.statusUrl);
