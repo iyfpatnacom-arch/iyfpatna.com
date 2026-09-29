@@ -61,6 +61,24 @@ const PROFILE_FIELDS = ["name", "phone", "email"];
 const DONOR_KEY = "iyf:donor-profile";
 const DONOR_FIELDS = ["address", "pan"];
 
+/**
+ * The query parameter that opens this form by itself: `/donate?give=1`.
+ *
+ * It exists for links that cannot click a button — a printed QR code on a
+ * hoarding or a prasadam counter, a WhatsApp forward, an ad. Scanning one
+ * lands on the donate page with the form already open, so the offering takes
+ * one tap instead of a scroll and a hunt.
+ *
+ * `give=1` means "whatever the page's own hero Donate would open" — during
+ * Pitru Paksha that is the three sevas of the fortnight (see the `sevas` prop
+ * below). `give=<seva-slug>` names a seva instead and opens on exactly that
+ * one, and `amount=<rupees>` prefills the amount. Both are validated against
+ * the published seva list before they are believed, so a mistyped or stale
+ * poster opens an ordinary donation form rather than an error.
+ */
+const GIVE_PARAM = "give";
+const AMOUNT_PARAM = "amount";
+
 const KNOWN_ERRORS = [
   "rate_limited",
   "invalid",
@@ -103,7 +121,11 @@ export function useDonate() {
   return value;
 }
 
-export function DonateProvider({ open: openable = true, children }) {
+export function DonateProvider({
+  open: openable = true,
+  sevas: linkSevas,
+  children,
+}) {
   /*
    * One session per press of a Donate button: the seva and amount it asked for,
    * plus an id that only counts up.
@@ -154,6 +176,60 @@ export function DonateProvider({ open: openable = true, children }) {
     },
     [openable],
   );
+
+  /*
+   * `/donate?give=1` — the QR code's entry point.
+   *
+   * Read from `window.location` in an effect rather than with
+   * `useSearchParams`, which would be the obvious hook and is the wrong one
+   * here: this provider wraps the entire donate page, so reading search params
+   * in it would drop the whole page out of the prerender (see the note on the
+   * Meta pixel, which sidesteps the same trap) and leave a blank screen until
+   * React had hydrated. The form cannot open before hydration anyway, so
+   * nothing is gained by knowing the URL any earlier.
+   *
+   * The parameters are stripped once used, so Back and Reload behave: a
+   * visitor who scanned the code, closed the form and refreshed gets the page,
+   * not the dialog again.
+   */
+  useEffect(() => {
+    if (!openable) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const give = params.get(GIVE_PARAM);
+    if (!give) return;
+
+    /* A named seva is a deliberate ask and overrides the page's shortlist —
+       a QR printed for gau seva must open on gau seva even in a fortnight the
+       hero has narrowed to three others. */
+    const named = getSeva(give);
+    const amount = Number(params.get(AMOUNT_PARAM));
+
+    params.delete(GIVE_PARAM);
+    params.delete(AMOUNT_PARAM);
+    const query = params.toString();
+    window.history.replaceState(
+      null,
+      "",
+      window.location.pathname +
+        (query ? `?${query}` : "") +
+        window.location.hash,
+    );
+
+    /* Deferred by a tick rather than opened in the effect body, the same way
+       the course checkout opens itself on `?enroll=1`: opening is a state
+       change and belongs after this render, not inside it. */
+    const timer = setTimeout(
+      () =>
+        openDonate({
+          sevaSlug: named?.slug,
+          amount: isValidAmount(amount) ? amount : undefined,
+          sevas: named ? undefined : linkSevas,
+        }),
+      0,
+    );
+    return () => clearTimeout(timer);
+  }, [openable, openDonate, linkSevas]);
 
   const value = useMemo(
     () => ({ openDonate, enabled: openable }),

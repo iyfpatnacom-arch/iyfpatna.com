@@ -163,7 +163,14 @@ export default async function DonatePage({ params }) {
   };
 
   return (
-    <DonateProvider open={donationsOpen}>
+    /* `sevas` is what `/donate?give=1` opens on — the QR code's landing, which
+       has no button to press and so cannot carry the choice itself. Same value
+       the hero's Donate below carries, and for the same reason: a code scanned
+       during Shraddha Paksha must offer the fortnight's sevas. */
+    <DonateProvider
+      open={donationsOpen}
+      sevas={pitru ? PITRU_SEVA_SLUGS : undefined}
+    >
       <div className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
         {/* ---------------------------------------------------------- hero */}
         <p className="text-xs font-semibold tracking-wider text-primary uppercase">
@@ -194,7 +201,13 @@ export default async function DonatePage({ params }) {
           </p>
         )}
 
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+        {/* `#give` so the CTA row is linkable from elsewhere on the site, the
+          way `#seva-list` already is. A QR code should point at `?give=1`
+          instead, which opens the form rather than merely scrolling to it. */}
+        <div
+          id="give"
+          className="mt-8 flex scroll-mt-24 flex-col gap-3 sm:flex-row sm:items-center"
+        >
           {/* During the fortnight this button opens the form on the three
             Pitru Paksha sevas and offers only those in its select — the hero
             above it has just asked for a seva in a forefather's name, and a
