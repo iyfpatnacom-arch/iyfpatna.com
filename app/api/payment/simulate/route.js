@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { paymentMode } from "@/lib/payments/razorpay";
+import { paymentMode } from "@/lib/payments/gateways";
 import { findPayable } from "@/lib/payments/payables";
 import { verifyOrderToken } from "@/lib/payments/order-link";
 import { recordPaymentOutcome } from "@/lib/payments/result";

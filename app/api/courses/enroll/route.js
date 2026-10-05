@@ -9,7 +9,7 @@ import { generateOrderId } from "@/lib/courses/enrollment";
 import { normalizePhone, PHONE_PATTERN } from "@/lib/courses/phone";
 import { applyCoupon, findUsableCoupon } from "@/lib/courses/coupons";
 import { orderStatusPath, orderToken } from "@/lib/payments/order-link";
-import { paymentMode } from "@/lib/payments/razorpay";
+import { paymentMode } from "@/lib/payments/gateways";
 import { recordPaymentOutcome } from "@/lib/payments/result";
 import { check, clientKey } from "@/lib/rate-limit";
 

@@ -36,7 +36,8 @@ import {
   isEnrollmentOpen,
   pricingOf,
 } from "@/lib/courses/catalog";
-import { paymentMode } from "@/lib/payments/razorpay";
+import { gatewayChoices, paymentMode } from "@/lib/payments/gateways";
+import { payableFor } from "@/lib/payments/payables";
 import { Panel } from "@/components/site/Panel";
 import { CourseNav } from "@/components/courses/CourseNav";
 import { HeroVideo } from "@/components/courses/HeroVideo";
@@ -203,6 +204,9 @@ export default async function CoursePage({ params }) {
       detail: L(mode.detail),
     })),
     paymentMode: paymentMode() ?? "none",
+    /* What the picker in the dialog offers, and in what order. Resolved on the
+       server so the browser cannot ask for a gateway this site does not run. */
+    gateways: gatewayChoices(payableFor("course").gateways),
   };
 
   const facts = [

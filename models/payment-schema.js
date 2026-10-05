@@ -21,11 +21,25 @@ export function paymentSchema() {
         enum: ["pending", "success", "failed", "aborted"],
         default: "pending",
       },
+      /* Which gateway actually took the money: "razorpay", "ccavenue", or
+         "simulated" on a dev machine. Free text, not an enum, because the row
+         records history — a payment taken through a gateway this site no
+         longer offers must still read back correctly. */
       provider: { type: String, default: "razorpay" },
       /* The Razorpay Order (order_…) and its amount in paise, reused across
-         retries so a second "pay now" can see an earlier payment landed. */
+         retries so a second "pay now" can see an earlier payment landed.
+         Razorpay only: CCAvenue has no order to create ahead of time, and
+         `initiate` checks these before opening either gateway so switching
+         between them cannot charge twice. */
       gatewayOrderId: { type: String, default: null },
       gatewayAmount: { type: Number, default: null },
+      /* Which billing page this row was last sent to. It is how a retry knows
+         whether to ask CCAvenue's Status API about the row before opening a
+         second billing page — CCAvenue will happily charge the same order
+         number twice, so without this a lost redirect becomes a double
+         charge. Not where the money came from: that is `provider`, written
+         when a payment is actually confirmed. */
+      lastGateway: { type: String, default: null },
       trackingId: { type: String, default: null },
       bankRefNo: { type: String, default: null },
       paymentMode: { type: String, default: null },

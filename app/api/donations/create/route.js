@@ -15,7 +15,7 @@ import { normalizePhone, PHONE_PATTERN } from "@/lib/courses/phone";
 import { extractPincode, hasPincode } from "@/lib/donations/address";
 import { generateOrderId } from "@/lib/payments/order-id";
 import { donationStatusPath, orderToken } from "@/lib/payments/order-link";
-import { paymentMode } from "@/lib/payments/razorpay";
+import { paymentMode } from "@/lib/payments/gateways";
 import { check, clientKey } from "@/lib/rate-limit";
 
 /**

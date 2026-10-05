@@ -17,7 +17,7 @@ import { getOptionalAuth } from "@/lib/auth-config";
 import Donation from "@/models/Donation";
 import { formatINR } from "@/lib/courses/catalog";
 import { DONATION_COMPLIANCE, ORG } from "@/lib/site-config";
-import { paymentMode } from "@/lib/payments/razorpay";
+import { paymentMode } from "@/lib/payments/gateways";
 import {
   orderToken,
   receiptPath,

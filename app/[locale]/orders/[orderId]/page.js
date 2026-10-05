@@ -6,7 +6,8 @@ import { dbConnect } from "@/lib/db/connect";
 import { getOptionalAuth } from "@/lib/auth-config";
 import Enrollment from "@/models/Enrollment";
 import { formatINR, getCourse, modeOf, whatsappGroupFor } from "@/lib/courses/catalog";
-import { paymentMode } from "@/lib/payments/razorpay";
+import { gatewayChoices, paymentMode } from "@/lib/payments/gateways";
+import { payableFor } from "@/lib/payments/payables";
 import { orderToken, receiptPath, verifyOrderToken } from "@/lib/payments/order-link";
 import { receiptFilename } from "@/lib/payments/receipt";
 import { passQrSvg } from "@/lib/courses/pass";
@@ -164,6 +165,7 @@ export default async function OrderPage({ params, searchParams }) {
                 <PayNowButton
                   orderId={orderId}
                   token={payToken}
+                  gateways={gatewayChoices(payableFor("course").gateways)}
                   label={status === "pending" ? t("pay_now", { price: amount }) : t("retry")}
                 />
               </div>

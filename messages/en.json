@@ -190,7 +190,7 @@
     "submit": "Pay {price} & reserve my seat",
     "submitting": "Saving your details…",
     "redirecting": "Opening secure payment…",
-    "secure_gateway": "Payments are processed securely by Razorpay — UPI, cards and net banking.",
+    "secure_gateway": "Payments are processed securely by Razorpay or CCAvenue. Your card and bank details never reach us.",
     "secure_test": "Test mode — no real money is charged on this machine.",
     "secure_offline": "Your seat is saved now; online payment opens shortly.",
     "terms": "By continuing you agree to our <terms>terms</terms>, <refund>refund policy</refund> and <privacy>privacy policy</privacy>.",
@@ -225,7 +225,27 @@
     "secure_free": "Your coupon covers the full amount — no payment needed.",
     "confirming": "Confirming your seat…",
     "free_title": "Seat confirmed",
-    "free_body": "Your coupon covered it. Downloading your receipt and entry pass."
+    "free_body": "Your coupon covered it. Downloading your receipt and entry pass.",
+    "gateway_title": "Choose how to pay",
+    "gateway_recommended": "Recommended",
+    "methods": {
+      "card": "Cards",
+      "netbanking": "Net banking",
+      "upi": "UPI",
+      "wallet": "Wallets"
+    },
+    "gateways": {
+      "razorpay": {
+        "name": "Razorpay",
+        "note": "Credit and debit cards, net banking and every UPI app — GPay, PhonePe, Paytm."
+      },
+      "ccavenue": {
+        "name": "CCAvenue",
+        "note": "Net banking and wallets only — no UPI and no cards. Use it if your bank fails on Razorpay."
+      }
+    },
+    "gateway_description": "Your seat is saved. Pick the option you want to pay with.",
+    "gateway_saved": "Your seat is held either way — if you close this, you can finish paying from your order page."
   },
   "order": {
     "success_title": "You're in, {name}!",

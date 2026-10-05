@@ -18,6 +18,7 @@ import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { normalizePhone, PHONE_PATTERN } from "@/lib/courses/phone";
 import { startPayment } from "@/lib/payments/redirect";
+import { GatewayOptions } from "@/components/payments/GatewayChoice";
 
 /**
  * Enrolment for a paid course: every "Register" button on the landing page,
@@ -197,11 +198,20 @@ export function StickyEnrollBar({ watchId = "enroll-hero-cta" }) {
 function CheckoutDialog({ open, onOpenChange, checkout, clerkConfigured }) {
   const t = useTranslations("checkout");
   const locale = useLocale();
-  // form → submitting (saving the order) → redirecting (leaving for payment)
+  /* form → submitting (saving the order) → redirecting (leaving for
+     payment), with a detour through `choosing` → `paying` when there is more
+     than one gateway to pay through. */
   const [stage, setStage] = useState("form");
   const [error, setError] = useState(null);
   // A code the server has checked: { code, percentOff, amount }.
   const [coupon, setCoupon] = useState(null);
+  /* The saved-but-unpaid order, while the gateway question is on screen:
+     { orderId, token, statusUrl }. */
+  const [pending, setPending] = useState(null);
+
+  /* More than one way to pay means the question is worth asking; one means it
+     is not, and the single gateway is simply used. */
+  const choice = checkout.gateways.length > 1 ? checkout.gateways : null;
 
   const {
     register,
@@ -262,6 +272,13 @@ function CheckoutDialog({ open, onOpenChange, checkout, clerkConfigured }) {
   function handleOpenChange(next) {
     // Never let the dialog be dismissed while the browser is leaving for the
     // gateway — a half-closed form over a navigating page is worse than a wait.
+    if (!next && stage === "choosing" && pending) {
+      /* Walking away from the gateway question leaves a saved, unpaid seat.
+         Their order page is the one place that says so and can finish it, so
+         they go there rather than back to the course with nothing. */
+      window.location.assign(pending.statusUrl);
+      return;
+    }
     if (!next && stage !== "form") return;
     onOpenChange(next);
   }
@@ -329,13 +346,40 @@ function CheckoutDialog({ open, onOpenChange, checkout, clerkConfigured }) {
       return;
     }
 
-    const payment = await startPayment({ orderId: result.orderId, token: result.token, lang: locale });
-    if (!payment.ok) {
-      setStage("form");
-      // Closing the checkout is a choice, not an error; the seat stays saved.
-      if (!payment.cancelled) {
-        setError(KNOWN_ERRORS.includes(payment.error) ? payment.error : "generic");
-      }
+    const order = {
+      orderId: result.orderId,
+      token: result.token,
+      statusUrl: result.statusUrl,
+    };
+
+    /* The seat is saved by now, so asking which gateway here costs nothing if
+       they walk away — and asking before the order exists would mean choosing
+       a gateway for a payment that might never be created. */
+    if (choice) {
+      setPending(order);
+      setStage("choosing");
+      return;
+    }
+
+    await pay(order, checkout.gateways[0]?.id);
+  }
+
+  /** Opens the gateway and keeps the dialog busy while the browser leaves. */
+  async function pay(order, gateway) {
+    setStage("paying");
+    const payment = await startPayment({
+      orderId: order.orderId,
+      token: order.token,
+      lang: locale,
+      gateway,
+    });
+    if (payment.ok) return;
+
+    // Closing the gateway is a choice, not an error; the seat stays saved, so
+    // a second attempt goes back to the question rather than the form.
+    setStage(choice ? "choosing" : "form");
+    if (!payment.cancelled) {
+      setError(KNOWN_ERRORS.includes(payment.error) ? payment.error : "generic");
     }
   }
 
@@ -347,11 +391,53 @@ function CheckoutDialog({ open, onOpenChange, checkout, clerkConfigured }) {
 
   const secureLine = free
     ? t("secure_free")
-    : checkout.paymentMode === "razorpay"
+    : checkout.paymentMode === "live"
       ? t("secure_gateway")
       : checkout.paymentMode === "simulate"
         ? t("secure_test")
         : t("secure_offline");
+
+  /* The gateway question takes over the dialog rather than opening a second
+     one on top of it: one surface, one question at a time. */
+  const choosing = stage === "choosing" || (stage === "paying" && Boolean(pending));
+
+  if (choosing) {
+    return (
+      <Modal
+        open={open}
+        onOpenChange={handleOpenChange}
+        title={t("gateway_title")}
+        description={t("gateway_description")}
+        className="max-h-[92dvh] max-w-[calc(100%-2rem)] overflow-y-auto sm:max-w-md"
+      >
+        <div className="flex flex-col gap-4 pt-1">
+          {error && (
+            <p role="alert" className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
+              {t(`errors.${error}`)}
+            </p>
+          )}
+
+          <GatewayOptions
+            gateways={checkout.gateways}
+            onPick={(id) => pay(pending, id)}
+            disabled={stage === "paying"}
+          />
+
+          {stage === "paying" ? (
+            <p className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+              <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
+              {t("redirecting")}
+            </p>
+          ) : (
+            <p className="flex items-start gap-1.5 text-xs leading-relaxed text-muted-foreground">
+              <ShieldCheck className="mt-0.5 size-3.5 shrink-0 text-primary" aria-hidden="true" />
+              {t("gateway_saved")}
+            </p>
+          )}
+        </div>
+      </Modal>
+    );
+  }
 
   return (
     <Modal

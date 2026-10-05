@@ -7,7 +7,7 @@
  *   node scripts/sync-env.mjs                    # merge .env.local, restart
  *   node scripts/sync-env.mjs --only CLERK_SECRET_KEY,MONGODB_URI
  *   node scripts/sync-env.mjs --only RAZORPAY_KEY_ID,RAZORPAY_KEY_SECRET,RAZORPAY_WEBHOOK_SECRET
- *   node scripts/sync-env.mjs --unset CCAVENUE_MERCHANT_ID
+ *   node scripts/sync-env.mjs --only CCAVENUE_MERCHANT_ID,CCAVENUE_ACCESS_CODE,CCAVENUE_WORKING_KEY,CCAVENUE_ENV
  *   node scripts/sync-env.mjs --unset SOME_KEY
  *   node scripts/sync-env.mjs --list             # key names on the server
  *
@@ -116,6 +116,13 @@ for (const k of removed) console.log(`remove ${k}`);
 const razorpayKey = updates.get("RAZORPAY_KEY_ID") ?? remote.get("RAZORPAY_KEY_ID");
 if (razorpayKey) {
   console.log(`\nRazorpay will run in ${razorpayKey.startsWith("rzp_live_") ? "LIVE" : "test"} mode.`);
+}
+// CCAvenue's credentials carry no such tell: test and production are different
+// hosts, picked by CCAVENUE_ENV, and anything but "production" means test.
+const ccavenueId = updates.get("CCAVENUE_MERCHANT_ID") ?? remote.get("CCAVENUE_MERCHANT_ID");
+if (ccavenueId) {
+  const env = updates.get("CCAVENUE_ENV") ?? remote.get("CCAVENUE_ENV");
+  console.log(`CCAvenue will run in ${env === "production" ? "PRODUCTION" : "test"} mode.`);
 }
 if (!changed.length && !removed.length) {
   console.log("Nothing to change.");
