@@ -4,6 +4,7 @@ import {
   ArrowRight,
   BookOpen,
   Flag,
+  HandCoins,
   ImageUp,
   Link2,
   QrCode,
@@ -29,6 +30,7 @@ import { Panel } from "@/components/site/Panel";
 export const dynamic = "force-dynamic";
 
 const SECTIONS = [
+  { key: "donations", href: "/admin/donations", Icon: HandCoins },
   { key: "registrations", href: "/admin/registrations", Icon: Users },
   { key: "marathon", href: "/admin/gita-marathon", Icon: BookOpen },
   { key: "coupons", href: "/admin/coupons", Icon: TicketPercent },
