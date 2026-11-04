@@ -16,6 +16,7 @@ import { dbConnect } from "@/lib/db/connect";
 import { getOptionalAuth } from "@/lib/auth-config";
 import Donation from "@/models/Donation";
 import { formatINR } from "@/lib/courses/catalog";
+import { GITA_MARATHON_SEVA_SLUG, gitasFor } from "@/lib/donations/sevas";
 import { DONATION_COMPLIANCE, ORG } from "@/lib/site-config";
 import { paymentMode } from "@/lib/payments/gateways";
 import {
@@ -113,6 +114,14 @@ export default async function DonationPage({ params, searchParams }) {
   const sevaTitle =
     donation.sevaTitle?.[locale] || donation.sevaTitle?.en || donation.sevaSlug;
   const amount = formatINR(donation.amount);
+
+  /* A marathon sponsorship is a number of books before it is an amount, and
+     the acknowledgement says so — so this screen says so too, off the same
+     `gitasFor` the receipt uses. */
+  const gitas =
+    donation.sevaSlug === GITA_MARATHON_SEVA_SLUG
+      ? gitasFor(donation.amount)
+      : null;
 
   const copy = {
     success: [
@@ -241,6 +250,7 @@ export default async function DonationPage({ params, searchParams }) {
             <dl>
               <Row label={t("receipt_no")} value={donation.orderId} mono />
               <Row label={t("seva")} value={sevaTitle} />
+              <Row label={t("gitas")} value={gitas} />
               <Row label={t("donor")} value={donation.name} />
               <Row
                 label={

@@ -190,6 +190,38 @@
   --sidebar-ring: var(--brand-gold);
 }
 
+/* ------------------------------------------------- data visualisation ------
+   The two series the Gita Marathon charts plot against each other: cash
+   collected by hand, and money taken online.
+
+   Separate tokens from --chart-1..5 above, which are the shadcn defaults
+   re-pointed at the brand's gold and purple. Those are fine as decorative
+   accents and are the wrong thing here for two measurable reasons: brand gold
+   and brand purple are not far enough apart under simulated protanopia or
+   deuteranopia to be told apart by a colour-blind reader, and in dark mode
+   both sit outside the lightness band a mark needs to hold its weight against
+   the dark surface.
+
+   These four were chosen by running the palette through the OKLab checks —
+   lightness band, chroma floor, CVD separation, normal-vision separation and
+   WCAG contrast against the actual chart surface (#ffffff light, the card over
+   --brand-ink in dark) — and are the nearest passing steps to the brand's own
+   gold and a complementary blue. Dark mode is its own pair, stepped for the
+   dark surface rather than flipped: the light values fail the band outright.
+
+   Worst adjacent pair: ΔE 30.5 light, 24.5 dark under protanopia. The legend
+   and the per-bar tooltip carry identity as well, so colour is never the only
+   channel either way. */
+:root {
+  --viz-cash: #b4640c;
+  --viz-online: #1f6feb;
+}
+
+.dark {
+  --viz-cash: #c87f22;
+  --viz-online: #5296dd;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

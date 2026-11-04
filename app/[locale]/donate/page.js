@@ -25,7 +25,11 @@ import { SevaCard } from "@/components/donate/SevaCard";
 import { PitruPaksha } from "@/components/donate/PitruPaksha";
 import { IkImage } from "@/components/media/IkImage";
 import { istDayKey, pitruPaksha } from "@/lib/panchang";
-import { PITRU_SEVA_KEYS, PITRU_SEVA_SLUGS } from "@/lib/donations/sevas";
+import {
+  PITRU_SEVA_KEYS,
+  PITRU_SEVA_SLUGS,
+  isSevaInSeason,
+} from "@/lib/donations/sevas";
 import { routing } from "@/i18n/routing";
 import { Link } from "@/i18n/navigation";
 import { getFlag } from "@/lib/flags";
@@ -127,21 +131,29 @@ export default async function DonatePage({ params }) {
    * year. `null` outside it, and every seasonal branch below reads as
    * "ordinary donate page" in that case.
    */
-  const pitru = pitruPaksha(istDayKey());
+  const today = istDayKey();
+  const pitru = pitruPaksha(today);
 
   /* The hero says the same three things either way; only which copy it
      reaches for changes. */
   const heroKey = (key) => (pitru ? `pitru.hero_${key}` : key);
 
+  /* A seva pointed at a dated drive — the Gita Marathon is the first — is
+     listed here only while that drive is running. Its own page stays up
+     either way; what this grid must not do is keep asking, in the temple's
+     name, for something the temple has finished organising. The hourly
+     `revalidate` above is what keeps `today` honest. */
+  const inSeason = SEVA_LIST.filter((seva) => isSevaInSeason(seva, today));
+
   /* Stable sort, so everything outside `PITRU_FIRST` keeps the published
      order and the lifted sevas keep theirs relative to each other. */
   const sevaList = pitru
-    ? [...SEVA_LIST].sort(
+    ? [...inSeason].sort(
         (a, b) =>
           Number(PITRU_SEVA_KEYS.includes(b.key)) -
           Number(PITRU_SEVA_KEYS.includes(a.key)),
       )
-    : SEVA_LIST;
+    : inSeason;
 
   const mapsHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
     ORG.address,
@@ -149,11 +161,10 @@ export default async function DonatePage({ params }) {
 
   // A dated seva keeps its date badge only while the festival is still ahead
   // of us; afterwards the card stays, minus the stale date.
-  const today = new Date();
   const dateLabelFor = (seva) => {
     if (!seva.date) return null;
+    if (seva.date < today) return null;
     const date = new Date(`${seva.date}T00:00:00`);
-    if (date < today) return null;
     return format.dateTime(date, {
       weekday: "long",
       day: "numeric",

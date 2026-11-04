@@ -37,6 +37,14 @@ const PAGES = [
   "/hi/gallery",
   "/en/schedule",
   "/en/donate",
+  // The Gita Marathon, both halves of it: the sponsorship page money arrives
+  // through, and the volunteer door that is shared in WhatsApp groups. Both
+  // render with no database — the flag read and the volunteer lookup behind
+  // them each fall back rather than throw.
+  "/en/donate/gita-marathon",
+  "/hi/donate/gita-marathon",
+  "/en/activity/gita-marathon",
+  "/hi/activity/gita-marathon",
   "/en/privacy",
   "/en/terms",
   "/en/refund",

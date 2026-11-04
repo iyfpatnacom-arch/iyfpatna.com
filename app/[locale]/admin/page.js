@@ -1,6 +1,15 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { ArrowRight, Flag, ImageUp, Link2, QrCode, TicketPercent, Users } from "lucide-react";
+import {
+  ArrowRight,
+  BookOpen,
+  Flag,
+  ImageUp,
+  Link2,
+  QrCode,
+  TicketPercent,
+  Users,
+} from "lucide-react";
 import {
   clerkConfigured,
   getAdminUser,
@@ -21,6 +30,7 @@ export const dynamic = "force-dynamic";
 
 const SECTIONS = [
   { key: "registrations", href: "/admin/registrations", Icon: Users },
+  { key: "marathon", href: "/admin/gita-marathon", Icon: BookOpen },
   { key: "coupons", href: "/admin/coupons", Icon: TicketPercent },
   { key: "darshan", href: "/admin/darshan", Icon: ImageUp },
   { key: "settings", href: "/admin/settings", Icon: Link2 },
