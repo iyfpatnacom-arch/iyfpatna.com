@@ -51,7 +51,7 @@
   "events": [
     {
       "key": "quiz",
-      "amount": 101,
+      "amount": 1,
       "date": "2026-12-19",
       "title": { "en": "Bhagavad Gita Quiz", "hi": "भगवद्गीता क्विज़" },
       "tagline": { "en": "Online · cash prizes", "hi": "ऑनलाइन · नकद पुरस्कार" },
@@ -65,7 +65,7 @@
     },
     {
       "key": "mahotsav",
-      "amount": 101,
+      "amount": 1,
       "date": null,
       "title": { "en": "Gita Mahotsav", "hi": "गीता महोत्सव" },
       "tagline": { "en": "At ISKCON Patna", "hi": "इस्कॉन पटना में" },
