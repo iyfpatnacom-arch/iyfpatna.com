@@ -517,33 +517,44 @@
   }
 }
 
-/* Yatra promo modal.
+/* Promo modals — the yatra's and the Gita Mahotsav's.
    The countdown bar's animation is the dialog's auto-close timer: it drains
-   once and `animationend` shuts the dialog. The shimmer sweeps the booking
-   button every few seconds so the eye keeps landing on it. */
-@keyframes yatraCountdown {
+   once and `animationend` shuts the dialog. The shimmer sweeps the call to
+   action every few seconds so the eye keeps landing on it.
+
+   The keyframes are shared and the per-promo classes differ only in how long
+   the bar takes to drain — the Gita card carries three figures to read where
+   the yatra's carries a one-line offer, so it is given two seconds more. */
+@keyframes promoCountdown {
   from { transform: scaleX(1); }
   to { transform: scaleX(0); }
 }
 
-@keyframes yatraShimmer {
+@keyframes promoShimmer {
   0% { transform: translateX(0) skewX(-20deg); }
   60%, 100% { transform: translateX(450%) skewX(-20deg); }
 }
 
 .yatra-countdown {
-  animation: yatraCountdown 10s linear forwards;
+  animation: promoCountdown 10s linear forwards;
 }
 
-.yatra-shimmer {
-  animation: yatraShimmer 3.2s ease-in-out 0.8s infinite;
+.gita-countdown {
+  animation: promoCountdown 12s linear forwards;
+}
+
+.yatra-shimmer,
+.gita-shimmer {
+  animation: promoShimmer 3.2s ease-in-out 0.8s infinite;
 }
 
 /* No self-closing and no sweep under reduced motion: the bar stays full and
    the dialog waits to be dismissed. */
 @media (prefers-reduced-motion: reduce) {
   .yatra-countdown,
-  .yatra-shimmer {
+  .gita-countdown,
+  .yatra-shimmer,
+  .gita-shimmer {
     animation: none;
   }
 }

@@ -65,6 +65,10 @@ const readMotion = () => window.matchMedia(MOTION_QUERY).matches;
 export function GitaCarousel({
   slides,
   className,
+  /* What this region is called. Defaulted rather than required, but a page
+     holding two of these must name them apart: a reader jumping between
+     landmarks has nothing else to tell one from the other. */
+  label,
   fit = "auto",
   frameClassName,
   dotsClassName,
@@ -176,7 +180,7 @@ export function GitaCarousel({
            widget semantics over a scroll container helps nobody. */
         role="region"
         aria-roledescription="carousel"
-        aria-label={t("carousel_label")}
+        aria-label={label || t("carousel_label")}
         tabIndex={0}
         onKeyDown={(event) => {
           if (event.key === "ArrowRight") {

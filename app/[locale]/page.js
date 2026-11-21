@@ -5,6 +5,7 @@ import { WhatsappJoin } from "@/components/home/WhatsappJoin";
 import { YatraCallout } from "@/components/home/YatraCallout";
 import { ParentOrg } from "@/components/home/ParentOrg";
 import { JoinCta } from "@/components/home/JoinCta";
+import { GitaPromo } from "@/components/gita/GitaPromo";
 import { routing } from "@/i18n/routing";
 import { ORG } from "@/lib/site-config";
 import { getWhatsappGroupUrl } from "@/lib/settings";
@@ -56,6 +57,14 @@ export default async function HomePage({ params }) {
       <YatraCallout />
       <ParentOrg />
       <JoinCta />
+
+      {/* The Gita Mahotsav popup, a moment after the page paints and once a
+          session until the quiz day. It lives on this page rather than in the
+          layout because the homepage is the only place it should interrupt
+          anybody: somebody who navigated to Donate or Courses has already
+          chosen what they came for. It reads the festival JSON and nothing
+          else, so it costs this page none of its prerendering. */}
+      <GitaPromo locale={locale} />
     </>
   );
 }

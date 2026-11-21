@@ -138,6 +138,12 @@ export default async function GitaMahotsavPage({ params }) {
      live text (see GitaStage) and two sets of lettering in one frame is one
      too many. */
   const gallery = localise(festival.gallery);
+
+  /* The two information banners — the festival's programme and the quiz's
+     prizes, drawn into the artwork. They are the one place the phone gets
+     the programme at all: the events block and the highlights are desktop
+     only, and the stage above them has room for three figures and no more. */
+  const infoGallery = localise(festival.infoGallery);
   const poster = {
     src: festival.poster.src,
     width: festival.poster.width,
@@ -328,6 +334,32 @@ export default async function GitaMahotsavPage({ params }) {
             <PrizePodium prizes={prizes} note={t("prizes_note")} />
           </div>
         </section>
+
+        {/* ------------------------------------------------ the banners
+            Shown at every width, and both are 16:9, so the frame can take
+            the picture's own height without the page jumping by half a
+            screen each time it advances — which is why this one is not the
+            hero's fixed window. */}
+        {infoGallery.length > 0 && (
+          <section className="pb-12 sm:pb-16" aria-labelledby="gita-info">
+            <h2
+              id="gita-info"
+              className="text-center text-2xl font-semibold tracking-tight sm:text-3xl"
+            >
+              {t("info_title")}
+            </h2>
+            <p className="mx-auto mt-2 max-w-xl text-center text-sm leading-relaxed text-muted-foreground">
+              {t("info_body")}
+            </p>
+
+            <GitaCarousel
+              slides={infoGallery}
+              label={t("info_carousel_label")}
+              className="mx-auto mt-8 max-w-3xl"
+              sizes="(min-width: 1024px) 768px, 100vw"
+            />
+          </section>
+        )}
 
         {/* -------------------------------------------------- the two events
             Desktop only: on a phone the poster names both of them and the

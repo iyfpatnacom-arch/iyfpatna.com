@@ -10,7 +10,7 @@
     "en": "One registration for two celebrations: an online Bhagavad Gita Quiz with cash prizes, and the Gita Mahotsav at the temple. Pick one, or take both at a combined fee.",
     "hi": "दो उत्सव, एक रजिस्ट्रेशन: नकद पुरस्कारों वाली ऑनलाइन भगवद्गीता क्विज़, और मंदिर में गीता महोत्सव। एक चुनें, या दोनों को एक साथ कम शुल्क में लें।"
   },
-  "helpline": "9031054013",
+  "helpline": "9031683002",
   "venue": { "en": "ISKCON Patna", "hi": "इस्कॉन पटना" },
 
   "gallery": [
@@ -34,6 +34,26 @@
     }
   ],
 
+  "infoGallery": [
+    {
+      "src": "https://ik.imagekit.io/mnkh9j9dw/gita-mahotsav/WhatsApp%20Image%202026-11-21%20at%2019.46.25.jpeg",
+      "width": 1280,
+      "height": 720,
+      "alt": {
+        "en": "Gita Mahotsav Grand Festival banner: welcome kirtan, lamp lighting, enlightening lectures, debate, prize distribution, prasadam and many more events. 20 December, 3 PM onwards, at ISKCON Patna, Buddha Marg.",
+        "hi": "गीता महोत्सव बैनर: स्वागत कीर्तन, दीप प्रज्वलन, ज्ञानवर्धक प्रवचन, वाद-विवाद, पुरस्कार वितरण, प्रसादम और कई कार्यक्रम। 20 दिसंबर, दोपहर 3 बजे से, इस्कॉन पटना, बुद्ध मार्ग।"
+      }
+    },
+    {
+      "src": "https://ik.imagekit.io/mnkh9j9dw/gita-mahotsav/WhatsApp%20Image%202026-11-21%20at%2019.46.27.jpeg",
+      "width": 1280,
+      "height": 720,
+      "alt": {
+        "en": "Gita Jayanti Quiz Competition banner: cash prizes of ₹11,000, ₹5,100 and ₹2,100 for the first three places. Quiz on 19 December, held online.",
+        "hi": "गीता जयंती क्विज़ प्रतियोगिता बैनर: पहले तीन स्थानों के लिए ₹11,000, ₹5,100 और ₹2,100 के नकद पुरस्कार। क्विज़ 19 दिसंबर को, ऑनलाइन।"
+      }
+    }
+  ],
   "poster": {
     "src": "https://ik.imagekit.io/mnkh9j9dw/gita-mahotsav/WhatsApp%20Image%202026-11-21%20at%2012.37.00.jpeg",
     "width": 1102,

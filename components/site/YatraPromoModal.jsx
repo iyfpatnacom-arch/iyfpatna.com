@@ -14,6 +14,7 @@ import {
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 import { IkImage } from "@/components/media/IkImage";
 import { usePathname } from "@/i18n/navigation";
+import { gitaPromoIsLive } from "@/lib/gita-event/promo";
 import {
   HERO_IMAGE,
   YATRA_DEPARTURE,
@@ -83,6 +84,12 @@ export function YatraPromoModal() {
 
   useEffect(() => {
     if (!YATRA_ENABLED || quiet) return;
+    /* The homepage belongs to the Gita Mahotsav popup while that festival is
+       still ahead of us. Two promos over one page view is one promo nobody
+       reads, and the one with a deadline wins. Checked here rather than added
+       to QUIET_PATHS because those are matched with `startsWith`, and "/"
+       starts every path on the site. */
+    if (pathname === "/" && gitaPromoIsLive()) return;
     // Someone arriving on the WhatsApp deep link is already leaving for the
     // group; do not stack a promo on top of that.
     if (window.location.hash) return;
@@ -98,7 +105,7 @@ export function YatraPromoModal() {
       } catch {}
     }, OPEN_DELAY_MS);
     return () => clearTimeout(timer);
-  }, [quiet]);
+  }, [quiet, pathname]);
 
   if (!YATRA_ENABLED) return null;
 
