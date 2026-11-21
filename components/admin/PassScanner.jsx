@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Camera, CameraOff, Keyboard } from "lucide-react";
+import { CalendarCheck, Camera, CameraOff, Keyboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Panel } from "@/components/site/Panel";
@@ -22,6 +22,13 @@ import { admitByOrderId, admitPass } from "@/app/[locale]/admin/registrations/ac
  * The camera never stops between people. Each code is ignored for a few
  * seconds after it is read, so a pass held in front of the lens is admitted
  * once rather than every frame.
+ *
+ * One scanner for every kind of pass. A course seat and a Gita festival
+ * registration carry the same QR and are admitted by the same action, which
+ * sends each to its own register. The `events` picker above the camera exists
+ * only for the festival: a pass bought at the combined fee opens two doors, and
+ * a volunteer standing at one of them says which once, at the top of their
+ * shift, instead of answering a question for every person in the queue.
  */
 
 const SCAN_EVERY_MS = 250;
@@ -65,9 +72,19 @@ function feedback(status) {
   }
 }
 
-export function PassScanner() {
+/**
+ * `events` is `[{ key, label }]` — the festival's events, for the door picker.
+ * Empty (or absent) hides the picker entirely, which is what every other
+ * scanning screen on the site wants.
+ */
+export function PassScanner({ events = [] }) {
   const t = useTranslations("admin");
   const locale = useLocale();
+
+  /* "" means "work it out": one-event passes resolve themselves and a
+     two-event pass is asked about on screen. A volunteer who picks an event
+     here is answering that question in advance for their whole queue. */
+  const [eventKey, setEventKey] = useState("");
 
   const videoRef = useRef(null);
   const streamRef = useRef(null);
@@ -108,14 +125,14 @@ export function PassScanner() {
 
       workingRef.current = true;
       try {
-        report(await admitPass(pass.orderId, pass.token, locale));
+        report(await admitPass(pass.orderId, pass.token, locale, eventKey || null));
       } catch {
         report({ status: "invalid" });
       } finally {
         workingRef.current = false;
       }
     },
-    [locale, report]
+    [locale, report, eventKey]
   );
 
   const stop = useCallback(() => {
@@ -174,8 +191,28 @@ export function PassScanner() {
     if (!value) return;
     setSubmitting(true);
     try {
-      report(await admitByOrderId(value, locale));
+      report(await admitByOrderId(value, locale, eventKey || null));
       setTyped("");
+    } catch {
+      report({ status: "invalid" });
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  /**
+   * The volunteer tapping one of the two event buttons on the result card.
+   *
+   * It re-sends the same admission with the event named rather than storing the
+   * answer: the next person in the queue may hold a one-event pass, and a
+   * remembered choice would quietly start marking the wrong register.
+   */
+  async function pickEvent(chosen) {
+    const person = result?.person;
+    if (!person?.orderId) return;
+    setSubmitting(true);
+    try {
+      report(await admitByOrderId(person.orderId, locale, chosen));
     } catch {
       report({ status: "invalid" });
     } finally {
@@ -186,6 +223,37 @@ export function PassScanner() {
   return (
     <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start">
       <div className="flex flex-col gap-5">
+        {events.length > 1 && (
+          <Panel className="p-4">
+            <fieldset>
+              <legend className="flex items-center gap-2 text-sm font-medium text-foreground">
+                <CalendarCheck className="size-4 text-muted-foreground" aria-hidden="true" />
+                {t("scan_event_label")}
+              </legend>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                {t("scan_event_hint")}
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {[{ key: "", label: t("scan_event_auto") }, ...events].map((option) => (
+                  <label
+                    key={option.key || "auto"}
+                    className="cursor-pointer rounded-full border border-border px-3.5 py-2 text-sm font-medium transition-colors has-checked:border-primary has-checked:bg-primary/10 has-checked:text-primary has-focus-visible:ring-3 has-focus-visible:ring-ring/50"
+                  >
+                    <input
+                      type="radio"
+                      name="scan-event"
+                      value={option.key}
+                      checked={eventKey === option.key}
+                      onChange={() => setEventKey(option.key)}
+                      className="sr-only"
+                    />
+                    {option.label}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+          </Panel>
+        )}
         <Panel className="overflow-hidden p-0">
           <div className="relative aspect-square w-full bg-black sm:aspect-[4/3]">
             <video
@@ -258,7 +326,7 @@ export function PassScanner() {
 
       <div className="lg:sticky lg:top-24">
         {result ? (
-          <AdmitResult result={result} />
+          <AdmitResult result={result} onPickEvent={pickEvent} busy={submitting} />
         ) : (
           <Panel className="p-8 text-center text-sm text-muted-foreground">{t("scan_waiting")}</Panel>
         )}

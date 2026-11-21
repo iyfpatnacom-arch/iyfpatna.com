@@ -18,7 +18,6 @@ import { clerkConfigured, getSignedInUser } from "@/lib/auth-config";
 import { getFlag } from "@/lib/flags";
 import { GITA_BOOKS } from "@/lib/marathon/books";
 import { getVolunteerStanding } from "@/lib/marathon/volunteers";
-import { GITA_MARATHON } from "@/lib/site-config";
 
 /**
  * /activity/gita-marathon — the door into the marathon, whoever opens it.
@@ -326,7 +325,7 @@ export default async function MarathonPage({ params, searchParams }) {
               {t("sponsor_title")}
             </h2>
             <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
-              {t("sponsor_body", { price: GITA_MARATHON.bookPrice })}
+              {t("sponsor_body")}
             </p>
           </div>
           <Button

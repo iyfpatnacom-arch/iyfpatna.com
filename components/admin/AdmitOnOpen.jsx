@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
 import { Panel } from "@/components/site/Panel";
@@ -18,12 +18,17 @@ import { admitPass } from "@/app/[locale]/admin/registrations/actions";
  *
  * The ref keeps React's development double-mount from sending a second
  * request, which would show "already admitted" for someone just let in.
+ *
+ * The one case that needs a second tap is a festival pass good for two events
+ * on a day that is neither event's date: the register comes back asking which,
+ * and the answer is sent through the same action with the event named.
  */
 export function AdmitOnOpen({ orderId, token }) {
   const t = useTranslations("admin");
   const locale = useLocale();
   const sent = useRef(false);
   const [result, setResult] = useState(null);
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     if (sent.current) return;
@@ -32,6 +37,20 @@ export function AdmitOnOpen({ orderId, token }) {
       .then(setResult)
       .catch(() => setResult({ status: "invalid" }));
   }, [orderId, token, locale]);
+
+  const pickEvent = useCallback(
+    async (eventKey) => {
+      setBusy(true);
+      try {
+        setResult(await admitPass(orderId, token, locale, eventKey));
+      } catch {
+        setResult({ status: "invalid" });
+      } finally {
+        setBusy(false);
+      }
+    },
+    [orderId, token, locale],
+  );
 
   if (!result) {
     return (
@@ -42,5 +61,5 @@ export function AdmitOnOpen({ orderId, token }) {
     );
   }
 
-  return <AdmitResult result={result} />;
+  return <AdmitResult result={result} onPickEvent={pickEvent} busy={busy} />;
 }

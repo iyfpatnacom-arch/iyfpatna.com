@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { CircleAlert, CircleCheck, CircleX, History } from "lucide-react";
+import { CircleAlert, CircleCheck, CircleX, History, LoaderCircle, SplitSquareVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -10,6 +10,12 @@ import { cn } from "@/lib/utils";
  * One colour, one icon and one word per outcome — green to let them in, amber
  * when the pass was already used today, red otherwise — with the person's name
  * under it so the volunteer can check it against the face in front of them.
+ *
+ * One outcome is a question rather than a verdict. A Gita festival pass bought
+ * at the combined fee is good for two events, and on any day that is not one of
+ * their dates nothing can tell which queue the holder is standing in. Rather
+ * than guess and put a wrong number in the register, the screen asks — two
+ * buttons, in the same place the verdict would have been.
  */
 
 const VIEW = {
@@ -19,6 +25,14 @@ const VIEW = {
   },
   already: {
     Icon: History,
+    className: "border-amber-600/40 bg-amber-500/12 text-amber-800 dark:text-amber-300",
+  },
+  choose_event: {
+    Icon: SplitSquareVertical,
+    className: "border-primary/45 bg-primary/10 text-foreground",
+  },
+  wrong_event: {
+    Icon: CircleAlert,
     className: "border-amber-600/40 bg-amber-500/12 text-amber-800 dark:text-amber-300",
   },
   unpaid: {
@@ -35,7 +49,12 @@ const VIEW = {
   },
 };
 
-export function AdmitResult({ result, className }) {
+/**
+ * `onPickEvent(eventKey)` is called when the volunteer answers the question. It
+ * is optional: without it the options are still listed, so a screen that cannot
+ * act on the choice at least tells the volunteer what the pass covers.
+ */
+export function AdmitResult({ result, className, onPickEvent, busy = false }) {
   const t = useTranslations("admin");
   const locale = useLocale();
   if (!result) return null;
@@ -49,6 +68,8 @@ export function AdmitResult({ result, className }) {
       }).format(new Date(result.at))
     : null;
 
+  const asking = result.status === "choose_event" || result.status === "wrong_event";
+
   return (
     <div
       role="status"
@@ -57,6 +78,13 @@ export function AdmitResult({ result, className }) {
     >
       <view.Icon className="mx-auto size-14" aria-hidden="true" />
       <p className="mt-3 text-2xl font-bold tracking-tight">{t(`admit_${result.status}`)}</p>
+
+      {/* Which event was marked. On a green screen this is the line that stops
+          a volunteer wondering whether the right box was ticked. */}
+      {result.eventLabel && result.status !== "choose_event" && (
+        <p className="mt-1 text-sm font-semibold">{result.eventLabel}</p>
+      )}
+
       {result.status === "already" && time && (
         <p className="mt-1 text-sm font-medium">{t("admit_already_at", { time })}</p>
       )}
@@ -81,6 +109,28 @@ export function AdmitResult({ result, className }) {
               {t("admit_days", { count: person.attendance.length })}
             </p>
           )}
+        </div>
+      )}
+
+      {asking && result.options?.length > 0 && (
+        <div className="mt-5">
+          <p className="text-sm font-medium">{t("admit_choose_event_prompt")}</p>
+          <div className="mt-3 grid gap-2.5">
+            {result.options.map((option) => (
+              <button
+                key={option.key}
+                type="button"
+                disabled={busy || !onPickEvent}
+                onClick={() => onPickEvent?.(option.key)}
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-base font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
+              >
+                {busy ? (
+                  <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
+                ) : null}
+                {option.label}
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </div>

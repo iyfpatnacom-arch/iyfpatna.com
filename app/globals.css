@@ -597,3 +597,181 @@
     display: none;
   }
 }
+
+/* ---------------------------------------------------------- the Gita book */
+
+/* The cover drawn by `components/donate/GitaBook.jsx`, and the one hover it
+   has: the front board swings open on its spine and the first page shows
+   underneath.
+
+   Here rather than in the component for the same reason `.cta-trace` is: the
+   whole effect is CSS, so the cards that carry it stay server components and
+   the animation costs the browser nothing but a transition.
+
+   The palette is the cover's own — deep indigo board, gold rules, cream
+   paper — and it is stepped a second time for the dark surface rather than
+   flipped: the light board is already dark, and against a dark page it needs
+   to come *up* to stay a distinct object rather than a hole. */
+.gita-book {
+  --gita-cover: #16254d;
+  --gita-spine: #0d1832;
+  --gita-arch: #223766;
+  --gita-gold: #d8a94b;
+  --gita-page: #f6edda;
+  --gita-page-edge: #d9cdb2;
+  --gita-page-line: #c6b89b;
+}
+
+.dark .gita-book {
+  --gita-cover: #1d3160;
+  --gita-spine: #142447;
+  --gita-arch: #2b4480;
+  --gita-gold: #e3b962;
+  --gita-page: #f3e9d4;
+  --gita-page-edge: #cfc2a6;
+}
+
+.gita-book__shadow {
+  opacity: 0.14;
+  transition:
+    opacity 0.45s ease,
+    transform 0.45s ease;
+}
+
+/* `fill-box` is what makes the origin mean "the spine" rather than a point
+   in the SVG's own user space — without it the board hinges off-canvas. */
+.gita-book__cover {
+  transform-box: fill-box;
+  transform-origin: 6% 50%;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gita-book__inner {
+  opacity: 0;
+  transition: opacity 0.3s ease 0.08s;
+}
+
+.gita-book {
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Driven by the card, not by the drawing: `:focus-within` is there so the
+   keyboard reaches the same state as a pointer when the card's own Sponsor
+   button is tabbed to. */
+.group:hover .gita-book,
+.group:focus-within .gita-book {
+  transform: translateY(-5px) rotate(-1.5deg);
+}
+
+.group:hover .gita-book__cover,
+.group:focus-within .gita-book__cover {
+  transform: perspective(460px) rotateY(-34deg);
+}
+
+.group:hover .gita-book__inner,
+.group:focus-within .gita-book__inner {
+  opacity: 1;
+}
+
+.group:hover .gita-book__shadow,
+.group:focus-within .gita-book__shadow {
+  opacity: 0.1;
+  transform: scale(1.12);
+}
+
+/* Ornament, and this preference is about ornament: the book keeps its cover
+   shut and loses the movement, rather than animating a shorter version of
+   it. */
+@media (prefers-reduced-motion: reduce) {
+  .gita-book,
+  .gita-book__cover,
+  .gita-book__inner,
+  .gita-book__shadow {
+    transition: none;
+  }
+
+  .group:hover .gita-book,
+  .group:focus-within .gita-book,
+  .group:hover .gita-book__cover,
+  .group:focus-within .gita-book__cover,
+  .group:hover .gita-book__shadow,
+  .group:focus-within .gita-book__shadow {
+    transform: none;
+  }
+
+  .group:hover .gita-book__inner,
+  .group:focus-within .gita-book__inner {
+    opacity: 0;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Gita Mahotsav & Gita Quiz
+   --------------------------------------------------------------------------- */
+
+/* The spotlight that sweeps over the festival hero on first paint.
+   Aceternity's `Spotlight` component ships the SVG and expects this animation
+   to exist by name; on Tailwind v4 there is no config file to extend, so the
+   keyframe and the utility live here with the rest of the page's motion. It
+   runs once and holds — a looping spotlight over a page people are reading a
+   form on would be a flicker, not an atmosphere. */
+@keyframes spotlight {
+  0% {
+    opacity: 0;
+    transform: translate(-72%, -62%) scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -40%) scale(1);
+  }
+}
+
+.animate-spotlight {
+  animation: spotlight 2s ease 0.75s 1 forwards;
+}
+
+/* A diya flame: the one literal piece of iconography on the page, and the only
+   thing on it that moves continuously. Two offset cycles on scale and opacity
+   so it reads as a flame guttering rather than a dot pulsing. */
+@keyframes diyaFlame {
+  0%, 100% { transform: scale(1) translateY(0); opacity: 0.92; }
+  35% { transform: scale(1.09) translateY(-1px); opacity: 1; }
+  70% { transform: scale(0.96) translateY(0.5px); opacity: 0.85; }
+}
+
+.animate-diya {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: diyaFlame 2.6s ease-in-out infinite;
+}
+
+/* Ornament, and this preference is about ornament. The spotlight lands at its
+   final frame immediately (it is the hero's lighting, so removing it entirely
+   would leave the heading on flat black) and the flame simply holds still. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-spotlight {
+    animation: none;
+    opacity: 1;
+    transform: translate(-50%, -40%) scale(1);
+  }
+
+  .animate-diya {
+    animation: none;
+  }
+}
+
+/* A page that would rather the floating WhatsApp button were not there.
+   The button is mounted by the locale layout, a level above every page, so a
+   page cannot simply not render it — it marks itself instead by putting an
+   empty `[data-hide-whatsapp-fab]` element anywhere in its tree, and the
+   button, which is that element's uncle, goes away.
+
+   `:has()` on the body rather than a context provider and a piece of client
+   state, because nothing here needs to be interactive: the condition is known
+   at the first paint of the server-rendered HTML, and this way the button
+   never flashes in and out on the way to being hidden. Only /gita-mahotsav
+   uses it so far, where the page carries its own full-width Register button
+   in that corner. */
+body:has([data-hide-whatsapp-fab]) [data-whatsapp-fab] {
+  display: none;
+}

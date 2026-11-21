@@ -10,7 +10,8 @@
     "seed": "node scripts/seed.mjs",
     "verify:digipin": "node scripts/verify-digipin.mjs",
     "verify:marathon": "node --import ./scripts/alias-register.mjs scripts/verify-marathon.mjs",
-    "verify:donations": "node --import ./scripts/alias-register.mjs scripts/verify-donations.mjs"
+    "verify:donations": "node --import ./scripts/alias-register.mjs scripts/verify-donations.mjs",
+    "verify:gita": "node --import ./scripts/alias-register.mjs scripts/verify-gita.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

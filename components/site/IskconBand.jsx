@@ -1,5 +1,5 @@
 import { IskconLogo } from "@/components/site/IskconLogo";
-import { MobileNav } from "@/components/site/MobileNav";
+import { cn } from "@/lib/utils";
 import {
   ORG,
   PARENT_BAND,
@@ -49,18 +49,16 @@ function SocialGlyph({ name, className }) {
  * reader can click are the lockup, which opens ISKCON Patna's own site, and
  * the social profiles.
  *
- * On phones it compresses to the temple line alone: the founder credit and
- * the society's full name are the first things worth losing when there are
- * only 400 pixels, and both still appear in the footer.
- *
- * The one control in it is the phone menu, parked at the right end of this
- * row rather than in the navigation bar below. That bar is the sticky tier,
- * so the drawer trigger now scrolls away with the band; the bottom dock is
- * what carries navigation once the page has moved.
+ * It is a desktop tier only. A phone showed two stacked headers — this band
+ * and the navigation bar under it — which between them took roughly a fifth
+ * of the screen before a single word of the page. The caller hides it below
+ * `md` (see SiteHeader); the parent identity is carried on a phone by the
+ * footer, which states it in full, and the phone menu that used to live at
+ * the right end of this row now sits in the one header bar that remains.
  */
-export function IskconBand({ whatsappUrl, clerkConfigured = false }) {
+export function IskconBand({ className }) {
   return (
-    <div className="iskcon-band text-white">
+    <div className={cn("iskcon-band text-white", className)}>
       <div className="mx-auto flex w-full max-w-6xl items-center gap-4 px-4 py-2.5 sm:px-6 sm:py-3">
         {/* Parent lockup. The whole box is the link out to the ISKCON Patna
             site — the emblem and the name are one target, which is both a
@@ -88,7 +86,7 @@ export function IskconBand({ whatsappUrl, clerkConfigured = false }) {
           </p>
         </div>
 
-        {/* Founder credit + socials, then the phone menu. */}
+        {/* Founder credit + socials. */}
         <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
           <div className="flex flex-col items-end gap-1.5">
             <p className="hidden text-right text-[11px] leading-tight text-white/85 lg:block">
@@ -117,15 +115,6 @@ export function IskconBand({ whatsappUrl, clerkConfigured = false }) {
               </ul>
             )}
           </div>
-
-          {/* Explicit white-on-dark classes, including the `dark:` ones: the
-              band keeps its own colours in both themes, so the button's
-              themed defaults would otherwise repaint it in dark mode. */}
-          <MobileNav
-            whatsappUrl={whatsappUrl}
-            clerkConfigured={clerkConfigured}
-            triggerClassName="border-white/30 bg-transparent text-white hover:bg-white/15 hover:text-white focus-visible:border-white focus-visible:ring-white/50 dark:border-white/30 dark:bg-transparent dark:hover:bg-white/15"
-          />
         </div>
       </div>
 

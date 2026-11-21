@@ -1,0 +1,172 @@
+{
+  "slug": "gita-jayanti-2026",
+  "orderPrefix": "GITA",
+  "registrationOpen": true,
+  "currency": "INR",
+
+  "title": { "en": "Gita Mahotsav & Gita Quiz", "hi": "गीता महोत्सव और गीता क्विज़" },
+  "eyebrow": { "en": "Gita Jayanti 2026 · ISKCON Patna", "hi": "गीता जयंती 2026 · इस्कॉन पटना" },
+  "summary": {
+    "en": "One registration for two celebrations: an online Bhagavad Gita Quiz with cash prizes, and the Gita Mahotsav at the temple. Pick one, or take both at a combined fee.",
+    "hi": "दो उत्सव, एक रजिस्ट्रेशन: नकद पुरस्कारों वाली ऑनलाइन भगवद्गीता क्विज़, और मंदिर में गीता महोत्सव। एक चुनें, या दोनों को एक साथ कम शुल्क में लें।"
+  },
+  "helpline": "9031054013",
+
+  "gallery": [
+    {
+      "src": "https://ik.imagekit.io/mnkh9j9dw/gita-mahotsav/WhatsApp%20Image%202026-11-21%20at%2012.06.23%20(1).jpeg",
+      "width": 1086,
+      "height": 1448,
+      "alt": {
+        "en": "Gita Mahotsav poster: Krishna speaking to Arjuna on the golden chariot at sunrise, an ISKCON flag above them, the temple and a crowd of devotees behind.",
+        "hi": "गीता महोत्सव पोस्टर: सूर्योदय में स्वर्ण रथ पर अर्जुन से संवाद करते श्रीकृष्ण, ऊपर इस्कॉन ध्वज, पीछे मंदिर और भक्तों की भीड़।"
+      }
+    },
+    {
+      "src": "https://ik.imagekit.io/mnkh9j9dw/gita-mahotsav/WhatsApp%20Image%202026-11-21%20at%2012.06.24.jpeg",
+      "width": 1600,
+      "height": 900,
+      "alt": {
+        "en": "Gita Quiz banner: Krishna and Arjuna on the chariot beside an open Bhagavad Gita, a peacock feather and a quiz answer sheet.",
+        "hi": "गीता क्विज़ बैनर: रथ पर श्रीकृष्ण और अर्जुन, पास ही खुली भगवद्गीता, मोरपंख और उत्तर-पुस्तिका।"
+      }
+    }
+  ],
+
+  "poster": {
+    "src": "https://ik.imagekit.io/mnkh9j9dw/gita-mahotsav/WhatsApp%20Image%202026-11-21%20at%2012.37.00.jpeg",
+    "width": 1102,
+    "height": 1428,
+    "alt": {
+      "en": "Krishna speaking to Arjuna on the golden chariot at sunrise, a peacock feather and rose petals in the air, and the temple domes beyond.",
+      "hi": "सूर्योदय में स्वर्ण रथ पर अर्जुन से संवाद करते श्रीकृष्ण, हवा में मोरपंख और पुष्प-पंखुड़ियाँ, और पीछे मंदिर के शिखर।"
+    }
+  },
+
+  "posterLines": [
+    { "en": "Gita Quiz", "hi": "गीता क्विज़" },
+    { "en": "Gita Mahotsav", "hi": "गीता महोत्सव" }
+  ],
+
+  "events": [
+    {
+      "key": "quiz",
+      "amount": 101,
+      "date": "2026-12-19",
+      "title": { "en": "Bhagavad Gita Quiz", "hi": "भगवद्गीता क्विज़" },
+      "tagline": { "en": "Online · cash prizes", "hi": "ऑनलाइन · नकद पुरस्कार" },
+      "dateLabel": { "en": "19 December 2026", "hi": "19 दिसंबर 2026" },
+      "modeLabel": { "en": "Online", "hi": "ऑनलाइन" },
+      "detail": {
+        "en": "An online quiz on the Bhagavad Gita, held on Gita Jayanti. The link and the time reach you in the WhatsApp group.",
+        "hi": "गीता जयंती पर भगवद्गीता पर आधारित ऑनलाइन क्विज़। लिंक और समय आपको WhatsApp ग्रुप में मिलेंगे।"
+      },
+      "whatsappGroupUrl": "https://chat.whatsapp.com/JOVt6KGeSktBDsVajeiPQi?s=cl&p=i&iam=2"
+    },
+    {
+      "key": "mahotsav",
+      "amount": 101,
+      "date": null,
+      "title": { "en": "Gita Mahotsav", "hi": "गीता महोत्सव" },
+      "tagline": { "en": "At ISKCON Patna", "hi": "इस्कॉन पटना में" },
+      "dateLabel": {
+        "en": "Date announced in the WhatsApp group",
+        "hi": "तिथि WhatsApp ग्रुप में बताई जाएगी"
+      },
+      "modeLabel": { "en": "In person", "hi": "मंदिर में" },
+      "detail": {
+        "en": "Kirtan, a Gita discourse, the mass Gita recitation and prasadam at Sri Sri Radha Banke Bihari Temple, Buddha Marg.",
+        "hi": "श्री श्री राधा बांके बिहारी मंदिर, बुद्ध मार्ग में कीर्तन, गीता प्रवचन, सामूहिक गीता पाठ और प्रसाद।"
+      },
+      "whatsappGroupUrl": "https://chat.whatsapp.com/I525baCSUGMFffGmUBr5VO?s=cl&p=i&mlu=4&ilr=4&iam=2"
+    }
+  ],
+
+  "comboAmount": 151,
+
+  "prizes": [
+    { "place": 1, "amount": 11000, "label": { "en": "1st prize", "hi": "प्रथम पुरस्कार" } },
+    { "place": 2, "amount": 5100, "label": { "en": "2nd prize", "hi": "द्वितीय पुरस्कार" } },
+    { "place": 3, "amount": 2100, "label": { "en": "3rd prize", "hi": "तृतीय पुरस्कार" } }
+  ],
+
+  "highlights": [
+    {
+      "icon": "trophy",
+      "title": { "en": "₹18,200 in cash prizes", "hi": "₹18,200 के नकद पुरस्कार" },
+      "body": {
+        "en": "Three winners, announced in the group and honoured at the temple.",
+        "hi": "तीन विजेता — ग्रुप में घोषणा, और मंदिर में सम्मान।"
+      }
+    },
+    {
+      "icon": "scroll",
+      "title": { "en": "Straight from the Gita", "hi": "सीधे गीता से" },
+      "body": {
+        "en": "Every question comes from the Bhagavad Gita As It Is — nothing outside it.",
+        "hi": "हर प्रश्न भगवद्गीता यथारूप से — उसके बाहर से कुछ नहीं।"
+      }
+    },
+    {
+      "icon": "users",
+      "title": { "en": "Open to everyone", "hi": "सबके लिए खुला" },
+      "body": {
+        "en": "Students, working people, families — no background in the scriptures needed.",
+        "hi": "छात्र, कामकाजी लोग, परिवार — शास्त्रों की पूर्व जानकारी ज़रूरी नहीं।"
+      }
+    },
+    {
+      "icon": "ticket",
+      "title": { "en": "A pass that is scanned", "hi": "स्कैन होने वाला पास" },
+      "body": {
+        "en": "Your receipt carries a QR pass. It is scanned at the door to mark attendance.",
+        "hi": "आपकी रसीद पर QR पास होता है। प्रवेश पर स्कैन होकर उपस्थिति दर्ज होती है।"
+      }
+    }
+  ],
+
+  "faqs": [
+    {
+      "q": { "en": "What is the quiz based on?", "hi": "क्विज़ किस पर आधारित है?" },
+      "a": {
+        "en": "The Bhagavad Gita As It Is — the verses, their translations and the chapter summaries. Nothing from outside the book is asked.",
+        "hi": "भगवद्गीता यथारूप — श्लोक, उनके अनुवाद और अध्यायों का सार। पुस्तक के बाहर से कुछ नहीं पूछा जाता।"
+      }
+    },
+    {
+      "q": { "en": "Can I register for only one of the two?", "hi": "क्या मैं दोनों में से केवल एक के लिए रजिस्टर कर सकता/सकती हूँ?" },
+      "a": {
+        "en": "Yes. Tick whichever you want. Ticking both costs ₹151 instead of ₹202, and you are added to both WhatsApp groups.",
+        "hi": "हाँ। जो चाहें चुनें। दोनों चुनने पर ₹202 की जगह ₹151 लगते हैं, और आप दोनों WhatsApp ग्रुप में जुड़ जाते हैं।"
+      }
+    },
+    {
+      "q": { "en": "How do I get the quiz link?", "hi": "क्विज़ का लिंक कैसे मिलेगा?" },
+      "a": {
+        "en": "In the WhatsApp group. The link to join it appears the moment your payment is confirmed, and is emailed to you as well.",
+        "hi": "WhatsApp ग्रुप में। भुगतान पक्का होते ही ग्रुप का लिंक स्क्रीन पर आ जाता है, और ईमेल पर भी भेजा जाता है।"
+      }
+    },
+    {
+      "q": { "en": "Is the registration fee refundable?", "hi": "क्या रजिस्ट्रेशन शुल्क वापस होता है?" },
+      "a": {
+        "en": "The fee covers the arrangements and is not refundable. If a payment is deducted twice, write to us and the extra amount is returned.",
+        "hi": "शुल्क व्यवस्था में लगता है और वापस नहीं होता। यदि भुगतान दो बार कट जाए, तो हमें लिखें — अतिरिक्त राशि वापस कर दी जाती है।"
+      }
+    },
+    {
+      "q": { "en": "How are the winners decided?", "hi": "विजेता कैसे तय होते हैं?" },
+      "a": {
+        "en": "By score, and by the time taken where scores tie. The results are announced in the WhatsApp group.",
+        "hi": "अंकों से, और बराबरी होने पर लगे समय से। परिणाम WhatsApp ग्रुप में घोषित होते हैं।"
+      }
+    },
+    {
+      "q": { "en": "I registered. Where is my pass?", "hi": "मैंने रजिस्टर कर लिया। मेरा पास कहाँ है?" },
+      "a": {
+        "en": "On your confirmation page and on page two of the receipt that downloads after payment. Bookmark that page — it is your proof of registration.",
+        "hi": "आपके पुष्टि पृष्ठ पर, और भुगतान के बाद डाउनलोड होने वाली रसीद के दूसरे पृष्ठ पर। उस पृष्ठ को सेव रखें — वही आपका प्रमाण है।"
+      }
+    }
+  ]
+}

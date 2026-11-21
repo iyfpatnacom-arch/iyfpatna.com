@@ -1,22 +1,28 @@
 import { getTranslations } from "next-intl/server";
-import { BookOpen, Check } from "lucide-react";
+import { Check } from "lucide-react";
 import { DonateButton } from "@/components/donate/DonateProvider";
+import { GitaBook } from "@/components/donate/GitaBook";
 import { GITA_MARATHON } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
 
 /**
  * One Gita Marathon sponsorship.
  *
- * The number of books leads, not the amount. Every tier is the same ₹250 a
- * copy, so the rupees carry no information the count does not already give —
- * and "108 Gitas" is a thing somebody can picture, which "₹27,000" is not.
- * The arithmetic is printed underneath anyway (`tier_each`), because a donor
- * being asked for twenty-seven thousand rupees is entitled to check it.
+ * The number of books leads, not the amount: "108 Gitas" is a thing somebody
+ * can picture, and "₹27,000" is not. The rupees are on the button, where the
+ * donor is about to agree to them.
  *
- * A server component, unlike `SevaCard`: there is nothing to pick here. The
- * tier *is* the amount, so the card holds no state and the only client code on
- * it is the `DonateButton` that opens the shared donation dialog with this
- * seva and this amount already chosen.
+ * No per-copy rate is printed here or anywhere else on the page. What a Gita
+ * costs over a counter is not what a sponsored copy costs, and publishing a
+ * division as though it were the book's price invited exactly that confusion.
+ * The tier is a count and an amount; both are stated plainly and neither
+ * claims to be a price list.
+ *
+ * `group` is on the article because the drawing inside it opens on hover —
+ * the animation is CSS keyed off this class (see `.gita-book` in
+ * `globals.css`), which is what lets this card stay a server component. The
+ * only client code on it is the `DonateButton` that opens the shared dialog
+ * with this seva and this amount already chosen.
  */
 export async function GitaTierCard({ tier }) {
   const t = await getTranslations("donate.gita_marathon");
@@ -24,7 +30,7 @@ export async function GitaTierCard({ tier }) {
   return (
     <article
       className={cn(
-        "relative flex flex-col rounded-2xl border bg-card p-5 transition-colors sm:p-6",
+        "group relative flex flex-col rounded-2xl border bg-card p-5 transition-colors sm:p-6",
         /* The featured tier is outlined rather than scaled up: a card that
            grows breaks the grid's baseline on a phone, where these stack and
            the "most chosen" badge is doing the same job on its own. */
@@ -40,21 +46,11 @@ export async function GitaTierCard({ tier }) {
         </span>
       )}
 
-      <div className="flex items-start justify-between gap-3">
-        <span className="grid size-10 shrink-0 place-items-center rounded-full border border-primary/25 bg-primary/10 text-primary">
-          <BookOpen className="size-[18px]" aria-hidden="true" />
-        </span>
+      <div className="flex items-center justify-between gap-3">
+        <GitaBook className="aspect-3/4 w-14 shrink-0" />
         {/* `tabular-nums` so a column of these line up down the grid. */}
-        <span className="text-end">
-          <span className="block text-2xl font-semibold tracking-tight tabular-nums">
-            {t("tier_books", { books: tier.books })}
-          </span>
-          <span className="block text-[11px] text-muted-foreground tabular-nums">
-            {t("tier_each", {
-              price: GITA_MARATHON.bookPrice,
-              books: tier.books,
-            })}
-          </span>
+        <span className="text-2xl font-semibold tracking-tight tabular-nums">
+          {t("tier_books", { books: tier.books })}
         </span>
       </div>
 

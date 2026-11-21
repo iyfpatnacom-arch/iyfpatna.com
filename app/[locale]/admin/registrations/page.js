@@ -8,6 +8,8 @@ import { courseSlugs, getCourse } from "@/lib/courses/catalog";
 import Enrollment from "@/models/Enrollment";
 import { Panel } from "@/components/site/Panel";
 import { RegistrationsDashboard } from "@/components/admin/RegistrationsDashboard";
+import { RegistrationTabs } from "@/components/admin/RegistrationTabs";
+import { registrationTabs } from "@/lib/admin/registration-tabs";
 
 /**
  * /admin/registrations — everyone who has enrolled on a paid course, with
@@ -119,23 +121,11 @@ export default async function RegistrationsPage({ params, searchParams }) {
         </Link>
       </div>
 
-      {slugs.length > 1 && (
-        <nav className="mt-6 flex flex-wrap gap-2" aria-label={t("reg_course")}>
-          {slugs.map((key) => (
-            <Link
-              key={key}
-              href={`/admin/registrations?course=${key}`}
-              className={`rounded-full border px-3.5 py-1.5 text-sm font-medium ${
-                key === slug
-                  ? "border-primary bg-primary/10 text-primary"
-                  : "border-border text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {getCourse(key)?.title?.[locale] ?? key}
-            </Link>
-          ))}
-        </nav>
-      )}
+      <RegistrationTabs
+        tabs={registrationTabs(locale)}
+        active={slug}
+        label={t("reg_register")}
+      />
 
       {failed ? (
         <Panel className="mt-8 p-8 text-center text-muted-foreground">{t("reg_load_failed")}</Panel>

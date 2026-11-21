@@ -10,7 +10,7 @@ import { gatewayChoices, paymentMode } from "@/lib/payments/gateways";
 import { payableFor } from "@/lib/payments/payables";
 import { orderToken, receiptPath, verifyOrderToken } from "@/lib/payments/order-link";
 import { receiptFilename } from "@/lib/payments/receipt";
-import { passQrSvg } from "@/lib/courses/pass";
+import { passQrSvg } from "@/lib/payments/pass";
 import { Panel } from "@/components/site/Panel";
 import { WhatsappIcon } from "@/components/site/WhatsappIcon";
 import { PayNowButton } from "@/components/payments/PayNowButton";

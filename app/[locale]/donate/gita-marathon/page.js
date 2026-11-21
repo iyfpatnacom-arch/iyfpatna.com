@@ -3,7 +3,6 @@ import {
   ArrowLeft,
   ArrowRight,
   BadgeCheck,
-  BookOpen,
   CalendarDays,
   CreditCard,
   HandHeart,
@@ -19,6 +18,7 @@ import {
   DonateButton,
   DonateProvider,
 } from "@/components/donate/DonateProvider";
+import { GitaBook } from "@/components/donate/GitaBook";
 import { GitaTierCard } from "@/components/donate/GitaTierCard";
 import { IkImage } from "@/components/media/IkImage";
 import { Link } from "@/i18n/navigation";
@@ -134,14 +134,13 @@ export default async function GitaMarathonPage({ params }) {
           {t("subtitle")}
         </p>
 
+        {/* The dates, and nothing beside them. A second chip here used to
+            print a per-copy rate, which is not what a Gita costs and was
+            being read as though it were. */}
         <div className="mt-6 flex flex-wrap gap-2">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/40 px-3 py-1 text-xs font-medium text-muted-foreground">
             <CalendarDays className="size-3.5 opacity-70" aria-hidden="true" />
             {range}
-          </span>
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/40 px-3 py-1 text-xs font-medium text-muted-foreground tabular-nums">
-            <BookOpen className="size-3.5 opacity-70" aria-hidden="true" />
-            {t("per_book", { price: GITA_MARATHON.bookPrice })}
           </span>
         </div>
 
@@ -268,7 +267,7 @@ export default async function GitaMarathonPage({ params }) {
             {t("tiers_title")}
           </h2>
           <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-muted-foreground">
-            {t("tiers_subtitle", { price: GITA_MARATHON.bookPrice })}
+            {t("tiers_subtitle")}
           </p>
 
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -279,14 +278,17 @@ export default async function GitaMarathonPage({ params }) {
 
           {/* Any amount is accepted — `isValidAmount` is the only rule — so
               the six cards must not read as the only way in. */}
-          <div className="mt-6 flex flex-col gap-4 rounded-2xl border border-dashed border-border bg-card p-6 sm:flex-row sm:items-center sm:justify-between">
-            <div className="min-w-0">
-              <h3 className="text-[15px] font-semibold tracking-tight">
-                {t("custom_title")}
-              </h3>
-              <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-                {t("custom_body", { price: GITA_MARATHON.bookPrice })}
-              </p>
+          <div className="group mt-6 flex flex-col gap-4 rounded-2xl border border-dashed border-border bg-card p-6 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex min-w-0 items-center gap-4">
+              <GitaBook className="aspect-3/4 w-10 shrink-0" />
+              <div className="min-w-0">
+                <h3 className="text-[15px] font-semibold tracking-tight">
+                  {t("custom_title")}
+                </h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+                  {t("custom_body")}
+                </p>
+              </div>
             </div>
             <DonateButton variant="outline" className="shrink-0">
               {t("custom_cta")}

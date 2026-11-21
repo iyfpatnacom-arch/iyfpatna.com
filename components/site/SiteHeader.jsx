@@ -14,6 +14,7 @@ import { Link, usePathname } from "@/i18n/navigation";
 import { BrandMark } from "@/components/site/BrandMark";
 import { IskconBand } from "@/components/site/IskconBand";
 import { LocaleToggle } from "@/components/site/LocaleToggle";
+import { MobileNav } from "@/components/site/MobileNav";
 import { YatraTicker } from "@/components/site/YatraTicker";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Button } from "@/components/ui/button";
@@ -31,19 +32,20 @@ import { cn } from "@/lib/utils";
 /**
  * The site header: an ISKCON Patna band, then IYF Patna's own navigation.
  *
- * Only the navigation row is sticky. The parent band is an attribution rather
- * than a control, so it scrolls away and gives the reader back the vertical
- * space — pinning both tiers would cost roughly a fifth of a phone screen on
- * every page.
+ * One bar on a phone, two from `md` up. The band is an attribution rather than
+ * a control, and two stacked headers were costing roughly a fifth of a phone
+ * screen before the page had said anything — so below `md` it is not rendered
+ * at all and the parent identity is carried by the footer, which states it in
+ * full. Where it does show it still scrolls away; only the navigation row is
+ * sticky.
  *
  * Desktop gets the full link row. A phone gets the brand, a Donate button
- * with its label intact, and the language switch — that is the whole width
- * budget, so the theme toggle and the two Clerk buttons move into the drawer
- * below `sm`. The hamburger that opens that drawer lives in the band above,
- * where there is room for it beside the socials. The drawer matters either
- * way: the bottom dock holds five destinations, so without it About, Courses,
- * Schedule, Gallery and the yatra had no route in from the top of a phone
- * screen at all.
+ * with its label intact, the language switch and the menu button — that is the
+ * whole width budget, so the theme toggle and the two Clerk buttons move into
+ * the drawer below `sm`. The drawer is what the menu button opens, and it
+ * matters: the bottom dock holds five destinations, so without it About,
+ * Courses, Schedule, Gallery and the yatra have no route in from the top of a
+ * phone screen at all.
  */
 export function SiteHeader({ clerkConfigured = false, whatsappUrl }) {
   const t = useTranslations("nav");
@@ -54,13 +56,7 @@ export function SiteHeader({ clerkConfigured = false, whatsappUrl }) {
 
   return (
     <>
-      {/* The phone menu trigger renders inside the band, so the invite and
-          the Clerk flag have to travel one tier further up than the drawer
-          that uses them. */}
-      <IskconBand
-        whatsappUrl={whatsappUrl}
-        clerkConfigured={clerkConfigured}
-      />
+      <IskconBand className="max-md:hidden" />
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/85 backdrop-blur-md">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center gap-4 px-4 sm:px-6">
           {/* `compact` drops the "youth wing of ISKCON Patna" subtitle: the
@@ -205,6 +201,17 @@ export function SiteHeader({ clerkConfigured = false, whatsappUrl }) {
                 {t("join")}
               </Button>
             )}
+
+            {/* The phone menu. It used to sit in the band above; with the band
+                gone below `md` this bar is the only place left for it, and it
+                is the right one — the drawer is navigation, and navigation
+                belongs in the sticky tier rather than in a strip that scrolls
+                away. It hides itself from `md` up, where the link row is. */}
+            <MobileNav
+              whatsappUrl={whatsappUrl}
+              clerkConfigured={clerkConfigured}
+              triggerClassName="size-9"
+            />
           </div>
         </div>
       </header>

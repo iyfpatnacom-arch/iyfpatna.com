@@ -4,6 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { clerkConfigured, getAdminUser, redirectSignedOut } from "@/lib/auth-config";
 import { Panel } from "@/components/site/Panel";
 import { PassScanner } from "@/components/admin/PassScanner";
+import { EVENT_KEYS, eventOf } from "@/lib/gita-event/catalog";
 
 /** /admin/registrations/scan — the phone at the door. */
 export const dynamic = "force-dynamic";
@@ -43,7 +44,15 @@ export default async function ScanPage({ params }) {
         {t("scan_body")}
       </p>
       <div className="mt-6">
-        <PassScanner />
+        {/* The festival's events, for the door picker. The scanner admits every
+            kind of pass; only a Gita registration can be good for more than one
+            event, so only it needs the question asked. */}
+        <PassScanner
+          events={EVENT_KEYS.map((key) => ({
+            key,
+            label: eventOf(key)?.title?.[locale] || eventOf(key)?.title?.en || key,
+          }))}
+        />
       </div>
     </div>
   );
