@@ -186,6 +186,18 @@ export default async function GitaMahotsavPage({ params }) {
     },
   ];
 
+  /* The two things about the festival that are not numbers, and the two
+     people ask at the gate: where it is, and whether they can just turn up.
+     They ride under the figures on the phone poster. */
+  const notes = [
+    {
+      icon: "pin",
+      label: t("stage_where"),
+      value: festival.venue?.[lang] || festival.venue?.en || ORG.name,
+    },
+    { icon: "pass", label: t("stage_entry"), value: t("stage_pass") },
+  ];
+
   return (
     <div className="w-full">
       {/* The floating WhatsApp button is hidden for this route — see the rule
@@ -206,6 +218,7 @@ export default async function GitaMahotsavPage({ params }) {
           label,
           value: short || value,
         }))}
+        notes={notes}
         events={events}
         combo={combo}
         open={open}
