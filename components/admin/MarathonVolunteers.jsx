@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Panel } from "@/components/site/Panel";
+import { VolunteerStock } from "@/components/admin/VolunteerStock";
 import { setVolunteerStatus } from "@/app/[locale]/admin/gita-marathon/actions";
 import { cn } from "@/lib/utils";
 
@@ -31,6 +32,12 @@ import { cn } from "@/lib/utils";
  * volunteer on their own screen. Being cut off with no explanation is how a
  * volunteer stops being a volunteer; there is no delete here at all, because
  * every sale and every cash settlement points back at these rows.
+ *
+ * Activating somebody and handing them books are two separate acts on this
+ * card, in that order. Activation opens the door; the trolley below it is
+ * what they may actually sell, and until it has something in it their console
+ * is empty. Keeping them apart is deliberate — stock leaving the building is
+ * the decision worth its own button, and it is made again every week.
  */
 
 const GROUPS = ["pending", "active", "suspended"];
@@ -196,6 +203,13 @@ function VolunteerCard({ volunteer, registered, t }) {
         <p className="mt-3 rounded-lg bg-destructive/10 px-3 py-2 text-xs leading-relaxed text-destructive">
           {volunteer.decisionNote}
         </p>
+      )}
+
+      {/* The trolley. Shown for anybody who can still sell or has sold — a
+          pending volunteer has no console to stock, and a suspended one may
+          still be holding books the temple wants back. */}
+      {volunteer.status !== "pending" && (
+        <VolunteerStock volunteer={volunteer} t={t} />
       )}
 
       {/* ----------------------------------------------------- the decision */}

@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import { dbConnect } from "@/lib/db/connect";
+import { CLAIM_KINDS, isClaim } from "@/lib/marathon/catalog";
 import { getOwnVolunteer } from "@/lib/marathon/volunteers";
 import { gatewayConfig } from "@/lib/payments/gateways";
 import { verifyOrderToken } from "@/lib/payments/order-link";
@@ -118,4 +120,109 @@ export async function GET(request, { params }) {
     console.error(`[marathon] could not check the QR for ${orderId}`, error);
     return answer(sale);
   }
+}
+
+const claimSchema = z.object({
+  kind: z.enum(CLAIM_KINDS),
+  reference: z.string().trim().min(1).max(40),
+});
+
+/**
+ * The volunteer saying "this one has been paid, and here is how to find it".
+ *
+ * The other half of the fixed-QR flow. There is no gateway to ask and no
+ * webhook coming: the money went straight into the temple's account from the
+ * reader's own bank, so the only witness is the volunteer standing there
+ * looking at the reader's phone. They type the last four digits of the UTR,
+ * or the time on the receipt when the app will not show them a reference,
+ * and the sale closes.
+ *
+ * That makes it a claim rather than a confirmation, and the row says so —
+ * `claim.verifiedAt` stays null until a coordinator matches it against the
+ * bank statement. The sale itself counts immediately, exactly as a cash sale
+ * does: in both cases a volunteer is asserting that money changed hands and
+ * the reconciliation is a separate act by a second person. Refusing to count
+ * it until someone checks the statement would mean the leaderboard and the
+ * volunteer's own screen disagreeing with the books in their hand all day.
+ *
+ * Only the volunteer who made the sale may do this, by their Clerk session —
+ * not by the signed link, which the reader also holds. The reader is the one
+ * party here with a reason to claim a payment they did not make.
+ */
+export async function POST(request, { params }) {
+  const limit = check(clientKey(request, "marathon-claim"), {
+    limit: 60,
+    windowMs: 10 * 60 * 1000,
+  });
+  if (!limit.allowed) {
+    return NextResponse.json(
+      { ok: false, error: "rate_limited" },
+      { status: 429, headers: { "Retry-After": String(limit.retryAfterSeconds) } },
+    );
+  }
+
+  const { orderId } = await params;
+  const parsed = claimSchema.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ ok: false, error: "invalid" }, { status: 400 });
+
+  const { kind, reference } = parsed.data;
+  if (!isClaim(kind, reference)) {
+    return NextResponse.json({ ok: false, error: "invalid" }, { status: 400 });
+  }
+
+  await dbConnect();
+
+  /* Ownership rather than permission, as the GET above: a volunteer switched
+     off mid-evening must still be able to close the sale in front of them. */
+  const volunteer = await getOwnVolunteer();
+  if (!volunteer) {
+    return NextResponse.json({ ok: false, error: "not_found" }, { status: 404 });
+  }
+
+  /* Scoped to a sale that is theirs, online, and not already settled — so a
+     double tap is a no-op rather than a second write, and a cash sale cannot
+     be re-labelled as a transfer. */
+  const sale = await BookSale.findOneAndUpdate(
+    {
+      orderId,
+      volunteerClerkId: volunteer.clerkId,
+      method: "online",
+      "payment.status": { $ne: "success" },
+    },
+    {
+      $set: {
+        "payment.status": "success",
+        "payment.provider": "upi",
+        "payment.paymentMode": "UPI",
+        "payment.trackingId": kind === "utr" ? reference : null,
+        "payment.paidAt": new Date(),
+        "claim.kind": kind,
+        "claim.reference": reference,
+        "claim.at": new Date(),
+      },
+    },
+    { returnDocument: "after" },
+  ).lean();
+
+  if (!sale) {
+    /* Either it is not theirs, or it was already closed. Tell the difference
+       apart only as far as the screen needs: a sale already marked paid is a
+       success from where the volunteer is standing. */
+    const existing = await BookSale.findOne({
+      orderId,
+      volunteerClerkId: volunteer.clerkId,
+    }).lean();
+    if (existing?.payment?.status === "success") {
+      return NextResponse.json({ ok: true, orderId, status: "success", already: true });
+    }
+    return NextResponse.json({ ok: false, error: "not_found" }, { status: 404 });
+  }
+
+  return NextResponse.json({
+    ok: true,
+    orderId: sale.orderId,
+    status: "success",
+    amount: sale.amount,
+    quantity: sale.quantity,
+  });
 }

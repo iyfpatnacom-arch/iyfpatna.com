@@ -9,7 +9,9 @@ import {
   redirectSignedOut,
 } from "@/lib/auth-config";
 import { dbConnect } from "@/lib/db/connect";
+import { stockList } from "@/lib/marathon/books";
 import { leaderboard } from "@/lib/marathon/stats";
+import BookSale from "@/models/BookSale";
 import MarathonVolunteer from "@/models/MarathonVolunteer";
 
 /**
@@ -19,6 +21,12 @@ import MarathonVolunteer from "@/models/MarathonVolunteer";
  * joined on from the leaderboard aggregation rather than queried per row. A
  * marathon has tens of volunteers, so the join is a Map lookup; doing it per
  * card would be one aggregation per volunteer on every render.
+ *
+ * The trolleys are counted the same way: one aggregation over every sale,
+ * grouped by volunteer and title, turned into a Map and handed to
+ * `stockList` per row. What is left of a consignment is counted from the
+ * sales rather than stored, so this is the query that answers it — see
+ * `lib/marathon/stock.js`, which does the same thing for one volunteer.
  *
  * Grouped rather than filtered, because the three groups are three different
  * jobs: the pending list is a queue to work through, the active list is a
@@ -50,7 +58,7 @@ export default async function AdminMarathonVolunteersPage({ params }) {
   let failed = false;
   try {
     await dbConnect();
-    const [docs, board] = await Promise.all([
+    const [docs, board, soldRows] = await Promise.all([
       MarathonVolunteer.find({})
         .sort({ status: 1, createdAt: 1 })
         .lean(),
@@ -58,9 +66,28 @@ export default async function AdminMarathonVolunteersPage({ params }) {
          volunteer wants everything that person has ever distributed, not only
          what falls inside this year's dates. */
       leaderboard({ scope: "all", limit: 1000 }),
+      BookSale.aggregate([
+        { $match: { "payment.status": "success" } },
+        { $unwind: "$items" },
+        {
+          $group: {
+            _id: { clerkId: "$volunteerClerkId", bookKey: "$items.bookKey" },
+            quantity: { $sum: "$items.quantity" },
+          },
+        },
+      ]),
     ]);
 
     const totals = new Map(board.map((row) => [row.clerkId, row]));
+
+    /* clerkId -> { bookKey: sold }, so each volunteer's trolley is a lookup
+       rather than a query. */
+    const sold = new Map();
+    for (const row of soldRows) {
+      const forVolunteer = sold.get(row._id.clerkId) || {};
+      forVolunteer[row._id.bookKey] = row.quantity;
+      sold.set(row._id.clerkId, forVolunteer);
+    }
 
     for (const doc of docs) {
       const row = totals.get(doc.clerkId);
@@ -79,6 +106,7 @@ export default async function AdminMarathonVolunteersPage({ params }) {
         createdAt: new Date(doc.createdAt).toISOString(),
         books: row?.books ?? 0,
         amount: row?.amount ?? 0,
+        stock: stockList(doc, sold.get(doc.clerkId) || {}),
       });
     }
   } catch (error) {

@@ -16,24 +16,24 @@ import { IkImage } from "@/components/media/IkImage";
 import { Diya } from "@/components/gita/Diya";
 import { GitaRegisterForm } from "@/components/gita/GitaRegisterForm";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 /**
- * The festival on a phone: one painting, its two names, three figures,
- * Register.
+ * The festival on a phone: the poster, three figures, Register.
  *
- * The painting is the page here. It carries no type of its own — Krishna and
- * Arjuna on the chariot, the sky open above them — so the festival's two
- * names are set over it in Kaushan Script, the one brush face on the site.
- * They are set as one lockup over the open sky at the top — Gita Mahotsav,
- * the lamp, then Gita Quiz — because they are one festival with two halves
- * and reading them as a pair is the point. The sky is the only part of the
- * painting with room for type at this size, which is why they sit there and
- * not over the chariot.
- * That is the whole reason the phone gets its own artwork: a picture with the
- * names already drawn into it cannot be translated, cannot be re-cut for a
- * narrower screen, and cannot have Register sit under it without covering
- * something. These names are text, so Hindi gets Devanagari and a 360-pixel
- * screen gets the same line one size smaller.
+ * The poster is the page here, and it comes in two kinds. An untyped
+ * painting — Krishna and Arjuna on the chariot, the sky open above them —
+ * gets the festival's two names set over it in Kaushan Script, the one brush
+ * face on the site; being text, they translate, they re-cut for a narrow
+ * screen, and they leave room for Register underneath. A finished poster
+ * with its own lettering gets none of that, because two sets of the same
+ * names in one frame is one set too many.
+ *
+ * Which it is comes from the content file (`poster.hasTitle`), not from a
+ * guess here. When the poster carries its own type the overlay is reduced to
+ * a screen-reader heading and the top scrim is dropped — that scrim exists
+ * to make cream type readable against a pale sky, and over a poster's own
+ * title it is just a shadow across the artwork.
  *
  * Everything else is one card in two tiers. Three figures across the top —
  * what can be won, when, and what it costs — in equal columns, one line
@@ -84,6 +84,9 @@ const RISE = {
 
 export function GitaStage({
   poster,
+  /* The festival's own name, for the heading a screen reader is given when
+     the poster's lettering is the only thing a sighted reader gets. */
+  title,
   lines,
   eyebrow,
   facts,
@@ -94,6 +97,8 @@ export function GitaStage({
   detailsHref,
 }) {
   const t = useTranslations("gita");
+  /* A poster that names itself needs nothing written over it. */
+  const titled = Boolean(poster?.hasTitle) || !lines?.length;
   const [sheetOpen, setSheetOpen] = useState(false);
   const closeRef = useRef(null);
 
@@ -120,11 +125,15 @@ export function GitaStage({
 
   return (
     <section className="relative isolate flex min-h-[calc(100svh-11rem)] flex-col overflow-hidden bg-brand-ink text-brand-cream md:hidden">
-      {/* The painting, filling the frame. `cover` crops rather than
-          letterboxes, and the crop is pinned to the bottom: the chariot is in
-          the lower third and the open sky above it is what should give way on
-          a short screen. It is not `priority` — the desktop hero below is in
-          the same document behind a media query, and a lazy image inside a
+      {/* The poster, filling the frame. `cover` crops rather than
+          letterboxes, and which end gives way depends on what is in it: a
+          titled poster is cropped from the bottom, because its lettering is
+          along the top and the bottom is where the figures and the button
+          sit anyway; an untyped painting is cropped from the top, where
+          there is only sky.
+
+          It is not `priority` — the desktop hero below is in the same
+          document behind a media query, and a lazy image inside a
           `display: none` subtree is never fetched, which is what keeps each
           width from downloading the other's artwork. */}
       <IkImage
@@ -133,73 +142,86 @@ export function GitaStage({
         width={poster.width}
         height={poster.height}
         sizes="100vw"
-        className="absolute inset-0 size-full object-cover object-bottom"
+        className={cn(
+          "absolute inset-0 size-full object-cover",
+          titled ? "object-top" : "object-bottom",
+        )}
       />
 
       {/* Two scrims, one from each edge. The top one is what the names are
           read against — the sky behind them is cream and pink, and cream type
           on it would vanish. The bottom one carries the figures and the
           button. The middle is left alone: that is the chariot. */}
-      <div
-        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-brand-ink/80 via-brand-ink/10 to-transparent"
-        aria-hidden="true"
-      />
+      {!titled && (
+        <div
+          className="pointer-events-none absolute inset-0 bg-gradient-to-b from-brand-ink/80 via-brand-ink/10 to-transparent"
+          aria-hidden="true"
+        />
+      )}
       <div
         className="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand-ink via-brand-ink/30 to-transparent"
         aria-hidden="true"
       />
 
       <div className="pointer-events-none relative z-10 flex flex-1 flex-col px-5 pt-5 pb-7">
-        <p
-          className="stage-rise pointer-events-auto mx-auto rounded-full border border-brand-gold/30 bg-brand-ink/40 px-3.5 py-1.5 text-[10px] font-semibold tracking-[0.18em] text-brand-gold-light uppercase backdrop-blur-md"
-          style={{ animationDelay: RISE.eyebrow }}
-        >
-          {eyebrow}
-        </p>
+        {!titled && (
+          <p
+            className="stage-rise pointer-events-auto mx-auto rounded-full border border-brand-gold/30 bg-brand-ink/40 px-3.5 py-1.5 text-[10px] font-semibold tracking-[0.18em] text-brand-gold-light uppercase backdrop-blur-md"
+            style={{ animationDelay: RISE.eyebrow }}
+          >
+            {eyebrow}
+          </p>
+        )}
 
-        {/* One `h1` holding both names, stretched over the whole picture and
-            pushing them to its two ends — one element rather than two, so a
-            screen reader still hears a single heading naming a single
-            festival, and so the two lines cannot drift out of step with each
-            other as the layout changes.
+        {/* The names. A titled poster has them already, drawn far better
+            than type over a photograph can be, so all that is left to do is
+            give the page a heading nobody sees — the poster's lettering is a
+            picture, and `alt` text on a background image is not a heading.
 
             The desktop hero below carries an `h1` of its own. Only ever one
             of the two is rendered: the other sits inside a `display: none`
             subtree, which no reader, assistive or otherwise, is shown. */}
-        <h1
-          /* Sized against the viewport rather than at two breakpoints: a
-             brush script this large is within a few percent of the screen's
-             width at every phone size, and `clamp` holds that margin
-             everywhere instead of at 360 and 390 and nowhere in between. The
-             names are deliberately left wrappable — if a longer one ever
-             outgrows its line it breaks onto two, which on a poster is fine,
-             where overflowing the screen would not be.
+        {titled ? (
+          <h1 className="sr-only">{title}</h1>
+        ) : (
+          <h1
+            /* Sized against the viewport rather than at two breakpoints: a
+               brush script this large is within a few percent of the
+               screen's width at every phone size, and `clamp` holds that
+               margin everywhere instead of at 360 and 390 and nowhere in
+               between. The names are deliberately left wrappable — if a
+               longer one ever outgrows its line it breaks onto two, which on
+               a poster is fine, where overflowing the screen would not be.
 
-             `-mx-1` buys the names a little of the padding the rest of the
-             overlay keeps, because they are the only thing here that is
-             width-bound. */
-          className="stage-rise kaushan-script -mx-1 mt-5 text-center text-[clamp(2.75rem,14vw,3.75rem)] text-brand-cream drop-shadow-[0_3px_22px_rgba(16,10,6,0.85)]"
-          style={{ animationDelay: RISE.title }}
-        >
-          <span className="block">{lines[0]}</span>
+               `-mx-1` buys the names a little of the padding the rest of the
+               overlay keeps, because they are the only thing here that is
+               width-bound. */
+            className="stage-rise kaushan-script -mx-1 mt-5 text-center text-[clamp(2.75rem,14vw,3.75rem)] text-brand-cream drop-shadow-[0_3px_22px_rgba(16,10,6,0.85)]"
+            style={{ animationDelay: RISE.title }}
+          >
+            <span className="block">{lines[0]}</span>
 
-          {/* The lamp between the two names, on the same axis as everything
-              else on the poster. Its flame flickers on its own
-              (`animate-diya`) and the glow behind it breathes a little out of
-              step with it, which is what keeps the pair from looking like one
-              blinking element. Decoration, so it is hidden from the screen
-              reader, which hears the two names in sequence. */}
-          <span className="my-2 flex items-center justify-center gap-3" aria-hidden="true">
-            <span className="h-px w-12 bg-gradient-to-r from-transparent to-brand-gold/60" />
-            <span className="relative grid size-7 place-items-center">
-              <span className="stage-glow absolute size-7 rounded-full bg-brand-gold/40 blur-md" />
-              <Diya className="relative size-7 text-brand-gold" />
+            {/* The lamp between the two names, on the same axis as
+                everything else on the poster. Its flame flickers on its own
+                (`animate-diya`) and the glow behind it breathes a little out
+                of step with it, which is what keeps the pair from looking
+                like one blinking element. Decoration, so it is hidden from
+                the screen reader, which hears the two names in sequence. */}
+            <span
+              className="my-2 flex items-center justify-center gap-3"
+              aria-hidden="true"
+            >
+              <span className="h-px w-12 bg-gradient-to-r from-transparent to-brand-gold/60" />
+              <span className="relative grid size-7 place-items-center">
+                <span className="stage-glow absolute size-7 rounded-full bg-brand-gold/40 blur-md" />
+                <Diya className="relative size-7 text-brand-gold" />
+              </span>
+              <span className="h-px w-12 bg-gradient-to-l from-transparent to-brand-gold/60" />
             </span>
-            <span className="h-px w-12 bg-gradient-to-l from-transparent to-brand-gold/60" />
-          </span>
 
-          <span className="block">{lines[1]}</span>
-        </h1>
+            <span className="block">{lines[1]}</span>
+          </h1>
+        )}
 
         <div className="mt-auto flex flex-col gap-4 pt-8">
           {/* One card in two tiers: the numbers, then the two things that

@@ -30,7 +30,7 @@ import CashSettlement from "../models/CashSettlement.js";
 import MarathonVolunteer from "../models/MarathonVolunteer.js";
 import { dbConnect } from "../lib/db/connect.js";
 import { GITA_MARATHON } from "../lib/site-config.js";
-import { getBook, priceBasket } from "../lib/marathon/books.js";
+import { getBook, priceBasket, stockList } from "../lib/marathon/books.js";
 import { buildBookSaleReceipt } from "../lib/marathon/receipt.js";
 import { gitasFor, gitaTierFor, isSevaInSeason } from "../lib/donations/sevas.js";
 import { buildDonationReceipt } from "../lib/donations/receipt.js";
@@ -154,6 +154,16 @@ const EXPECTED = {
   bimalBooks: 6,
 };
 
+/* A trolley deep enough that the pricing checks are testing pricing and not
+   the cap, which gets checks of its own. Built through `stockList` so the
+   shape is exactly what the sell screen and the route are handed. */
+const TROLLEY = stockList({
+  stock: [
+    { bookKey: "gita_hi", unitPrice: 300, language: "hi", issued: 1000, title: { hi: "", en: "" } },
+    { bookKey: "gita_en", unitPrice: 350, language: "en", issued: 1000, title: { hi: "", en: "" } },
+  ],
+});
+
 async function seed() {
   const volunteers = await MarathonVolunteer.create([
     { clerkId: "user_asha", name: "Asha", phone: "9000000001", status: "active" },
@@ -165,7 +175,7 @@ async function seed() {
   let counter = 100;
   const sale = async (clerkId, dayKey, bookKey, quantity, method, status) => {
     const volunteer = by[clerkId];
-    const { items, quantity: books, amount } = priceBasket([{ bookKey, quantity }]);
+    const { items, quantity: books, amount } = priceBasket([{ bookKey, quantity }], TROLLEY);
     counter += 1;
     return BookSale.create({
       orderId: `GM-${counter}`,
@@ -212,24 +222,63 @@ try {
   check("2 Hindi + 1 English is INR 950", priceBasket([
     { bookKey: "gita_hi", quantity: 2 },
     { bookKey: "gita_en", quantity: 1 },
-  ]).amount, 950);
+  ], TROLLEY).amount, 950);
   check("the same title twice is folded into one line", priceBasket([
     { bookKey: "gita_hi", quantity: 2 },
     { bookKey: "gita_hi", quantity: 3 },
-  ]).items.length, 1);
+  ], TROLLEY).items.length, 1);
   check("...and its quantities added", priceBasket([
     { bookKey: "gita_hi", quantity: 2 },
     { bookKey: "gita_hi", quantity: 3 },
-  ]).quantity, 5);
+  ], TROLLEY).quantity, 5);
   check("an unknown title is dropped", priceBasket([
     { bookKey: "mahabharata", quantity: 1 },
-  ]).items.length, 0);
+  ], TROLLEY).items.length, 0);
   check("a zero quantity is dropped", priceBasket([
     { bookKey: "gita_hi", quantity: 0 },
-  ]).quantity, 0);
+  ], TROLLEY).quantity, 0);
   check("51 copies is refused as a fat finger", priceBasket([
     { bookKey: "gita_hi", quantity: 51 },
-  ]).quantity, 0);
+  ], TROLLEY).quantity, 0);
+
+  console.log("\nGita Marathon - the trolley");
+  /* A volunteer may only sell what they were handed, and the price comes off
+     their own trolley rather than the catalogue - which is what lets a
+     coordinator issue a title the catalogue has never heard of. */
+  const SMALL = stockList(
+    {
+      stock: [
+        { bookKey: "gita_hi", unitPrice: 300, language: "hi", issued: 10, returned: 2, title: { hi: "", en: "" } },
+        { bookKey: "custom:krishna-book", unitPrice: 120, language: "hi", issued: 4, custom: true, title: { hi: "Krishna Book", en: "Krishna Book" } },
+      ],
+    },
+    { gita_hi: 3 },
+  );
+
+  check("what is left is issued less returned less sold",
+    SMALL.find((b) => b.bookKey === "gita_hi").remaining, 5);
+  check("a title that was never issued is not on the trolley",
+    SMALL.find((b) => b.bookKey === "gita_en"), undefined);
+  check("a typed-in title is priced from the trolley", priceBasket([
+    { bookKey: "custom:krishna-book", quantity: 2 },
+  ], SMALL).amount, 240);
+  check("a title not on this trolley is dropped", priceBasket([
+    { bookKey: "gita_en", quantity: 1 },
+  ], SMALL).items.length, 0);
+  check("a basket within the trolley reports nothing over", priceBasket([
+    { bookKey: "gita_hi", quantity: 5 },
+  ], SMALL).over.length, 0);
+  check("a basket past the trolley is flagged", priceBasket([
+    { bookKey: "gita_hi", quantity: 6 },
+  ], SMALL).over[0], "gita_hi");
+  /* Capped rather than dropped, so the screen and the route agree on the
+     number even as the route refuses the basket outright. */
+  check("...and capped at what is left", priceBasket([
+    { bookKey: "gita_hi", quantity: 6 },
+  ], SMALL).quantity, 5);
+  check("an empty trolley sells nothing", priceBasket([
+    { bookKey: "gita_hi", quantity: 1 },
+  ], []).quantity, 0);
 
   console.log("\nGita Marathon — sponsorship arithmetic");
   check("INR 2,750 sponsors 11 Gitas", gitasFor(2750), 11);

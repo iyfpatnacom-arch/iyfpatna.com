@@ -5,6 +5,7 @@ import { Panel } from "@/components/site/Panel";
 import { SellConsole } from "@/components/marathon/SellConsole";
 import { Link } from "@/i18n/navigation";
 import { getFlag } from "@/lib/flags";
+import { volunteerStock } from "@/lib/marathon/stock";
 import { getVolunteerStanding } from "@/lib/marathon/volunteers";
 import { redirectSignedOut } from "@/lib/auth-config";
 
@@ -21,6 +22,12 @@ import { redirectSignedOut } from "@/lib/auth-config";
  * `marathon.open` is checked here as well as in the route, so that closing the
  * marathon closes this screen rather than letting a volunteer fill a basket
  * and be refused at the end of it.
+ *
+ * The trolley is read here too and handed down. It is what the console draws
+ * its titles, its prices and its caps from, and /api/marathon/sales reads the
+ * same thing through the same function when the sale arrives — so the screen
+ * cannot offer a book, a price or a last copy that the route will then
+ * disagree with.
  */
 export const dynamic = "force-dynamic";
 
@@ -44,6 +51,10 @@ export default async function SellPage({ params }) {
     getVolunteerStanding(),
     getFlag("marathon.open", true),
   ]);
+
+  /* Only for an active volunteer: `volunteerStock` runs an aggregation, and
+     there is nothing to count for somebody who may not sell. */
+  const stock = state === "active" ? await volunteerStock(volunteer) : [];
 
   if (state !== "active") {
     return (
@@ -89,7 +100,7 @@ export default async function SellPage({ params }) {
 
       {open ? (
         <div className="mt-7">
-          <SellConsole />
+          <SellConsole stock={stock} />
         </div>
       ) : (
         <Panel className="mt-7 border-amber-500/30 bg-amber-500/[0.06] p-6">

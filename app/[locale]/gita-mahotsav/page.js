@@ -142,6 +142,10 @@ export default async function GitaMahotsavPage({ params }) {
     src: festival.poster.src,
     width: festival.poster.width,
     height: festival.poster.height,
+    /* Whether the artwork already has the festival's name drawn into it. A
+       finished poster does and is left alone; an untyped painting gets the
+       names set over it as live text. */
+    hasTitle: Boolean(festival.poster.hasTitle),
     alt: festival.poster.alt?.[lang] || festival.poster.alt?.en || "",
   };
   const posterLines = festival.posterLines.map((line) => line[lang] || line.en);
@@ -211,6 +215,7 @@ export default async function GitaMahotsavPage({ params }) {
       {/* ------------------------------------------------- phone: the poster */}
       <GitaStage
         poster={poster}
+        title={festival.title[lang] || festival.title.en}
         lines={posterLines}
         eyebrow={festival.eyebrow[lang] || festival.eyebrow.en}
         facts={facts.map(({ icon, label, value, short }) => ({

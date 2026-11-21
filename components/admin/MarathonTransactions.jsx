@@ -1,11 +1,13 @@
 "use client";
 
-import { useDeferredValue, useMemo, useState } from "react";
+import { useDeferredValue, useMemo, useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Download, Search } from "lucide-react";
+import { toast } from "sonner";
+import { BadgeCheck, Download, LoaderCircle, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Panel } from "@/components/site/Panel";
+import { matchUpiClaim } from "@/app/[locale]/admin/gita-marathon/actions";
 import { cn } from "@/lib/utils";
 
 /**
@@ -20,6 +22,14 @@ import { cn } from "@/lib/utils";
  * The CSV is built from the filtered list for exactly that reason: somebody
  * who has narrowed to one volunteer's cash sales and presses Export means that
  * list, not the whole collection.
+ *
+ * The UPI column is the one place in this table that is not a record but a
+ * job. A sale paid into the temple's fixed QR closes on the volunteer's word
+ * plus four digits of a UTR, and nothing on this site can confirm it — the
+ * money went bank to bank. So the reference sits here next to a tick, and a
+ * coordinator with the statement open marks off the ones they can find. An
+ * unticked reference at the end of the week is the only signal the temple
+ * gets that a claimed transfer never arrived.
  */
 
 const PAGE = 100;
@@ -70,6 +80,8 @@ function buildCsv(rows) {
     "Payment status",
     "Payment mode",
     "Payment reference",
+    "UPI reference",
+    "UPI matched",
     "Bank reference",
     "Reader",
     "Reader phone",
@@ -90,6 +102,8 @@ function buildCsv(rows) {
       row.status,
       row.paymentMode,
       row.trackingId,
+      row.claimReference,
+      row.claimMatched ? "yes" : "no",
       row.bankRefNo,
       row.buyerName,
       row.buyerPhone,
@@ -303,6 +317,7 @@ export function MarathonTransactions({ rows }) {
                       ["mar_col_amount", "text-end"],
                       ["mar_col_method", "text-start"],
                       ["mar_col_status", "text-start"],
+                      ["mar_col_upi", "text-start"],
                       ["mar_col_reader", "text-start"],
                     ].map(([key, align]) => (
                       <th
@@ -352,6 +367,9 @@ export function MarathonTransactions({ rows }) {
                           {tm(`status_${row.status}`)}
                         </span>
                       </td>
+                      <td className="px-3 py-2.5 whitespace-nowrap">
+                        <UpiClaim row={row} t={t} />
+                      </td>
                       <td className="max-w-36 truncate px-3 py-2.5 text-muted-foreground">
                         {row.buyerName || "—"}
                       </td>
@@ -376,5 +394,64 @@ export function MarathonTransactions({ rows }) {
         </>
       )}
     </section>
+  );
+}
+
+/**
+ * One UPI claim: what the volunteer typed, and whether it has been found.
+ *
+ * Three states and no more. A cash sale has nothing to show. A matched claim
+ * is a tick and the reference, greyed, because it is finished. An unmatched
+ * one is a button, because it is work — and the button says what it will do
+ * ("found it") rather than what it is, since the coordinator pressing it is
+ * looking at a bank statement and not at this table.
+ *
+ * `useTransition` rather than a spinner of its own: the action revalidates
+ * the page, so the row re-renders as matched from the server rather than from
+ * optimistic local state that could disagree with it.
+ */
+function UpiClaim({ row, t }) {
+  const [pending, startTransition] = useTransition();
+
+  if (row.method !== "online" || !row.claimReference) {
+    return <span className="text-muted-foreground/40">—</span>;
+  }
+
+  const label =
+    row.claimKind === "utr"
+      ? t("mar_tx_upi_utr", { reference: row.claimReference })
+      : t("mar_tx_upi_time", { reference: row.claimReference });
+
+  if (row.claimMatched) {
+    return (
+      <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+        <BadgeCheck className="size-3.5 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
+        {label}
+      </span>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      disabled={pending}
+      onClick={() =>
+        startTransition(async () => {
+          const result = await matchUpiClaim({ orderId: row.orderId });
+          if (!result?.ok) {
+            toast.error(t(result?.error || "mar_claim_failed"));
+            return;
+          }
+          toast.success(t("mar_claim_matched"));
+        })
+      }
+      className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-500/10 px-2.5 py-1 text-xs font-medium text-amber-700 transition-colors hover:bg-amber-500/20 disabled:opacity-60 dark:text-amber-400"
+    >
+      {pending ? (
+        <LoaderCircle className="size-3 animate-spin" aria-hidden="true" />
+      ) : null}
+      {label}
+      <span className="font-semibold">· {t("mar_tx_upi_match")}</span>
+    </button>
   );
 }

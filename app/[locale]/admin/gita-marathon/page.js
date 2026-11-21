@@ -83,6 +83,12 @@ function toRow(doc) {
     paymentMode: payment.paymentMode || null,
     trackingId: payment.trackingId || null,
     bankRefNo: payment.bankRefNo || null,
+    /* The volunteer's word that a UPI transfer landed, and whether anybody
+       has since found it on the statement. Only ever set on an online sale;
+       null on a cash one, where the reconciliation is a count of notes. */
+    claimKind: doc.claim?.kind || null,
+    claimReference: doc.claim?.reference || "",
+    claimMatched: Boolean(doc.claim?.verifiedAt),
     buyerName: doc.buyer?.name || "",
     buyerPhone: doc.buyer?.phone || "",
     note: doc.note || "",

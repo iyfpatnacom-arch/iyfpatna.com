@@ -1,14 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import {
   BanknoteArrowDown,
   BookOpen,
   CircleCheck,
   CircleX,
+  Copy,
   LoaderCircle,
   Minus,
+  PackageOpen,
   Plus,
   QrCode,
   RotateCcw,
@@ -18,44 +20,48 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Panel } from "@/components/site/Panel";
-import { GITA_BOOKS, MAX_PER_TITLE, priceBasket } from "@/lib/marathon/books";
-import { startPayment } from "@/lib/payments/redirect";
+import { MAX_PER_TITLE, priceBasket } from "@/lib/marathon/books";
+import { UPI_QR_IMAGE, UPI_VPA, upiIntentUrl } from "@/lib/payments/upi";
 import { cn } from "@/lib/utils";
 
 /**
  * The screen a volunteer actually uses, standing in a market with one hand
  * free.
  *
- * Everything about it is shaped by that. Two big steppers instead of a form;
- * a running total that is always on screen; two buttons the size of a thumb;
- * and a single decision at the end — cash, or show a QR. There is no "submit"
- * and no page navigation in the common path, because a volunteer with a queue
- * in front of them cannot afford a round trip they have to wait out and then
- * find their way back from.
+ * Everything about it is shaped by that. Steppers instead of a form; a
+ * running total that is always on screen; two buttons the size of a thumb;
+ * and a single decision at the end — cash, or show the QR. There is no
+ * "submit" and no page navigation in the common path, because a volunteer
+ * with a queue in front of them cannot afford a round trip they have to wait
+ * out and then find their way back from.
  *
- * The two halves of that decision are genuinely different mechanisms:
+ * What is on the screen is `stock`: the titles this volunteer was actually
+ * handed, at the prices they were handed them at, with what is left of each.
+ * Not the site's catalogue — a coordinator can issue a title the catalogue
+ * has never heard of, and a volunteer who was given forty Hindi Gitas should
+ * not be able to record the forty-first. The steppers stop at what is left
+ * and /api/marathon/sales refuses anything past it, so a stale tab cannot get
+ * round the cap either.
  *
- *   Cash      recorded and finished in one request. The money is already in
- *             their hand; what is left is the evening's reconciliation, and
- *             the confirm step exists so that a mis-tap cannot add ₹300 to
- *             what they will be asked for at the desk.
+ * The two ways to pay are genuinely different mechanisms:
  *
- *   Online    the reader pays, on their own phone, by scanning a QR off this
- *             one. That is why it cannot be the ordinary checkout: the
- *             checkout assumes the payer is holding the device. The QR is
- *             created server-side for this exact amount, single-use, and the
- *             screen then polls until Razorpay says it has been paid — see
- *             /api/marathon/sales/[orderId], which settles it through the same
- *             writer every other payment on this site goes through.
+ *   Cash    recorded and finished in one request. The money is already in
+ *           their hand; what is left is the evening's reconciliation, and the
+ *           confirm step exists so that a mis-tap cannot add ₹300 to what
+ *           they will be asked for at the desk.
  *
- * `priceBasket` is imported rather than reimplemented: the total on screen and
- * the total in the database come out of the same function, so a volunteer can
- * never be shown one figure and charged for another.
+ *   UPI     the reader scans the temple's own printed QR and pays straight
+ *           into its account. Nothing comes back to this site when they do —
+ *           a fixed code carries no order and fires no webhook — so the
+ *           volunteer closes the sale by typing the last four digits of the
+ *           UTR off the reader's phone. That is a claim, and the row says so
+ *           until a coordinator finds it on the statement.
+ *
+ * `priceBasket` is imported rather than reimplemented: the total on screen
+ * and the total in the database come out of the same function applied to the
+ * same trolley, so a volunteer can never be shown one figure and charged for
+ * another.
  */
-
-/* Fast enough that the volunteer does not start wondering, slow enough that a
-   sale left open for ten minutes is forty requests and not six hundred. */
-const POLL_MS = 3000;
 
 const SALE_ERRORS = [
   "rate_limited",
@@ -63,28 +69,28 @@ const SALE_ERRORS = [
   "empty",
   "closed",
   "not_active",
-  "payment_unavailable",
+  "no_stock",
+  "out_of_stock",
   "network",
   "generic",
 ];
 
-export function SellConsole() {
+export function SellConsole({ stock = [] }) {
   const t = useTranslations("marathon");
   const locale = useLocale();
   const format = useFormatter();
 
-  /* basket → confirm? → (qr | cash_done) → paid | failed */
+  /* basket → confirm? → (upi | cash_done) → paid | failed */
   const [stage, setStage] = useState("basket");
   /* The method whose request is in flight, or null. Kept apart from `stage`
      because the screen it belongs on differs: a cash sale is confirmed from
      the confirm panel and must stay on it while it saves, an online one goes
-     straight from the basket. One "recording" stage could only be on one of
-     the two. */
+     straight from the basket. One "recording" stage could only be on one. */
   const [recording, setRecording] = useState(null);
   const [error, setError] = useState(null);
 
   const [counts, setCounts] = useState(() =>
-    Object.fromEntries(GITA_BOOKS.map((book) => [book.key, 0])),
+    Object.fromEntries(stock.map((book) => [book.bookKey, 0])),
   );
   const [showBuyer, setShowBuyer] = useState(false);
   const [buyerName, setBuyerName] = useState("");
@@ -101,19 +107,27 @@ export function SellConsole() {
     [counts],
   );
 
-  const basket = useMemo(() => priceBasket(lines), [lines]);
+  const basket = useMemo(() => priceBasket(lines, stock), [lines, stock]);
   const empty = basket.quantity < 1;
+
+  /* Nothing issued means nothing to sell, and saying so plainly is better
+     than an empty screen the volunteer has to interpret. */
+  const nothingIssued = stock.length === 0;
+  const allGone =
+    !nothingIssued && stock.every((book) => book.remaining < 1);
 
   function step(key, delta) {
     setError(null);
+    const book = stock.find((item) => item.bookKey === key);
+    const ceiling = Math.min(MAX_PER_TITLE, book?.remaining ?? 0);
     setCounts((previous) => ({
       ...previous,
-      [key]: Math.min(MAX_PER_TITLE, Math.max(0, (previous[key] || 0) + delta)),
+      [key]: Math.min(ceiling, Math.max(0, (previous[key] || 0) + delta)),
     }));
   }
 
   function reset() {
-    setCounts(Object.fromEntries(GITA_BOOKS.map((book) => [book.key, 0])));
+    setCounts(Object.fromEntries(stock.map((book) => [book.bookKey, 0])));
     setBuyerName("");
     setBuyerPhone("");
     setShowBuyer(false);
@@ -164,130 +178,45 @@ export function SellConsole() {
 
       setRecording(null);
       setSale(result);
-
-      if (method === "cash") {
-        setStage("cash_done");
-        return;
-      }
-
-      /* A QR is the happy path. Without one — the Razorpay account does not
-         have the QR Codes API, or there is no gateway at all — the screen
-         says so and offers the ordinary checkout instead of a blank square. */
-      setStage("qr");
+      setStage(method === "cash" ? "cash_done" : "upi");
     },
     [lines, buyerName, buyerPhone, locale],
   );
 
-  /* ---- Waiting for the QR to be paid ----------------------------------- */
-
-  useEffect(() => {
-    if (stage !== "qr" || !sale?.orderId || !sale?.qr) return;
-
-    let cancelled = false;
-
-    const poll = async () => {
-      try {
-        const response = await fetch(
-          `/api/marathon/sales/${encodeURIComponent(sale.orderId)}?t=${sale.token}`,
-          { cache: "no-store" },
-        );
-        const result = await response.json().catch(() => null);
-        if (cancelled || !result?.ok) return;
-
-        /* Merged through the updater rather than from the `sale` this
-           effect closed over, so a poll that comes back after another one has
-           already written cannot resurrect the older value. */
-        if (result.status === "success") {
-          setSale((previous) => ({ ...previous, ...result }));
-          setStage("paid");
-        } else if (result.status === "failed" || result.status === "aborted") {
-          setSale((previous) => ({ ...previous, ...result }));
-          setStage("failed");
-        }
-      } catch {
-        /* Offline for a moment at a stall is normal. Keep polling — the sale
-           is saved either way, and the webhook settles it regardless. */
-      }
-    };
-
-    const timer = setInterval(poll, POLL_MS);
-    poll();
-
-    return () => {
-      cancelled = true;
-      clearInterval(timer);
-    };
-  }, [stage, sale?.orderId, sale?.token, sale?.qr]);
-
-  /**
-   * The QR's own lifetime, so an expired square says so instead of lying.
-   *
-   * Held as the order id that expired rather than a boolean, and compared on
-   * render. A boolean would have to be cleared when the next sale starts,
-   * which means writing state from an effect on every QR that opens; this way
-   * a new order simply does not match and reads as unexpired.
-   */
-  const [expiredOrderId, setExpiredOrderId] = useState(null);
-  useEffect(() => {
-    if (stage !== "qr" || !sale?.orderId || !sale?.qr?.closeBy) return;
-
-    const orderId = sale.orderId;
-    const left = new Date(sale.qr.closeBy).getTime() - Date.now();
-    /* A QR that is already past its close time expires on the next tick
-       rather than during this effect. */
-    const timer = setTimeout(() => setExpiredOrderId(orderId), Math.max(0, left));
-    return () => clearTimeout(timer);
-  }, [stage, sale?.orderId, sale?.qr?.closeBy]);
-
-  const expired = Boolean(sale?.orderId) && expiredOrderId === sale.orderId;
-
-  /* ---- The ordinary checkout, as a fallback ---------------------------- */
-
-  const [opening, setOpening] = useState(false);
-
-  async function openCheckout() {
-    if (!sale?.orderId || !sale?.token) return;
-    setOpening(true);
-    setError(null);
-
-    const payment = await startPayment({
-      orderId: sale.orderId,
-      token: sale.token,
-      kind: "book",
-      lang: locale,
-    });
-
-    setOpening(false);
-    /* On success the browser is already navigating to Razorpay's callback, so
-       there is nothing to do. Closing the overlay is a choice, not an error —
-       the sale stays saved and the QR keeps waiting. */
-    if (!payment.ok && !payment.cancelled) {
-      setError(
-        SALE_ERRORS.includes(payment.error) ? payment.error : "generic",
-      );
-    }
-  }
-
   /* ---- Render ---------------------------------------------------------- */
 
   if (stage === "cash_done" || stage === "paid" || stage === "failed") {
+    return <Done stage={stage} sale={sale} onReset={reset} t={t} />;
+  }
+
+  if (stage === "upi") {
     return (
-      <Done stage={stage} sale={sale} onReset={reset} t={t} />
+      <UpiPanel
+        sale={sale}
+        format={format}
+        t={t}
+        onPaid={(confirmed) => {
+          setSale((previous) => ({ ...previous, ...confirmed }));
+          setStage("paid");
+        }}
+        onReset={reset}
+      />
     );
   }
 
-  if (stage === "qr") {
+  if (nothingIssued) {
     return (
-      <QrPanel
-        sale={sale}
-        expired={expired}
-        opening={opening}
-        error={error}
-        onCheckout={openCheckout}
-        onReset={reset}
-        format={format}
-        t={t}
-      />
+      <Panel className="p-7 text-center">
+        <span className="mx-auto grid size-12 place-items-center rounded-full bg-primary/10 text-primary">
+          <PackageOpen className="size-6" aria-hidden="true" />
+        </span>
+        <h2 className="mt-5 text-lg font-semibold tracking-tight">
+          {t("sell_no_stock_title")}
+        </h2>
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          {t("sell_no_stock_body")}
+        </p>
+      </Panel>
     );
   }
 
@@ -295,14 +224,16 @@ export function SellConsole() {
     <div className="flex flex-col gap-5">
       {/* ------------------------------------------------------- the books */}
       <div className="grid gap-3 sm:grid-cols-2">
-        {GITA_BOOKS.map((book) => {
-          const quantity = counts[book.key] || 0;
+        {stock.map((book) => {
+          const quantity = counts[book.bookKey] || 0;
+          const out = book.remaining < 1;
           return (
             <Panel
-              key={book.key}
+              key={book.bookKey}
               className={cn(
                 "p-4 transition-colors",
                 quantity > 0 && "border-primary/40 bg-primary/[0.04]",
+                out && "opacity-60",
               )}
             >
               <div className="flex items-start gap-3">
@@ -311,10 +242,17 @@ export function SellConsole() {
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm leading-snug font-semibold text-balance">
-                    {t(`books.${book.key}.name`)}
+                    {bookName(book, locale, t)}
                   </p>
                   <p className="mt-0.5 text-xs text-muted-foreground tabular-nums">
-                    {t("sell_each", { price: book.price })}
+                    {t("sell_each", { price: book.unitPrice })}
+                    {" · "}
+                    {/* What is left of what they were handed. The number that
+                        decides whether they can say yes to the next reader,
+                        so it is on the card rather than in a summary. */}
+                    {out
+                      ? t("sell_out_of_stock")
+                      : t("sell_left", { left: book.remaining })}
                   </p>
                 </div>
               </div>
@@ -326,7 +264,7 @@ export function SellConsole() {
                 <StepButton
                   label="-"
                   disabled={quantity === 0 || Boolean(recording)}
-                  onClick={() => step(book.key, -1)}
+                  onClick={() => step(book.bookKey, -1)}
                 >
                   <Minus className="size-4" aria-hidden="true" />
                 </StepButton>
@@ -338,14 +276,17 @@ export function SellConsole() {
                 </span>
                 <StepButton
                   label="+"
-                  disabled={quantity >= MAX_PER_TITLE || Boolean(recording)}
-                  onClick={() => step(book.key, 1)}
+                  disabled={
+                    Boolean(recording) ||
+                    quantity >= Math.min(MAX_PER_TITLE, book.remaining)
+                  }
+                  onClick={() => step(book.bookKey, 1)}
                 >
                   <Plus className="size-4" aria-hidden="true" />
                 </StepButton>
                 {quantity > 0 && (
                   <span className="ms-auto text-sm font-semibold text-primary tabular-nums">
-                    ₹{format.number(book.price * quantity)}
+                    ₹{format.number(book.unitPrice * quantity)}
                   </span>
                 )}
               </div>
@@ -353,6 +294,12 @@ export function SellConsole() {
           );
         })}
       </div>
+
+      {allGone && (
+        <p className="rounded-lg bg-amber-500/10 px-3 py-2 text-sm text-amber-700 dark:text-amber-400">
+          {t("sell_all_gone")}
+        </p>
+      )}
 
       {/* ------------------------------------------------- reader details */}
       {showBuyer ? (
@@ -503,6 +450,25 @@ export function SellConsole() {
 
 /* ---- Pieces ------------------------------------------------------------- */
 
+/**
+ * A title's printed name.
+ *
+ * A catalogue title's name is translated and comes from the message bundle; a
+ * title a coordinator typed in has only what they typed, stored in both
+ * language slots. The trolley's own snapshot is preferred where there is one
+ * because that is what the receipt will say.
+ */
+function bookName(book, locale, t) {
+  const snapshot = locale === "hi" ? book.title?.hi : book.title?.en;
+  if (snapshot) return snapshot;
+  if (book.custom) return book.title?.en || book.title?.hi || book.bookKey;
+  try {
+    return t(`books.${book.bookKey}.name`);
+  } catch {
+    return book.bookKey;
+  }
+}
+
 function StepButton({ label, disabled, onClick, children }) {
   return (
     <button
@@ -520,107 +486,203 @@ function StepButton({ label, disabled, onClick, children }) {
 }
 
 /**
- * The QR, while the reader is scanning it.
+ * The temple's QR, while the reader is paying into it.
  *
- * The image comes from Razorpay and is shown with a plain `<img>`: it is an
- * off-site URL that must not be re-encoded (a recompressed QR is a QR that
- * fails to scan in bad light), and routing it through the Next optimizer would
- * put CPU work on a VPS that has none to spare for every single sale.
+ * The code is fixed — the same one on the printed card at the counter — so it
+ * carries no amount and nothing that says which sale it belongs to. Both of
+ * those are handled here rather than pretended away: the amount is set in
+ * type larger than anything else on the screen, because the reader has to key
+ * it in themselves, and the sale is closed by the volunteer typing the last
+ * four digits of the UTR off the reader's phone.
+ *
+ * Shown with a plain `<img>`: a recompressed QR is a QR that fails to scan in
+ * bad light, and this one is a static file that needs no optimising.
  */
-function QrPanel({
-  sale,
-  expired,
-  opening,
-  error,
-  onCheckout,
-  onReset,
-  format,
-  t,
-}) {
-  const hasQr = Boolean(sale?.qr?.imageUrl) && !expired;
+function UpiPanel({ sale, format, t, onPaid, onReset }) {
+  const [kind, setKind] = useState("utr");
+  const [reference, setReference] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
+  const [copied, setCopied] = useState(false);
+
+  const valid =
+    kind === "utr" ? /^\d{4}$/.test(reference) : reference.trim().length >= 3;
+
+  async function confirm() {
+    if (!valid || !sale?.orderId) return;
+    setSaving(true);
+    setError(null);
+
+    try {
+      const response = await fetch(
+        `/api/marathon/sales/${encodeURIComponent(sale.orderId)}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ kind, reference: reference.trim() }),
+        },
+      );
+      const result = await response.json().catch(() => null);
+      if (!response.ok || !result?.ok) {
+        setSaving(false);
+        setError(SALE_ERRORS.includes(result?.error) ? result.error : "generic");
+        return;
+      }
+      onPaid(result);
+    } catch {
+      setSaving(false);
+      setError("network");
+    }
+  }
+
+  async function copyVpa() {
+    try {
+      await navigator.clipboard.writeText(UPI_VPA);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      /* Clipboard blocked. The handle is on screen to be typed either way. */
+    }
+  }
 
   return (
     <div className="flex flex-col items-center gap-5">
       <Panel className="w-full max-w-sm p-6 text-center">
         <h2 className="text-lg font-semibold tracking-tight">
-          {hasQr ? t("sell_qr_title") : t("sell_qr_unavailable_title")}
+          {t("sell_upi_title")}
         </h2>
-        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          {hasQr
-            ? t("sell_qr_body", { amount: sale.amount, books: sale.quantity })
-            : t("sell_qr_unavailable_body")}
-        </p>
 
-        {hasQr && (
-          <div className="mx-auto mt-5 w-full max-w-64 rounded-2xl border border-border bg-white p-3">
-            {/* eslint-disable-next-line @next/next/no-img-element -- Razorpay's own QR; re-encoding it risks an unscannable code */}
-            <img
-              src={sale.qr.imageUrl}
-              alt={t("sell_qr_alt", { amount: sale.amount })}
-              width={256}
-              height={256}
-              className="h-auto w-full"
-            />
-          </div>
-        )}
-
-        {expired && (
-          <p className="mt-4 rounded-lg bg-amber-500/10 px-3 py-2 text-sm text-amber-700 dark:text-amber-400">
-            {t("sell_qr_expired")}
-          </p>
-        )}
-
-        <p className="mt-5 text-2xl font-semibold tabular-nums">
+        {/* The amount first and biggest. A fixed code cannot carry it, so the
+            reader types it in — which makes this the one number on the screen
+            that a mistake costs real money. */}
+        <p className="mt-4 text-4xl font-bold tabular-nums">
           ₹{format.number(sale?.amount || 0)}
         </p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          {t("sell_upi_amount_hint")}
+        </p>
 
-        {hasQr && (
-          <p className="mt-3 inline-flex items-center gap-2 text-sm text-muted-foreground">
-            <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
-            {t("sell_qr_waiting")}
-          </p>
-        )}
+        <div className="mx-auto mt-5 w-full max-w-64 rounded-2xl border border-border bg-white p-3">
+          {/* eslint-disable-next-line @next/next/no-img-element -- the bank's own QR; re-encoding it risks an unscannable code */}
+          <img
+            src={UPI_QR_IMAGE}
+            alt={t("sell_upi_alt")}
+            width={512}
+            height={512}
+            className="h-auto w-full"
+          />
+        </div>
+
+        <button
+          type="button"
+          onClick={copyVpa}
+          className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <Copy className="size-3" aria-hidden="true" />
+          {copied ? t("sell_upi_copied") : UPI_VPA}
+        </button>
+
+        {/* On the reader's own phone this opens their UPI app with the payee
+            and the amount already filled in, which is both faster and safer
+            than scanning a code that carries neither. */}
+        <a
+          href={upiIntentUrl({ amount: sale?.amount, orderId: sale?.orderId })}
+          className="mt-3 flex items-center justify-center gap-2 text-sm font-medium text-primary underline underline-offset-4"
+        >
+          <Smartphone className="size-4" aria-hidden="true" />
+          {t("sell_upi_open_app")}
+        </a>
       </Panel>
 
-      {error && (
-        <p
-          role="alert"
-          className="w-full max-w-sm rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive"
-        >
-          {t(`sell_errors.${error}`)}
+      {/* ------------------------------------------------ the confirmation */}
+      <Panel className="w-full max-w-sm p-5">
+        <h3 className="text-sm font-semibold tracking-tight">
+          {t("sell_claim_title")}
+        </h3>
+        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+          {t("sell_claim_body")}
         </p>
-      )}
 
-      <div className="flex w-full max-w-sm flex-col gap-3">
+        <div className="mt-4 flex gap-2">
+          {["utr", "time"].map((option) => (
+            <button
+              key={option}
+              type="button"
+              onClick={() => {
+                setKind(option);
+                setReference("");
+                setError(null);
+              }}
+              className={cn(
+                "flex-1 rounded-full border px-3 py-2 text-xs font-medium transition-colors",
+                kind === option
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-border text-muted-foreground hover:text-foreground",
+              )}
+            >
+              {t(`sell_claim_${option}`)}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-3">
+          <Label htmlFor="sell-claim" className="sr-only">
+            {t(`sell_claim_${kind}`)}
+          </Label>
+          <Input
+            id="sell-claim"
+            value={reference}
+            inputMode={kind === "utr" ? "numeric" : "text"}
+            placeholder={t(`sell_claim_${kind}_placeholder`)}
+            onChange={(event) =>
+              setReference(
+                kind === "utr"
+                  ? event.target.value.replace(/\D/g, "").slice(0, 4)
+                  : event.target.value.slice(0, 40),
+              )
+            }
+            className="h-12 text-center text-lg tracking-[0.3em] tabular-nums"
+          />
+        </div>
+
+        {error && (
+          <p
+            role="alert"
+            className="mt-3 rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive"
+          >
+            {t(`sell_errors.${error}`)}
+          </p>
+        )}
+
         <Button
           type="button"
-          variant={hasQr ? "outline" : undefined}
-          disabled={opening}
-          onClick={onCheckout}
-          className="h-12 rounded-full"
+          disabled={!valid || saving}
+          onClick={confirm}
+          className="mt-4 h-12 w-full rounded-full text-base font-semibold"
         >
-          {opening ? (
+          {saving ? (
             <>
               <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
-              {t("sell_opening")}
+              {t("sell_recording")}
             </>
           ) : (
             <>
-              <Smartphone className="size-4" aria-hidden="true" />
-              {t("sell_other_methods")}
+              <CircleCheck className="size-4" aria-hidden="true" />
+              {t("sell_claim_confirm")}
             </>
           )}
         </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={onReset}
-          className="h-11 rounded-full"
-        >
-          <RotateCcw className="size-4" aria-hidden="true" />
-          {t("sell_new_sale")}
-        </Button>
-      </div>
+      </Panel>
+
+      <Button
+        type="button"
+        variant="ghost"
+        onClick={onReset}
+        className="h-11 rounded-full"
+      >
+        <RotateCcw className="size-4" aria-hidden="true" />
+        {t("sell_abandon")}
+      </Button>
     </div>
   );
 }
@@ -638,7 +700,7 @@ function Done({ stage, sale, onReset, t }) {
       Icon: CircleCheck,
       bubble: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
       title: t("sell_paid_title", { amount: sale?.amount || 0 }),
-      body: t("sell_paid_body", { books: sale?.quantity || 0 }),
+      body: t("sell_upi_done_body", { books: sale?.quantity || 0 }),
     },
     failed: {
       Icon: CircleX,

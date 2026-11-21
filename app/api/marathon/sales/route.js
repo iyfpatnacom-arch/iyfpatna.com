@@ -11,11 +11,10 @@ import {
   isSaleMethod,
   priceBasket,
 } from "@/lib/marathon/catalog";
+import { volunteerStock } from "@/lib/marathon/stock";
 import { getActiveVolunteer } from "@/lib/marathon/volunteers";
 import { generateOrderId } from "@/lib/payments/order-id";
 import { bookSaleStatusPath, orderToken } from "@/lib/payments/order-link";
-import { gatewayConfig, paymentMode } from "@/lib/payments/gateways";
-import { createQrCode } from "@/lib/payments/razorpay";
 import { check, clientKey } from "@/lib/rate-limit";
 import BookSale from "@/models/BookSale";
 
@@ -34,11 +33,23 @@ import BookSale from "@/models/BookSale";
  * something to be recorded against.
  *
  * Second, **nothing in the request decides what is charged**. The browser
- * sends titles and quantities; the price of each title comes from
- * `lib/marathon/books.js` on this side of the wire, and `priceBasket` does the
- * arithmetic that the stored row then holds. A volunteer cannot record a ₹300
- * Gita as a ₹30 one, which matters because they are the one who will be asked
- * for the difference at the end of the day.
+ * sends titles and quantities; the price of each title comes from this
+ * volunteer's own trolley, read here from their row, and `priceBasket` does
+ * the arithmetic that the stored row then holds. A volunteer cannot record a
+ * ₹300 Gita as a ₹30 one, which matters because they are the one who will be
+ * asked for the difference at the end of the day.
+ *
+ * Third, a volunteer may only sell what they were handed. The trolley is
+ * issued by a coordinator (see the admin's volunteer list) and the basket is
+ * refused if it exceeds what is left of it — counted from the sales
+ * themselves, not from a balance anybody maintains. The sell screen caps its
+ * own steppers at the same numbers, so in practice this refusal fires for a
+ * stale tab or a second phone, which is exactly the case it is there for.
+ *
+ * Online sales are paid into the temple's fixed UPI code rather than through
+ * a gateway: the row is written pending, the screen shows the printed QR, and
+ * the volunteer confirms it with the last four digits of the UTR off the
+ * reader's phone (see this route's sibling, sales/[orderId]).
  */
 
 const bodySchema = z.object({
@@ -70,44 +81,6 @@ function fail(status, error, headers) {
   return NextResponse.json({ ok: false, error }, { status, headers });
 }
 
-/**
- * A QR for this sale, or null when there is none to be had.
- *
- * Null is an ordinary outcome, not an error: the QR Codes API is enabled per
- * Razorpay account, and on an account without it every call here fails. A
- * volunteer must not lose a sale to that, so the failure is logged and the
- * screen falls back to the ordinary checkout — which takes UPI too, just on
- * whichever phone is holding it.
- */
-async function qrFor(sale, { lang }) {
-  const config = gatewayConfig("razorpay");
-  if (!config) return null;
-
-  try {
-    const qr = await createQrCode(
-      {
-        orderId: sale.orderId,
-        amount: sale.amount,
-        kind: "book",
-        description: `Gita Marathon - ${sale.quantity} ${
-          sale.quantity === 1 ? "book" : "books"
-        }`,
-        notes: { volunteer: String(sale.volunteerClerkId).slice(0, 100) },
-      },
-      { lang, config },
-    );
-
-    return {
-      id: qr.id,
-      imageUrl: qr.image_url,
-      closeBy: qr.close_by ? new Date(qr.close_by * 1000) : null,
-    };
-  } catch (error) {
-    console.error(`[marathon] no QR for ${sale.orderId}`, error);
-    return null;
-  }
-}
-
 export async function POST(request) {
   /* Generous: a volunteer at a busy stall on a Sunday evening genuinely
      records a sale every twenty seconds, and throttling them is throttling
@@ -135,18 +108,26 @@ export async function POST(request) {
   const volunteer = await getActiveVolunteer();
   if (!volunteer) return fail(403, "not_active");
 
-  /* Priced here, on the server, from the server's own price list. */
-  const { items, quantity, amount } = priceBasket(data.lines);
+  /* Priced here, on the server, from this volunteer's own trolley — which is
+     also what says how many copies are left to sell. */
+  const stock = await volunteerStock(volunteer);
+  if (!stock.length) return fail(403, "no_stock");
+
+  const { items, quantity, amount, over } = priceBasket(data.lines, stock);
+  /* Over the trolley: refused outright rather than silently truncated. A
+     truncated basket is two books handed over and one recorded, which is a
+     shortfall the volunteer gets asked about at the desk. */
+  if (over.length) return fail(409, "out_of_stock");
   if (!items.length || quantity < 1 || amount < 1) return fail(400, "empty");
 
   try {
     await dbConnect();
 
     const orderId = await generateOrderId(BOOK_SALE_ORDER_PREFIX);
-    const described = await describeItems(items);
+    const described = await describeItems(items, stock);
     const isCash = data.method === "cash";
 
-    const sale = await BookSale.create({
+    await BookSale.create({
       orderId,
       volunteerClerkId: volunteer.clerkId,
       volunteerId: volunteer._id,
@@ -184,34 +165,11 @@ export async function POST(request) {
       bookSaleStatusPath(orderId, data.locale),
     ]);
 
-    if (isCash) {
-      return NextResponse.json(
-        { ok: true, orderId, method: "cash", amount, quantity, token, statusUrl },
-        { status: 201 },
-      );
-    }
-
-    const qr = await qrFor(sale, { lang: data.locale });
-    if (qr) {
-      await BookSale.updateOne({ orderId }, { $set: { qr } });
-    }
-
+    /* The same answer either way. An online sale is pending until the
+       volunteer confirms the transfer, and the screen knows which it is from
+       `method` — there is no gateway to hand back a redirect to. */
     return NextResponse.json(
-      {
-        ok: true,
-        orderId,
-        method: "online",
-        token,
-        statusUrl,
-        amount,
-        quantity,
-        qr: qr
-          ? { imageUrl: qr.imageUrl, closeBy: qr.closeBy?.toISOString() ?? null }
-          : null,
-        /* With no gateway configured at all (a dev machine) the screen offers
-           the simulator the rest of the site uses rather than a dead QR. */
-        next: paymentMode() ? "pay" : "status",
-      },
+      { ok: true, orderId, method: data.method, amount, quantity, token, statusUrl },
       { status: 201 },
     );
   } catch (error) {

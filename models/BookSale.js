@@ -109,6 +109,37 @@ const BookSaleSchema = new mongoose.Schema(
     },
 
     /**
+     * What the volunteer typed off the reader's phone after a UPI transfer.
+     *
+     * The temple's UPI QR is fixed — one code on a card, the same at every
+     * stall — so a transfer into it carries nothing that says which sale it
+     * belongs to. Nobody is going to reconcile forty ₹300 credits against
+     * forty sales by amount and timestamp alone, so the volunteer is asked
+     * for the one thing the payer's app shows them: the last four digits of
+     * the UTR, or failing that the time on the receipt. That is what makes a
+     * line on the bank statement findable.
+     *
+     * It is a claim, not a confirmation, and the field is named so. The money
+     * is in the temple's account rather than the volunteer's pocket, so there
+     * is no cash to count at the desk — `verifiedAt` is set when a
+     * coordinator has matched it against the statement, and until then the
+     * admin list shows it as unmatched. The sale itself counts from the
+     * moment it is claimed, exactly as a cash sale does: in both cases a
+     * volunteer is asserting that money changed hands, and the reconciliation
+     * is a separate act by a second person.
+     */
+    claim: {
+      /** "utr" — last four digits — or "time", when they could not find one. */
+      kind: { type: String, enum: ["utr", "time", null], default: null },
+      /** Four digits, or a time as the payer's app showed it. Short on purpose. */
+      reference: { type: String, default: "", trim: true, maxlength: 40 },
+      at: { type: Date, default: null },
+      /** Clerk id of the coordinator who found it on the statement. */
+      verifiedBy: { type: String, default: "" },
+      verifiedAt: { type: Date, default: null },
+    },
+
+    /**
      * The day's cash settlement this sale was counted into, once there is one.
      *
      * Null means the money is still in the volunteer's pocket as far as the
@@ -133,6 +164,8 @@ BookSaleSchema.index({ volunteerClerkId: 1, createdAt: -1 });
 BookSaleSchema.index({ volunteerClerkId: 1, dayKey: 1, method: 1 });
 /** The admin's day view and every chart bucket. */
 BookSaleSchema.index({ dayKey: 1, "payment.status": 1 });
+/** "Which UPI claims has nobody matched against the statement yet?" */
+BookSaleSchema.index({ method: 1, "claim.verifiedAt": 1, dayKey: -1 });
 
 export default mongoose.models.BookSale ||
   mongoose.model("BookSale", BookSaleSchema);
