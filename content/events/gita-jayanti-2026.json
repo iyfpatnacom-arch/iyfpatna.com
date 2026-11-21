@@ -44,8 +44,8 @@
   },
 
   "posterLines": [
-    { "en": "Gita Quiz", "hi": "गीता क्विज़" },
-    { "en": "Gita Mahotsav", "hi": "गीता महोत्सव" }
+    { "en": "Gita Mahotsav", "hi": "गीता महोत्सव" },
+    { "en": "Gita Quiz", "hi": "गीता क्विज़" }
   ],
 
   "events": [
@@ -82,7 +82,7 @@
     }
   ],
 
-  "comboAmount": 151,
+  "comboAmount": 1,
 
   "prizes": [
     { "place": 1, "amount": 11000, "label": { "en": "1st prize", "hi": "प्रथम पुरस्कार" } },

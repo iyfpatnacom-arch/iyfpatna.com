@@ -462,14 +462,19 @@ async function verifyDocuments() {
   check("...with no amount mismatch", settled.payment.amountMismatch, false);
 
   /* The headline best practice of every gateway guide: never trust the amount
-     that comes back. A wrong one must be flagged, not quietly accepted. */
+     that comes back. A wrong one must be flagged, not quietly accepted.
+
+     The wrong amount is derived from the catalog rather than written out, so
+     this still tests something when the prices are turned down to ₹1 for a
+     gateway run — a hardcoded 1 would quietly become the *correct* amount and
+     the check would pass by accident. */
   await seed("GITA-913", [QUIZ], { paid: false, phone: "9000000013" });
   await recordPaymentOutcome({
     orderId: "GITA-913",
     kind: "gita",
     lang: "en",
     status: "success",
-    amount: 1,
+    amount: priceFor([QUIZ]).amount + 50,
     currency: "INR",
     provider: "simulated",
     paymentMode: "Simulated",

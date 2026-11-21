@@ -86,6 +86,11 @@ const HIGHLIGHT_ICONS = {
 
 const EVENT_ICONS = { quiz: BookOpenText, mahotsav: MapPin };
 
+/* The three figures' icons. Named rather than passed as components, because
+   the phone's stage is a client component and a React component is not
+   serialisable across that boundary — it keeps its own copy of this map. */
+const FACT_ICONS = { trophy: Trophy, calendar: CalendarDays, ticket: Ticket };
+
 export default async function GitaMahotsavPage({ params }) {
   const { locale } = await params;
   setRequestLocale(locale);
@@ -145,14 +150,40 @@ export default async function GitaMahotsavPage({ params }) {
   const quiz = eventOf("quiz");
   const helpline = festival.helpline || ORG.phone;
 
-  /* The three the poster has room for, in the order somebody asks them. */
+  /* "19 Dec" rather than "19 December 2026": the phone gives each figure one
+     line in a third of the screen, and the year is the part nobody is in
+     doubt about. Formatted from the catalog's own ISO date rather than
+     written out again in the JSON, so it cannot drift from `dateLabel`.
+     Fixed to UTC because the date is stored as a bare day — read in any
+     timezone behind it, the 19th becomes the 18th. */
+  const shortDate = quiz?.date
+    ? new Intl.DateTimeFormat(lang === "en" ? "en-IN" : "hi-IN", {
+        day: "numeric",
+        month: "short",
+        timeZone: "UTC",
+      }).format(new Date(quiz.date))
+    : null;
+
+  /* The three figures, in the order somebody asks them. `value` is the long
+     form for the desktop hero's cards; `short` is the one line the phone's
+     bar has room for. */
   const facts = [
-    { label: t("hero_prize_pool"), value: formatINR(prizePool) },
     {
+      icon: "trophy",
+      label: t("hero_prize_pool"),
+      value: formatINR(prizePool),
+    },
+    {
+      icon: "calendar",
       label: t("hero_quiz_date"),
       value: quiz?.dateLabel?.[lang] || quiz?.dateLabel?.en || "—",
+      short: shortDate,
     },
-    { label: t("hero_fee"), value: formatINR(events[0].amount) },
+    {
+      icon: "ticket",
+      label: t("hero_fee"),
+      value: formatINR(events[0].amount),
+    },
   ];
 
   return (
@@ -170,7 +201,11 @@ export default async function GitaMahotsavPage({ params }) {
         poster={poster}
         lines={posterLines}
         eyebrow={festival.eyebrow[lang] || festival.eyebrow.en}
-        facts={facts}
+        facts={facts.map(({ icon, label, value, short }) => ({
+          icon,
+          label,
+          value: short || value,
+        }))}
         events={events}
         combo={combo}
         open={open}
@@ -217,22 +252,21 @@ export default async function GitaMahotsavPage({ params }) {
 
             {/* The three facts somebody wants before they scroll. */}
             <dl className="mt-8 grid w-full max-w-2xl grid-cols-3 gap-3">
-              {[
-                { Icon: Trophy, ...facts[0] },
-                { Icon: CalendarDays, ...facts[1] },
-                { Icon: Ticket, ...facts[2] },
-              ].map(({ Icon, label, value }) => (
-                <div
-                  key={label}
-                  className="rounded-xl border border-brand-cream/12 bg-brand-cream/[0.04] p-3 text-start backdrop-blur-sm"
-                >
-                  <dt className="flex items-center gap-1.5 text-[11px] font-medium text-brand-cream/60">
-                    <Icon className="size-3.5 text-brand-gold" aria-hidden="true" />
-                    {label}
-                  </dt>
-                  <dd className="mt-1 text-base font-semibold tracking-tight">{value}</dd>
-                </div>
-              ))}
+              {facts.map(({ icon, label, value }) => {
+                const Icon = FACT_ICONS[icon];
+                return (
+                  <div
+                    key={label}
+                    className="rounded-xl border border-brand-cream/12 bg-brand-cream/[0.04] p-3 text-start backdrop-blur-sm"
+                  >
+                    <dt className="flex items-center gap-1.5 text-[11px] font-medium text-brand-cream/60">
+                      <Icon className="size-3.5 text-brand-gold" aria-hidden="true" />
+                      {label}
+                    </dt>
+                    <dd className="mt-1 text-base font-semibold tracking-tight">{value}</dd>
+                  </div>
+                );
+              })}
             </dl>
 
             <MovingBorderButton

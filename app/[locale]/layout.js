@@ -1,4 +1,10 @@
-import { Plus_Jakarta_Sans, Mukta, Instrument_Serif, Fraunces } from "next/font/google";
+import {
+  Plus_Jakarta_Sans,
+  Mukta,
+  Instrument_Serif,
+  Fraunces,
+  Kaushan_Script,
+} from "next/font/google";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -55,6 +61,16 @@ const fraunces = Fraunces({
   variable: "--font-fraunces",
   subsets: ["latin"],
   axes: ["SOFT", "WONK", "opsz"],
+});
+
+// The brush script the Gita festival signs its two names in, and the only
+// place on the site that uses it. It ships a single weight and no Devanagari
+// — both facts are handled by `.kaushan-script` in globals.css, which stacks
+// Mukta behind it for Hindi.
+const kaushan = Kaushan_Script({
+  variable: "--font-kaushan",
+  subsets: ["latin"],
+  weight: "400",
 });
 
 export const metadata = {
@@ -170,7 +186,7 @@ export default async function LocaleLayout({ children, params }) {
   return (
     <html
       lang={locale}
-      className={`${jakarta.variable} ${mukta.variable} ${instrumentSerif.variable} ${fraunces.variable} h-full antialiased`}
+      className={`${jakarta.variable} ${mukta.variable} ${instrumentSerif.variable} ${fraunces.variable} ${kaushan.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">

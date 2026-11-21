@@ -338,6 +338,33 @@
   letter-spacing: normal;
 }
 
+/* The Gita festival's wordmark face, and the one brush script on the site.
+   It signs the two names over the phone poster — a painting with no type of
+   its own — which is the only place a script this expressive earns its
+   keep.
+
+   Kaushan Script has one weight and a tall x-height with long descenders, so
+   the line-height is set here rather than left to the caller: at display
+   sizes the default leading laps the "G" of the next line over the "y" of
+   this one. Mukta sits behind it for the same reason it sits behind the two
+   serif faces above — there is no Devanagari in the script, and a
+   per-character fallback beats dropping the whole line to a system font. */
+.kaushan-script {
+  font-family: var(--font-kaushan), var(--font-mukta), ui-serif, Georgia, serif;
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: 0.005em;
+}
+
+/* Mukta is upright and even-weighted where Kaushan is slanted and fluid, so
+   Hindi is given the weight it needs to read as the same piece of display
+   type rather than as body copy that grew. */
+[lang="hi"] .kaushan-script {
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: normal;
+}
+
 @layer components {
   .iskcon-band {
     background-color: var(--band-bg);
@@ -745,6 +772,74 @@
   animation: diyaFlame 2.6s ease-in-out infinite;
 }
 
+/* ---------------------------------------------------------------------------
+   The Gita festival's phone poster.
+
+   Three small animations, and between them they are the whole difference
+   between a picture with text on it and something that feels lit. They are
+   deliberately cheap: `transform` and `opacity` only, so every one of them
+   runs on the compositor and none of them cost a layout on a four-year-old
+   Android.
+   ------------------------------------------------------------------------ */
+
+/* The entrance. Everything over the poster arrives from just below, in the
+   order it should be read: eyebrow, then the two names, then the figures,
+   then the button. The stagger is set per element with `animation-delay`.
+
+   `both` matters: without it each element is visible at its final position
+   for the frame before its delay elapses, which reads as a flicker rather
+   than an entrance. */
+@keyframes stageRise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.stage-rise {
+  animation: stageRise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* A slow breath on the gold. Used on the glow behind the diya between the
+   two names, where it reads as lamplight rather than as a pulsing dot. */
+@keyframes stageGlow {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.12);
+  }
+}
+
+.stage-glow {
+  animation: stageGlow 3.4s ease-in-out infinite;
+}
+
+/* The three figures' icons, drifting a couple of pixels out of phase with
+   each other. Three pixels is the whole amplitude — enough that the row is
+   alive when looked at, little enough that it is not a distraction while
+   somebody is reading the numbers under it. */
+@keyframes stageFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.stage-float {
+  animation: stageFloat 3.8s ease-in-out infinite;
+}
+
 /* Ornament, and this preference is about ornament. The spotlight lands at its
    final frame immediately (it is the hero's lighting, so removing it entirely
    would leave the heading on flat black) and the flame simply holds still. */
@@ -756,6 +851,21 @@
   }
 
   .animate-diya {
+    animation: none;
+  }
+}
+
+/* The poster's three, for the same reason: they are ornament on a page whose
+   content is a picture, a price and a button. The entrance resolves to its
+   final frame rather than being removed, or the overlay would never appear
+   at all. */
+@media (prefers-reduced-motion: reduce) {
+  .stage-rise {
+    animation: none;
+  }
+
+  .stage-glow,
+  .stage-float {
     animation: none;
   }
 }
