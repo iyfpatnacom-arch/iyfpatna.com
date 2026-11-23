@@ -73,10 +73,10 @@
     {
       "key": "quiz",
       "amount": 101,
-      "date": "2026-12-19",
+      "date": "2026-12-20",
       "title": { "en": "Bhagavad Gita Quiz", "hi": "भगवद्गीता क्विज़" },
       "tagline": { "en": "Online · cash prizes", "hi": "ऑनलाइन · नकद पुरस्कार" },
-      "dateLabel": { "en": "19 December 2026", "hi": "19 दिसंबर 2026" },
+      "dateLabel": { "en": "20 December 2026", "hi": "20 दिसंबर 2026" },
       "modeLabel": { "en": "Online", "hi": "ऑनलाइन" },
       "detail": {
         "en": "An online quiz on the Bhagavad Gita, held on Gita Jayanti. The link and the time reach you in the WhatsApp group.",

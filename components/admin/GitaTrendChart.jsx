@@ -199,8 +199,14 @@ export function GitaTrendChart({
             const lostH = day.abandoned > 0 ? Math.max(2, scale(day.abandoned)) : 0;
             /* The gap is taken out of the upper segment, so the stack's total
                height stays true to the day's attempts and the lower segment
-               still sits on the axis. */
-            const lostDrawn = lostH > 0 && paidH > 0 ? Math.max(1, lostH - GAP) : lostH;
+               still sits on the axis.
+               On a day with no paid rows at all there is no lower segment to be
+               separated from, so there is no gap either — the abandoned bar is
+               the bar, and a bar sits on the axis rather than floating 2px over
+               it. */
+            const stacked = lostH > 0 && paidH > 0;
+            const lostDrawn = stacked ? Math.max(1, lostH - GAP) : lostH;
+            const lostTop = PLOT_H - paidH - (stacked ? GAP : 0) - lostDrawn;
 
             return (
               <g
@@ -252,20 +258,33 @@ export function GitaTrendChart({
                 )}
 
                 {lostDrawn > 0 && (
-                  <rect
-                    x={x}
-                    y={PLOT_H - paidH - GAP - lostDrawn}
-                    width={barWidth}
-                    height={lostDrawn}
-                    rx={4}
-                    fill="var(--viz-cash)"
-                  />
+                  <>
+                    <rect
+                      x={x}
+                      y={lostTop}
+                      width={barWidth}
+                      height={lostDrawn}
+                      rx={4}
+                      fill="var(--viz-cash)"
+                    />
+                    {/* Standing on the axis on its own, it needs its baseline
+                        end squared off for the same reason the paid bar does. */}
+                    {!stacked && lostDrawn > 6 && (
+                      <rect
+                        x={x}
+                        y={PLOT_H - 4}
+                        width={barWidth}
+                        height={4}
+                        fill="var(--viz-cash)"
+                      />
+                    )}
+                  </>
                 )}
 
                 {index === peakIndex && (
                   <text
                     x={x + barWidth / 2}
-                    y={PLOT_H - paidH - (lostDrawn > 0 ? lostDrawn + GAP : 0) - 5}
+                    y={(lostDrawn > 0 ? lostTop : PLOT_H - paidH) - 5}
                     textAnchor="middle"
                     className="fill-foreground text-[9px] font-semibold tabular-nums"
                   >
