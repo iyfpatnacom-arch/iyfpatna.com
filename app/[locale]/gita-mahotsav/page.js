@@ -10,7 +10,9 @@ import {
   Trophy,
   Users,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Button as MovingBorderButton } from "@/components/ui/moving-border";
+import { Link } from "@/i18n/navigation";
 import { BackgroundBeams } from "@/components/ui/background-beams";
 import { Spotlight } from "@/components/ui/spotlight";
 import { Panel } from "@/components/site/Panel";
@@ -26,6 +28,7 @@ import {
   formatINR,
   getFestival,
   isRegistrationOpen,
+  localisedEvents,
   priceTable,
 } from "@/lib/gita-event/catalog";
 
@@ -42,10 +45,13 @@ import {
  * answering different questions here:
  *
  *   - A phone gets `GitaStage`: one painting filling the screen with the
- *     festival's two names, three facts and Register set over it, and the
- *     form as a sheet over the same picture. Almost everybody arrives on a
- *     phone from a WhatsApp forward of this artwork, and the thing they came
- *     to do fits on one screen.
+ *     festival's two names, three facts and Register set over it. Almost
+ *     everybody arrives on a phone from a WhatsApp forward of this artwork,
+ *     and the thing they came to do fits on one screen. Register leaves for
+ *     /gita-mahotsav/register, which is the form on a solid page of its own —
+ *     it used to be a sheet over this poster, and a form behind frosted
+ *     glass with two scroll surfaces is not where anybody should be typing
+ *     their phone number.
  *   - From `md` up the page is the long one — hero, prizes, the two events,
  *     the highlights, the form in a column and the FAQ — because a desktop
  *     reader is usually deciding rather than acting, and there is room to
@@ -105,15 +111,9 @@ export default async function GitaMahotsavPage({ params }) {
 
   const { combo } = priceTable();
 
-  const events = festival.events.map((event) => ({
-    key: event.key,
-    title: event.title[lang] || event.title.en,
-    tagline: event.tagline[lang] || event.tagline.en,
-    detail: event.detail[lang] || event.detail.en,
-    dateLabel: event.dateLabel?.[lang] || event.dateLabel?.en || null,
-    modeLabel: event.modeLabel?.[lang] || event.modeLabel?.en || null,
-    amount: Number(event.amount),
-  }));
+  /* The same call the register page makes, so the form's `events` prop can
+     never be a field behind on one of the two. */
+  const events = localisedEvents(lang);
 
   const prizes = festival.prizes.map((prize) => ({
     place: prize.place,
@@ -230,9 +230,8 @@ export default async function GitaMahotsavPage({ params }) {
           value: short || value,
         }))}
         notes={notes}
-        events={events}
-        combo={combo}
         open={open}
+        registerHref="/gita-mahotsav/register"
         detailsHref="#festival"
       />
 
@@ -293,6 +292,10 @@ export default async function GitaMahotsavPage({ params }) {
               })}
             </dl>
 
+            {/* An opaque face, not a translucent one: the travelling spark
+                is a blob behind it, and anything see-through turns it into a
+                semicircle drifting inside the button rather than a light
+                running the border. */}
             <MovingBorderButton
               as="a"
               href="#register"
@@ -300,7 +303,7 @@ export default async function GitaMahotsavPage({ params }) {
               duration={3500}
               containerClassName="mt-9 h-14 w-auto p-[1.5px] text-base"
               borderClassName="h-20 w-20 bg-[radial-gradient(#F2A63B_40%,transparent_60%)] opacity-80"
-              className="gap-2 border-brand-gold/30 bg-brand-ink-2/80 px-7 text-base font-semibold text-brand-cream"
+              className="gap-2 border-brand-gold/30 bg-brand-ink-2 px-7 text-base font-semibold text-brand-cream"
             >
               {open ? t("hero_cta") : t("hero_cta_closed")}
               <ArrowRight className="size-4" aria-hidden="true" />
@@ -436,12 +439,15 @@ export default async function GitaMahotsavPage({ params }) {
         </section>
 
         {/* ------------------------------------------------------ the form
-            Desktop only: the phone opens the same form as a sheet over the
-            poster, and two copies of it in one document would be two sets of
-            saved details fighting over the same localStorage key. */}
+            The form itself is desktop only — the phone's Register leaves for
+            /gita-mahotsav/register, and a second copy of the form in this
+            document would be two sets of saved details fighting over the same
+            localStorage key. What the phone gets here is the same three steps
+            and a button to that page: somebody who scrolled the whole festival
+            should not have to scroll back up to register. */}
         <section
           id="register"
-          className="hidden scroll-mt-20 pb-12 md:block sm:pb-16"
+          className="scroll-mt-20 pb-12 sm:pb-16"
           aria-labelledby="gita-register"
         >
           <div className="grid gap-8 lg:grid-cols-[1fr_1.15fr] lg:items-start lg:gap-12">
@@ -467,16 +473,33 @@ export default async function GitaMahotsavPage({ params }) {
                 ))}
               </ol>
 
+              {/* The way to a person, from `md` up. On a phone the same
+                  number is offered under the questions, which is where
+                  somebody who still has one has just finished reading. */}
               <a
                 href={`tel:${helpline.replace(/\s/g, "")}`}
-                className="mt-7 inline-flex items-center gap-2 rounded-full border border-border bg-muted/40 px-4 py-2 text-sm font-medium transition-colors hover:text-primary"
+                className="mt-7 hidden items-center gap-2 rounded-full border border-border bg-muted/40 px-4 py-2 text-sm font-medium transition-colors hover:text-primary md:inline-flex"
               >
                 <Phone className="size-4 text-primary" aria-hidden="true" />
                 {t("helpline", { phone: helpline })}
               </a>
+
+              {/* The phone's second way in, after the scroll. Full width and
+                  solid: it is the one thing to tap at the end of the page. */}
+              <Button
+                size="lg"
+                animatedBorder
+                className="mt-7 h-12 w-full gap-2 rounded-full text-base font-semibold md:hidden"
+                render={<Link href="/gita-mahotsav/register" />}
+              >
+                {open ? t("stage_register") : t("hero_cta_closed")}
+                <ArrowRight className="size-4" aria-hidden="true" />
+              </Button>
             </div>
 
-            <GitaRegisterForm events={events} combo={combo} open={open} />
+            <div className="hidden md:block">
+              <GitaRegisterForm events={events} combo={combo} open={open} />
+            </div>
           </div>
         </section>
 

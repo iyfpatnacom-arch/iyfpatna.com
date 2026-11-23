@@ -890,9 +890,9 @@
    `:has()` on the body rather than a context provider and a piece of client
    state, because nothing here needs to be interactive: the condition is known
    at the first paint of the server-rendered HTML, and this way the button
-   never flashes in and out on the way to being hidden. Only /gita-mahotsav
-   uses it so far, where the page carries its own full-width Register button
-   in that corner. */
+   never flashes in and out on the way to being hidden. The two Gita festival
+   pages use it: the poster carries its own full-width Register button in that
+   corner, and the form page's submit button is in the same place. */
 body:has([data-hide-whatsapp-fab]) [data-whatsapp-fab] {
   display: none;
 }

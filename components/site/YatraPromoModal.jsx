@@ -54,6 +54,11 @@ const QUIET_PATHS = [
   "/check-in",
   "/orders",
   "/donate",
+  /* The Gita form and the page a paid registration lands on. The form page
+     exists because a registration should not be typed inside a dialog; a
+     yatra dialog thrown over it would undo exactly that. */
+  "/gita-mahotsav/register",
+  "/gita-mahotsav/ticket",
 ];
 
 /**

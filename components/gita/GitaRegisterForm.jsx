@@ -122,9 +122,10 @@ export function GitaRegisterForm({
   events,
   combo,
   open,
-  /* The phone renders this form in a sheet over the poster while the desktop
-     page keeps its own copy in the column — both are in the document at once,
-     so the labels cannot share one set of element ids. */
+  /* Two pages render this form — /gita-mahotsav in its desktop column and
+     /gita-mahotsav/register on its own — and `label for` needs ids that are
+     unique per document. One prefix each, so a stray second copy on one page
+     can never point every label at `#gita-name`. */
   idPrefix = "gita",
   className,
 }) {

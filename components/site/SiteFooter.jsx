@@ -3,6 +3,7 @@ import { ArrowUpRight, Mail, MapPin, Phone } from "lucide-react";
 import NextLink from "next/link";
 import { Link } from "@/i18n/navigation";
 import { BrandMark } from "@/components/site/BrandMark";
+import { FooterSections } from "@/components/site/FooterSections";
 import { DONATE_HREF } from "@/lib/donate-href";
 import {
   DONATE_NAV,
@@ -27,14 +28,6 @@ const EXPLORE_NAV = [
   // arrives already prefixed and must not be prefixed a second time.
   { ...DONATE_NAV, href: DONATE_HREF, pinned: true },
 ];
-
-function FooterHeading({ children }) {
-  return (
-    <h2 className="text-[11px] font-semibold tracking-wider text-foreground/70 uppercase">
-      {children}
-    </h2>
-  );
-}
 
 function FooterLink({ href, external = false, pinned = false, children }) {
   const className =
@@ -92,86 +85,105 @@ export function SiteFooter() {
       data-site-footer
       className="mt-auto border-t border-border/70 bg-muted/25"
     >
-      <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
-        <div className="grid gap-10 md:grid-cols-12">
+      <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+        <div className="grid md:grid-cols-12 md:gap-10">
           {/* Identity */}
-          <div className="md:col-span-4">
+          <div className="mb-5 md:col-span-4 md:mb-0">
             <BrandMark />
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground md:mt-4 md:max-w-xs">
               {t("about_line")}
             </p>
-            <p className="mt-4 max-w-xs text-xs leading-relaxed text-muted-foreground/80">
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground/80 md:mt-4 md:max-w-xs">
               {t("founder")}
             </p>
           </div>
 
-          {/* Explore */}
-          <nav className="md:col-span-2" aria-label={t("explore")}>
-            <FooterHeading>{t("explore")}</FooterHeading>
-            <ul className="mt-3 space-y-2">
-              {EXPLORE_NAV.map((item) => (
-                <li key={item.key}>
-                  <FooterLink
-                    href={item.href}
-                    external={item.external}
-                    pinned={item.pinned}
-                  >
-                    {tn(item.key)}
-                  </FooterLink>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          {/* Legal */}
-          <nav className="md:col-span-2" aria-label={t("legal_heading")}>
-            <FooterHeading>{t("legal_heading")}</FooterHeading>
-            <ul className="mt-3 space-y-2">
-              {LEGAL_NAV.map((item) => (
-                <li key={item.key}>
-                  <FooterLink href={item.href}>{tn(item.key)}</FooterLink>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          {/* Contact */}
-          <div className="md:col-span-4">
-            <FooterHeading>{t("contact_heading")}</FooterHeading>
-            <ul className="mt-3 space-y-2.5 text-sm text-muted-foreground">
-              <li className="flex gap-2">
-                <MapPin
-                  className="mt-0.5 size-3.5 shrink-0 opacity-70"
-                  aria-hidden="true"
-                />
-                <span className="leading-relaxed">{ORG.address}</span>
-              </li>
-              <li>
-                <a
-                  href={`mailto:${ORG.email}`}
-                  className="inline-flex items-center gap-2 transition-colors hover:text-foreground"
-                >
-                  <Mail className="size-3.5 opacity-70" aria-hidden="true" />
-                  {ORG.email}
-                </a>
-              </li>
-              <li>
-                <a
-                  href={`tel:${ORG.phone.replace(/\s+/g, "")}`}
-                  className="inline-flex items-center gap-2 transition-colors hover:text-foreground"
-                >
-                  <Phone className="size-3.5 opacity-70" aria-hidden="true" />
-                  {ORG.phone}
-                </a>
-              </li>
-            </ul>
-          </div>
+          <FooterSections
+            sections={[
+              {
+                key: "explore",
+                title: t("explore"),
+                as: "nav",
+                className: "md:col-span-2",
+                content: (
+                  <ul className="space-y-2.5 md:space-y-2">
+                    {EXPLORE_NAV.map((item) => (
+                      <li key={item.key}>
+                        <FooterLink
+                          href={item.href}
+                          external={item.external}
+                          pinned={item.pinned}
+                        >
+                          {tn(item.key)}
+                        </FooterLink>
+                      </li>
+                    ))}
+                  </ul>
+                ),
+              },
+              {
+                key: "legal",
+                title: t("legal_heading"),
+                as: "nav",
+                className: "md:col-span-2",
+                content: (
+                  <ul className="space-y-2.5 md:space-y-2">
+                    {LEGAL_NAV.map((item) => (
+                      <li key={item.key}>
+                        <FooterLink href={item.href}>{tn(item.key)}</FooterLink>
+                      </li>
+                    ))}
+                  </ul>
+                ),
+              },
+              {
+                key: "contact",
+                title: t("contact_heading"),
+                className: "md:col-span-4",
+                content: (
+                  <ul className="space-y-2.5 text-sm text-muted-foreground">
+                    <li className="flex gap-2">
+                      <MapPin
+                        className="mt-0.5 size-3.5 shrink-0 opacity-70"
+                        aria-hidden="true"
+                      />
+                      <span className="leading-relaxed">{ORG.address}</span>
+                    </li>
+                    <li>
+                      <a
+                        href={`mailto:${ORG.email}`}
+                        className="inline-flex items-center gap-2 transition-colors hover:text-foreground"
+                      >
+                        <Mail
+                          className="size-3.5 opacity-70"
+                          aria-hidden="true"
+                        />
+                        {ORG.email}
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href={`tel:${ORG.phone.replace(/\s+/g, "")}`}
+                        className="inline-flex items-center gap-2 transition-colors hover:text-foreground"
+                      >
+                        <Phone
+                          className="size-3.5 opacity-70"
+                          aria-hidden="true"
+                        />
+                        {ORG.phone}
+                      </a>
+                    </li>
+                  </ul>
+                ),
+              },
+            ]}
+          />
         </div>
 
         {/* Temple Management Council */}
         <section
           aria-labelledby="management-council"
-          className="mt-10 border-t border-border/70 pt-8"
+          className="mt-7 border-t border-border/70 pt-6 md:mt-10 md:pt-8"
         >
           <h2
             id="management-council"
@@ -179,7 +191,7 @@ export function SiteFooter() {
           >
             {t("council_heading")}
           </h2>
-          <ul className="mt-4 grid gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-4">
+          <ul className="mt-3 grid grid-cols-2 gap-x-5 gap-y-3 md:mt-4 md:gap-x-6 md:gap-y-4 lg:grid-cols-4">
             {MANAGEMENT_COUNCIL.map((member) => (
               <li key={member.name}>
                 <p className="text-sm font-medium text-foreground">
@@ -193,7 +205,7 @@ export function SiteFooter() {
           </ul>
         </section>
 
-        <div className="mt-10 flex flex-col gap-2 border-t border-border/70 pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-8 flex flex-col gap-1.5 border-t border-border/70 pt-5 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between md:mt-10 md:pt-6">
           <p>{t("operated_by")}</p>
           <p className="shrink-0">
             © {new Date().getFullYear()} {ORG.parent} · {t("rights")}

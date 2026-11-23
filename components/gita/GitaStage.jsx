@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import {
   ArrowRight,
@@ -10,12 +9,11 @@ import {
   QrCode,
   Ticket,
   Trophy,
-  X,
 } from "lucide-react";
 import { IkImage } from "@/components/media/IkImage";
 import { Diya } from "@/components/gita/Diya";
-import { GitaRegisterForm } from "@/components/gita/GitaRegisterForm";
-import { Button } from "@/components/ui/button";
+import { Link } from "@/i18n/navigation";
+import { Button as MovingBorderButton } from "@/components/ui/moving-border";
 import { cn } from "@/lib/utils";
 
 /**
@@ -48,17 +46,17 @@ import { cn } from "@/lib/utils";
  * columns are an equal grid rather than content-width — so the row stays
  * symmetrical whatever the numbers happen to be, in either language.
  *
- * Register does not scroll anywhere. It opens the form as a sheet over this
- * same picture, blurred behind frosted glass — which is why this is one
- * component and not a link to an anchor further down: the background never
- * changes, so tapping Register feels like the page answering rather than
- * like arriving somewhere else, and closing it puts them back exactly where
- * they were with nothing scrolled.
+ * Register is a link to /gita-mahotsav/register, not a sheet over this
+ * picture. It was a sheet, and the sheet is what the form kept losing to: a
+ * nine-field form in a 92svh dialog has two scroll surfaces, the keyboard
+ * eats a third of the one it is in, and an autofill menu over frosted glass
+ * has a chariot showing through it. A page that costs one navigation and
+ * cannot be swiped away by accident is the better trade for the one thing on
+ * this screen somebody must not lose their place in.
  *
  * Only the phone gets this. From `md` up the page below renders its own hero
- * and its own inline form, which is why the form here is given an `idPrefix`:
- * both copies are in the document at once and their labels cannot both point
- * at `#gita-name`.
+ * and its own inline form; nothing of the form is in this subtree any more,
+ * so there is only ever one of it in the document.
  */
 
 /* The icons, for both tiers of the card. The page names them rather than
@@ -91,37 +89,13 @@ export function GitaStage({
   eyebrow,
   facts,
   notes,
-  events,
-  combo,
   open,
+  registerHref,
   detailsHref,
 }) {
   const t = useTranslations("gita");
   /* A poster that names itself needs nothing written over it. */
   const titled = Boolean(poster?.hasTitle) || !lines?.length;
-  const [sheetOpen, setSheetOpen] = useState(false);
-  const closeRef = useRef(null);
-
-  /* While the sheet is up the page behind it must not scroll under the thumb,
-     and Escape must close it. Both are undone on the way out, and the body's
-     own overflow is put back rather than cleared — the layout may well be
-     setting one of its own. */
-  useEffect(() => {
-    if (!sheetOpen) return undefined;
-
-    const onKeyDown = (event) => {
-      if (event.key === "Escape") setSheetOpen(false);
-    };
-    const { overflow } = document.body.style;
-    document.body.style.overflow = "hidden";
-    document.addEventListener("keydown", onKeyDown);
-    closeRef.current?.focus();
-
-    return () => {
-      document.body.style.overflow = overflow;
-      document.removeEventListener("keydown", onKeyDown);
-    };
-  }, [sheetOpen]);
 
   return (
     <section className="relative isolate flex min-h-[calc(100svh-11rem)] flex-col overflow-hidden bg-brand-ink text-brand-cream md:hidden">
@@ -308,15 +282,32 @@ export function GitaStage({
             className="stage-rise flex flex-col gap-2.5"
             style={{ animationDelay: RISE.cta }}
           >
-            <Button
-              type="button"
-              size="lg"
-              onClick={() => setSheetOpen(true)}
-              className="pointer-events-auto h-14 w-full gap-2 rounded-full text-base font-semibold shadow-xl shadow-black/40"
+            {/* The same button the desktop hero uses — the gold spark running
+                its rim — rather than a plain filled pill. One festival, one
+                Register: the artwork above it is the same on both, and a
+                phone arriving from a WhatsApp forward should recognise the
+                button somebody showed them on a laptop. Full width here
+                because it is the one thing to tap on this screen. The face is
+                opaque, not `/80`: the spark is an 80px blob behind it, and
+                through a translucent face it reads as a semicircle sliding
+                about inside the button instead of a light running the rim.
+
+                A `Link`, so the form page is prefetched while they are still
+                reading the poster and the locale rides along — and so the one
+                tap on this screen is a navigation a browser understands,
+                openable in a new tab and recoverable with Back. */}
+            <MovingBorderButton
+              as={Link}
+              href={registerHref}
+              borderRadius="999px"
+              duration={3500}
+              containerClassName="pointer-events-auto h-14 w-full p-[1.5px] text-base shadow-xl shadow-black/40"
+              borderClassName="h-20 w-20 bg-[radial-gradient(#F2A63B_40%,transparent_60%)] opacity-80"
+              className="gap-2 border-brand-gold/30 bg-brand-ink-2 px-7 text-base font-semibold text-brand-cream"
             >
               {open ? t("stage_register") : t("hero_cta_closed")}
               <ArrowRight className="size-4" aria-hidden="true" />
-            </Button>
+            </MovingBorderButton>
 
             {/* The way down to the prizes and the questions, as a chevron
                 rather than a sentence: it is the one thing on this screen
@@ -331,55 +322,6 @@ export function GitaStage({
           </div>
         </div>
       </div>
-
-      {sheetOpen && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label={t("stage_form_title")}
-          className="fixed inset-0 z-[60] flex flex-col justify-end"
-        >
-          {/* The poster, still there, through frosted glass. Tapping it is the
-              other way out — the same gesture as the close button, for a thumb
-              that is nowhere near the top of the screen. */}
-          <button
-            type="button"
-            onClick={() => setSheetOpen(false)}
-            aria-label={t("stage_form_close")}
-            className="absolute inset-0 bg-brand-ink/55 backdrop-blur-xl"
-          />
-
-          <div className="relative flex max-h-[92svh] flex-col overflow-hidden rounded-t-3xl border-t border-brand-gold/30 bg-background/85 shadow-2xl shadow-black/50 backdrop-blur-2xl">
-            <div className="flex items-center justify-between gap-3 border-b border-border/60 px-5 py-3.5">
-              <h2 className="text-base font-semibold tracking-tight">
-                {t("stage_form_title")}
-              </h2>
-              <button
-                type="button"
-                ref={closeRef}
-                onClick={() => setSheetOpen(false)}
-                aria-label={t("stage_form_close")}
-                className="grid size-9 place-items-center rounded-full border border-border text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
-              >
-                <X className="size-4" aria-hidden="true" />
-              </button>
-            </div>
-
-            <div className="overflow-y-auto overscroll-contain px-4 pt-4 pb-[calc(1.25rem+env(safe-area-inset-bottom))]">
-              {/* No card of its own inside the sheet: the sheet is the card,
-                  and a bordered panel within a bordered panel is the thing
-                  that made this form look heavier than it is. */}
-              <GitaRegisterForm
-                events={events}
-                combo={combo}
-                open={open}
-                idPrefix="gita-sheet"
-                className="rounded-none border-0 bg-transparent p-0 shadow-none sm:p-0"
-              />
-            </div>
-          </div>
-        </div>
-      )}
     </section>
   );
 }
