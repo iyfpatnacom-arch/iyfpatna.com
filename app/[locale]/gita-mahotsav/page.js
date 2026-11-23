@@ -260,16 +260,16 @@ export default async function GitaMahotsavPage({ params }) {
                 everybody else gets are in their alt text. */}
             <h1 className="sr-only">{festival.title[lang] || festival.title.en}</h1>
 
-            {/* A fixed 16:10 window with the poster fitted inside it. The two
-                desktop slides are a 3:4 poster and a 16:9 banner, so a frame
-                that took each picture's own height would jump by half the
-                viewport every six seconds. */}
+            {/* The frame takes the pictures' own height. Both desktop slides
+                are 16:9 banners of the same size, so there is nothing to
+                reconcile: this used to be a fixed 16:10 window with the
+                posters fitted inside it, because one of the two was a 3:4
+                portrait and a frame that followed each picture would have
+                jumped by half the viewport every six seconds. With one ratio
+                across the set, that window would only add permanent bars. */}
             <GitaCarousel
               slides={gallery}
-              fit="contain"
               className="mt-8 max-w-3xl"
-              frameClassName="aspect-[16/10] rounded-2xl border border-brand-gold/25 bg-brand-ink-2 shadow-2xl shadow-black/40"
-              dotsClassName="bottom-3"
               sizes="(min-width: 1024px) 768px, 90vw"
             />
 
