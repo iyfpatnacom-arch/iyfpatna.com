@@ -421,6 +421,11 @@ export default async function GitaOverviewPage({ params, searchParams }) {
         <h2 className="flex items-center gap-2 text-lg font-semibold tracking-tight">
           <CalendarClock className="size-4 shrink-0 text-primary" aria-hidden="true" />
           {t("gita_ov_recent_title")}
+          {recent.length > 0 && (
+            <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground tabular-nums">
+              {recent.length}
+            </span>
+          )}
         </h2>
         <p className="mt-1 text-xs text-muted-foreground">{t("gita_ov_recent_hint")}</p>
 
@@ -430,9 +435,15 @@ export default async function GitaOverviewPage({ params, searchParams }) {
           </Panel>
         ) : (
           <Panel className="mt-4 overflow-hidden">
-            <div className="overflow-x-auto">
+            {/* The list is the whole campaign, so it scrolls inside this box
+                rather than running the page to a mile long: the panel keeps
+                its height whether there are eight registrations or eight
+                hundred, and the sections under it stay reachable. The header
+                is pinned on `bg-card`, the Panel's own fill, so rows pass
+                under it rather than through it. */}
+            <div className="max-h-[32rem] overflow-auto">
               <table className="w-full text-sm">
-                <thead>
+                <thead className="sticky top-0 z-10 bg-card">
                   <tr className="border-b border-border text-xs text-muted-foreground">
                     <th scope="col" className="px-3 py-2.5 text-start font-medium">
                       {t("don_col_when")}
