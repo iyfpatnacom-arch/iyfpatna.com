@@ -6,6 +6,7 @@ import {
   verifyWebhookSignature,
 } from "@/lib/payments/razorpay";
 import { recordPaymentOutcome } from "@/lib/payments/result";
+import { loggerProvider, paymentWebhookLogger } from "@/instrumentation";
 
 export const dynamic = "force-dynamic";
 
@@ -83,9 +84,32 @@ export async function POST(request) {
       : await settlePayment(paymentId, config);
     // A payment for something this site did not create (another integration
     // on the same account) is acknowledged and left alone.
-    if (outcome) await recordPaymentOutcome(outcome);
+    const recorded = outcome ? await recordPaymentOutcome(outcome) : null;
+    paymentWebhookLogger?.emit({
+      severityText: "INFO",
+      body: "payment webhook processed",
+      attributes: {
+        source: "razorpay_webhook",
+        gateway_event: event.event,
+        outcome_found: Boolean(outcome),
+        outcome_status: recorded?.status || "unmatched",
+        payment_kind: recorded?.kind || "unknown",
+        outcome_changed: Boolean(recorded?.changed),
+      },
+    });
+    await loggerProvider?.forceFlush().catch(() => {});
     return NextResponse.json({ ok: true });
   } catch (error) {
+    paymentWebhookLogger?.emit({
+      severityText: "ERROR",
+      body: "payment webhook settlement failed",
+      attributes: {
+        source: "razorpay_webhook",
+        gateway_event: event.event,
+        error_category: "payment_settlement_failed",
+      },
+    });
+    await loggerProvider?.forceFlush().catch(() => {});
     console.error(`[payment] webhook for ${paymentId} failed`, error);
     return NextResponse.json({ ok: false }, { status: 500 });
   }

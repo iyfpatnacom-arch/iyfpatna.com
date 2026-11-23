@@ -22,7 +22,10 @@ import { SiteFooter } from "@/components/site/SiteFooter";
 import { AppDock } from "@/components/site/AppDock";
 import { WhatsappFab } from "@/components/site/WhatsappFab";
 import { YatraPromoModal } from "@/components/site/YatraPromoModal";
-import { MetaPixel } from "@/components/analytics/MetaPixel";
+import {
+  MetaPixel,
+  PostHogIdentify,
+} from "@/components/analytics/MetaPixel";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { PageTransition } from "@/components/PageTransition";
 import { PwaInstallGate } from "@/components/pwa/PwaInstallGate";
@@ -195,6 +198,7 @@ export default async function LocaleLayout({ children, params }) {
         <ThemeProvider>
           {clerkConfigured ? (
             <ClerkProvider appearance={CLERK_APPEARANCE}>
+              <PostHogIdentify />
               {content}
             </ClerkProvider>
           ) : (

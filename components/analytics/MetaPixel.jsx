@@ -2,7 +2,9 @@
 
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 import Script from "next/script";
+import posthog from "posthog-js";
 import {
   META_PIXEL_ID,
   metaPixelEnabled,
@@ -43,6 +45,43 @@ import {
 export function MetaPixel() {
   if (!metaPixelEnabled) return null;
   return <Pixel />;
+}
+
+/**
+ * Identifies Clerk sessions once in the browser. Clerk's `user.id` is durable;
+ * email and name remain person properties that may change independently.
+ */
+export function PostHogIdentify() {
+  const { isLoaded, user } = useUser();
+  const identifiedUserId = useRef(null);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    const userId = user?.id ?? null;
+
+    if (!userId) {
+      if (identifiedUserId.current) {
+        posthog.reset();
+        identifiedUserId.current = null;
+      }
+      return;
+    }
+
+    if (identifiedUserId.current && identifiedUserId.current !== userId) {
+      posthog.reset();
+    }
+
+    if (identifiedUserId.current !== userId) {
+      posthog.identify(userId, {
+        email: user.primaryEmailAddress?.emailAddress,
+        name: user.fullName || undefined,
+      });
+      identifiedUserId.current = userId;
+    }
+  }, [isLoaded, user]);
+
+  return null;
 }
 
 function Pixel() {

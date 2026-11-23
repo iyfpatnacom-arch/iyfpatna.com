@@ -33,6 +33,7 @@ import {
 import { SEVA_LIST } from "@/lib/site-config";
 import { META_CURRENCY, trackMeta } from "@/lib/analytics/meta";
 import { startPayment } from "@/lib/payments/redirect";
+import posthog from "posthog-js";
 
 /**
  * Giving, end to end, on this site.
@@ -501,6 +502,13 @@ function DonateDialog({ session, open, onClose }) {
 
     remember(values);
     setStage("redirecting");
+
+    posthog.capture("donation_checkout_initiated", {
+      order_id: result.orderId,
+      seva_slug: seva.slug,
+      amount,
+      currency: META_CURRENCY,
+    });
 
     /*
      * The middle of the funnel: an offering that now exists as a row, with a

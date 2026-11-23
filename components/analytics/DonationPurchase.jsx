@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { META_CURRENCY, trackMeta } from "@/lib/analytics/meta";
+import posthog from "posthog-js";
 
 /** One key per donation, so a refresh of the thank-you page stays quiet. */
 const fired = (orderId) => `iyf:meta-purchase:${orderId}`;
@@ -52,6 +53,12 @@ export function DonationPurchase({ orderId, amount, currency, sevaSlug }) {
 
     trackMeta("Purchase", params, { eventId: orderId });
     trackMeta("Donate", params, { eventId: orderId });
+    posthog.capture("donation_completed", {
+      order_id: orderId,
+      seva_slug: sevaSlug,
+      amount: Number(amount) || 0,
+      currency: currency || META_CURRENCY,
+    });
   }, [orderId, amount, currency, sevaSlug]);
 
   return null;

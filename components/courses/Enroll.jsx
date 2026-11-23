@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { normalizePhone, PHONE_PATTERN } from "@/lib/courses/phone";
 import { startPayment } from "@/lib/payments/redirect";
 import { GatewayOptions } from "@/components/payments/GatewayChoice";
+import posthog from "posthog-js";
 
 /**
  * Enrolment for a paid course: every "Register" button on the landing page,
@@ -328,6 +329,15 @@ function CheckoutDialog({ open, onOpenChange, checkout, clerkConfigured }) {
 
     remember(values);
     setStage(result.free ? "confirming" : "redirecting");
+
+    if (!result.already) {
+      posthog.capture("course_checkout_initiated", {
+        order_id: result.orderId,
+        course_slug: checkout.slug,
+        enrollment_mode: values.mode,
+        payment_required: !result.free && result.next === "payment",
+      });
+    }
 
     if (result.free) {
       toast.success(t("free_title"), { description: t("free_body") });

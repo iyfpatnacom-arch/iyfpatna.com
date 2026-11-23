@@ -11,6 +11,7 @@ import { ClerkAutofillBridge } from "./ClerkAutofillBridge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import posthog from "posthog-js";
 
 const schema = z.object({
   name: z.string().trim().min(1),
@@ -55,6 +56,7 @@ export function JoinModal({ open, onOpenChange, item, itemType, clerkConfigured 
         }),
       });
       if (!res.ok) throw new Error("failed");
+      posthog.capture("program_registration_submitted", { item_type: itemType });
       toast.success(t("success_title"), { description: t("success_body") });
       reset();
       onOpenChange(false);

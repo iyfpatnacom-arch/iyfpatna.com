@@ -15,6 +15,7 @@ import { Panel } from "@/components/site/Panel";
 import { WhatsappIcon } from "@/components/site/WhatsappIcon";
 import { PayNowButton } from "@/components/payments/PayNowButton";
 import { ReceiptDownload } from "@/components/payments/ReceiptDownload";
+import { CoursePurchase } from "@/components/analytics/CoursePurchase";
 
 /**
  * An order's status page — the success screen after payment, and the place
@@ -124,6 +125,16 @@ export default async function OrderPage({ params, searchParams }) {
             <p className="mt-6 text-xs font-semibold tracking-wider text-primary uppercase">{courseTitle}</p>
             <h1 className="mt-2 text-3xl font-semibold tracking-tight text-balance sm:text-4xl">{title}</h1>
             <p className="mt-3 max-w-lg text-[15px] leading-relaxed text-muted-foreground">{body}</p>
+
+            {status === "success" && !simulated && (
+              <CoursePurchase
+                orderId={enrollment.orderId}
+                courseSlug={enrollment.courseSlug}
+                amount={enrollment.amount}
+                currency={enrollment.currency}
+                enrollmentMode={enrollment.mode}
+              />
+            )}
 
             {simulated && (
               <p className="mt-4 flex items-start gap-2 rounded-lg border border-dashed border-primary/40 px-3 py-2 text-xs text-muted-foreground">

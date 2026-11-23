@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Panel } from "@/components/site/Panel";
 import { cn } from "@/lib/utils";
+import posthog from "posthog-js";
 
 export function GitaQuiz({ questions, clerkConfigured }) {
   const t = useTranslations("playground.quiz");
@@ -29,6 +30,11 @@ export function GitaQuiz({ questions, clerkConfigured }) {
       return;
     }
     setFinished(true);
+    posthog.capture("gita_quiz_completed", {
+      chapter: question.chapter,
+      score,
+      total_questions: questions.length,
+    });
     if (clerkConfigured) {
       fetch("/api/quiz/submit", {
         method: "POST",

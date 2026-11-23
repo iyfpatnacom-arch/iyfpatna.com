@@ -40,6 +40,7 @@ export function AvatarChat({ avatar }) {
   const locale = useLocale();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [conversationId, setConversationId] = useState(() => crypto.randomUUID());
   const pending = messages.some((message) => message.status === "streaming");
 
   const abortRef = useRef(null);
@@ -84,7 +85,7 @@ export function AvatarChat({ avatar }) {
       response = await fetch("/api/sarathi/avatar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ slug: avatar.slug, question: text, history }),
+        body: JSON.stringify({ slug: avatar.slug, question: text, conversationId, history }),
         signal: controller.signal,
       });
     } catch (error) {
@@ -160,6 +161,7 @@ export function AvatarChat({ avatar }) {
     abortRef.current?.abort();
     setMessages([]);
     setInput("");
+    setConversationId(crypto.randomUUID());
     inputRef.current?.focus();
   }
 

@@ -21,6 +21,7 @@ import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { normalizePhone, PHONE_PATTERN } from "@/lib/courses/phone";
 import { startPayment } from "@/lib/payments/redirect";
+import posthog from "posthog-js";
 
 /**
  * The one form for the whole festival.
@@ -263,6 +264,15 @@ export function GitaRegisterForm({
 
     remember(values);
     setStage("redirecting");
+
+    if (!result.already) {
+      posthog.capture("gita_registration_initiated", {
+        order_id: result.orderId,
+        event_count: chosen.length,
+        amount: result.amount,
+        currency: "INR",
+      });
+    }
 
     /* Already paid from this number: their ticket, not a second charge. */
     if (result.already || result.next !== "payment") {

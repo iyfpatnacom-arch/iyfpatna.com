@@ -1,9 +1,11 @@
+import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { avatarBySlug } from "@/lib/sarathi/avatars";
 import { personaBySlug } from "@/lib/sarathi/personas";
 import { runAvatar } from "@/lib/sarathi/engine";
 import { geminiConfigured, GeminiError } from "@/lib/sarathi/gemini";
+import { flushAiObservability } from "@/lib/sarathi/observability";
 
 /**
  * Ask an AI avatar a question. Streams NDJSON — one event per line, in the
@@ -22,6 +24,7 @@ export const maxDuration = 60;
 const bodySchema = z.object({
   slug: z.string().max(80),
   question: z.string().trim().min(1).max(1000),
+  conversationId: z.string().uuid(),
   history: z
     .array(
       z.object({
@@ -78,7 +81,7 @@ export async function POST(request) {
   if (!parsed.success) {
     return NextResponse.json({ error: "invalid_body" }, { status: 400 });
   }
-  const { slug, question, history } = parsed.data;
+  const { slug, question, conversationId, history } = parsed.data;
 
   const avatar = avatarBySlug(slug);
   const persona = personaBySlug(slug);
@@ -103,6 +106,7 @@ export async function POST(request) {
           persona,
           history: history.slice(-HISTORY_TURNS),
           question,
+          observability: { sessionId: conversationId, traceId: randomUUID() },
         })) {
           send(event);
         }
@@ -110,6 +114,7 @@ export async function POST(request) {
         console.error("[sarathi] avatar failed", error);
         send({ type: "error", code: error instanceof GeminiError ? error.code : "upstream" });
       } finally {
+        await flushAiObservability();
         controller.close();
       }
     },
