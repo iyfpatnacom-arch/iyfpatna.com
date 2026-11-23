@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { clerkMiddleware } from "@clerk/nextjs/server";
+import { withPostHogProxy } from "@posthog/next";
 import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
 
@@ -85,7 +86,7 @@ const clerkConfigured = Boolean(
   process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && process.env.CLERK_SECRET_KEY
 );
 
-export default function proxy(req, event) {
+function proxy(req, event) {
   /* Ahead of Clerk because it is a routing decision and needs no session:
      the redirected request comes back through this same middleware with a
      locale prefix, and picks up its auth context then. */
@@ -96,6 +97,16 @@ export default function proxy(req, event) {
   if (isApiPath(req.nextUrl.pathname)) return NextResponse.next();
   return intlMiddleware(req);
 }
+
+const posthogToken = process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN;
+const posthogHost = process.env.NEXT_PUBLIC_POSTHOG_HOST;
+
+export default posthogToken && posthogHost
+  ? withPostHogProxy(proxy, {
+      apiKey: posthogToken,
+      host: posthogHost,
+    })
+  : proxy;
 
 export const config = {
   matcher: [

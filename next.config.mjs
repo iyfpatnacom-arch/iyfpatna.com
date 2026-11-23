@@ -1,5 +1,6 @@
 import createNextIntlPlugin from "next-intl/plugin";
 import withSerwistInit from "@serwist/next";
+import { withPostHogConfig } from "@posthog/nextjs-config";
 
 const withNextIntl = createNextIntlPlugin("./i18n/request.js");
 
@@ -34,4 +35,14 @@ const nextConfig = {
   },
 };
 
-export default withSerwist(withNextIntl(nextConfig));
+export default withPostHogConfig(withSerwist(withNextIntl(nextConfig)), {
+  personalApiKey: process.env.POSTHOG_API_KEY ?? "",
+  projectId: process.env.POSTHOG_PROJECT_ID,
+  host: process.env.POSTHOG_HOST,
+  sourcemaps: {
+    enabled: Boolean(
+      process.env.POSTHOG_API_KEY && process.env.POSTHOG_PROJECT_ID,
+    ),
+    deleteAfterUpload: true,
+  },
+});

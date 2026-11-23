@@ -62,6 +62,11 @@ jobs:
       NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL: ${{ vars.CLERK_SIGN_IN_FALLBACK_REDIRECT_URL || '/' }}
       NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL: ${{ vars.CLERK_SIGN_UP_FALLBACK_REDIRECT_URL || '/' }}
       CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+      # PostHog's public SDK settings are also required by both the build and
+      # the smoke-test server. The VPS launcher reads the same names from its
+      # existing .env.production when it starts the deployed standalone app.
+      NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN: ${{ vars.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN }}
+      NEXT_PUBLIC_POSTHOG_HOST: ${{ vars.NEXT_PUBLIC_POSTHOG_HOST }}
       # The Meta Pixel is inlined at build time like everything else here, but
       # unlike the Clerk key it does not need to be set: both values default in
       # lib/analytics/meta.js, because a pixel ID that lived only in a
@@ -99,9 +104,16 @@ jobs:
 
       # Building on Linux is also what fixes `sharp`: npm resolves the
       # linux-x64 binary here, where a Windows-built bundle carried the
-      # win32 one and next/image failed at runtime.
+      # win32 one and next/image failed at runtime. The PostHog API key is
+      # scoped to this step; missing values leave source-map upload disabled
+      # without failing deploys. GitHub's checkout and built-in git variables
+      # provide the uploader's release commit identity on this inline build.
       - name: Build
         run: npm run build
+        env:
+          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
+          POSTHOG_PROJECT_ID: ${{ vars.POSTHOG_PROJECT_ID }}
+          POSTHOG_HOST: ${{ vars.POSTHOG_HOST }}
 
       - name: Assemble standalone bundle
         run: |
@@ -209,7 +221,9 @@ jobs:
           cd "$REMOTE_DIR"
           # Recreate the launcher if it went missing. It sources the env file
           # before exec'ing node, because Next's standalone server reads
-          # secrets from process.env at boot.
+          # secrets from process.env at boot. That file must expose the app's
+          # exact PostHog runtime names: NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN and
+          # NEXT_PUBLIC_POSTHOG_HOST.
           if [ ! -x start.sh ]; then
             printf '%s\n' '#!/usr/bin/env bash' 'cd "\$(dirname "\$0")"' \
               'set -a; . ./.env.production; set +a' 'exec /usr/bin/node server.js' > start.sh

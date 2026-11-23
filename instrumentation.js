@@ -1,6 +1,8 @@
 import { OTLPLogExporter } from "@opentelemetry/exporter-logs-otlp-http";
 import { resourceFromAttributes } from "@opentelemetry/resources";
 import { BatchLogRecordProcessor, LoggerProvider } from "@opentelemetry/sdk-logs";
+import { createOnRequestError } from "@posthog/next";
+import { getPostHogServer } from "@/lib/posthog-server";
 
 const posthogToken = process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN;
 const posthogHost = process.env.NEXT_PUBLIC_POSTHOG_HOST;
@@ -49,8 +51,17 @@ if (loggerProvider && process.env.NEXT_RUNTIME === "nodejs") {
   });
 }
 
+export const onRequestError =
+  posthogToken && posthogHost
+    ? createOnRequestError({
+        apiKey: posthogToken,
+        host: posthogHost,
+      })
+    : async () => {};
+
 export async function register() {
   if (process.env.NEXT_RUNTIME !== "nodejs") return;
+  getPostHogServer();
   if (process.env.NODE_ENV === "production") return; // never auto-seed a real database
   if (process.env.MONGODB_URI) return; // real database — seed explicitly via `npm run seed`
 
