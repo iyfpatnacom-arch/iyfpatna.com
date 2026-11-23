@@ -51,6 +51,16 @@ import { admitGita, setGitaAttendance } from "../lib/gita-event/attendance.js";
 import { buildGitaReceipt } from "../lib/gita-event/receipt.js";
 import { renderGitaRegistrationEmail } from "../lib/notifications/templates/email/gitaRegistration.js";
 import { recordPaymentOutcome } from "../lib/payments/result.js";
+import {
+  gitaByEvent,
+  gitaDaily,
+  gitaDemographics,
+  gitaInstitutions,
+  gitaReferralCoverage,
+  gitaReferrals,
+  gitaRecent,
+  gitaTotals,
+} from "../lib/gita-event/stats.js";
 
 let failures = 0;
 
@@ -494,6 +504,248 @@ function istToday() {
   }).format(new Date());
 }
 
+/* ---- Part five: the dashboard ------------------------------------------ */
+
+/**
+ * The figures /admin/registrations/gita/overview puts on screen.
+ *
+ * Here rather than left to be eyeballed on the page, because a dashboard is the
+ * one screen whose bugs are invisible: a wrong total is a plausible number in a
+ * tile, and nobody checks a number they came to the page to be told. Three
+ * things in `lib/gita-event/stats.js` can only be wrong quietly, and each is
+ * asserted directly.
+ *
+ * The event split double-counts on purpose. Somebody registered for both is one
+ * row and two events, so the per-event figures must sum to *more* than the
+ * registration count. A pipeline that grouped before unwinding would return a
+ * set of numbers that add up perfectly and undercount the mahotsav by every
+ * combo sold — the kind of wrong that survives review because it looks tidy.
+ *
+ * Attendance is keyed by event *and* day. The same trap as `setGitaAttendance`,
+ * one layer up: asking "has a mark for this event" and "has a mark for today"
+ * separately answers yes for somebody who came to the quiz in January and the
+ * mahotsav today, on both counts. So the fixture is exactly that person, and
+ * the quiz's "admitted today" must still be zero.
+ *
+ * The free-text tallies normalise before they group. "Rohit", "rohit " and
+ * "ROHIT" are one volunteer; three rows of one each is a thank-you list that
+ * thanks nobody properly, and it is the default behaviour of a plain `$group`.
+ *
+ * The collection is emptied first so every number can be asserted exactly
+ * rather than as a delta — this runs last for that reason.
+ */
+
+/** One row, with every field the dashboard groups by under our control. */
+async function seedRow(orderId, events, fields = {}) {
+  const price = priceFor(events);
+  const { paid = true, attendance = [], ...rest } = fields;
+  await GitaRegistration.create({
+    festivalSlug: festival.slug,
+    name: `Row ${orderId}`,
+    email: `${orderId.toLowerCase()}@example.com`,
+    locale: "en",
+    ...rest,
+    orderId,
+    events,
+    amount: price.amount,
+    fullAmount: price.fullAmount,
+    attendance,
+    payment: paid
+      ? { status: "success", provider: "razorpay", paidAt: new Date() }
+      : { status: fields.status || "pending" },
+  });
+}
+
+async function verifyDashboard() {
+  console.log("\nThe dashboard");
+
+  await GitaRegistration.deleteMany({});
+
+  const today = istToday();
+  /* A day that is certainly not today, whenever this is run. */
+  const LONG_AGO = "2019-01-01";
+
+  /* 3 quiz-only, 2 mahotsav-only, 2 combo — all paid; then one pending and one
+     failed, so the attempt count and the success rate have something to be
+     wrong about. */
+  await seedRow("GITA-801", [QUIZ], {
+    phone: "9000000801",
+    occupation: "student",
+    gender: "male",
+    age: 16,
+    referral: "Rohit",
+    institution: "St Xavier's College",
+  });
+  await seedRow("GITA-802", [QUIZ], {
+    phone: "9000000802",
+    occupation: "student",
+    gender: "female",
+    age: 20,
+    referral: "rohit ",
+    institution: "st xavier's  college",
+  });
+  await seedRow("GITA-803", [QUIZ], {
+    phone: "9000000803",
+    occupation: "student",
+    gender: "male",
+    age: 30,
+  });
+  await seedRow("GITA-804", [MAHOTSAV], {
+    phone: "9000000804",
+    occupation: "working",
+    gender: "female",
+    age: 40,
+    referral: "Gopal  Das",
+  });
+  await seedRow("GITA-805", [MAHOTSAV], {
+    phone: "9000000805",
+    occupation: "working",
+    gender: "male",
+    age: 55,
+    referral: "gopal das",
+  });
+  /* The row the attendance checks hang on: registered for both, admitted to the
+     mahotsav today and to the quiz on a day years ago. */
+  await seedRow("GITA-806", [QUIZ, MAHOTSAV], {
+    phone: "9000000806",
+    occupation: "student",
+    gender: "female",
+    age: 22,
+    referral: "ROHIT",
+    institution: "St Xavier's College",
+    attendance: [
+      { eventKey: MAHOTSAV, dayKey: today, source: "qr" },
+      { eventKey: QUIZ, dayKey: LONG_AGO, source: "manual" },
+    ],
+  });
+  await seedRow("GITA-807", [QUIZ, MAHOTSAV], {
+    phone: "9000000807",
+    occupation: "other",
+    gender: "male",
+    notifications: { emailSent: true },
+  });
+  await seedRow("GITA-808", [QUIZ], { phone: "9000000808", paid: false });
+  await seedRow("GITA-809", [QUIZ], { phone: "9000000809", paid: false, status: "failed" });
+
+  const solo = priceFor([QUIZ]).amount;
+  const combo = priceFor([QUIZ, MAHOTSAV]).amount;
+  const comboFull = priceFor([QUIZ, MAHOTSAV]).fullAmount;
+
+  /* -- totals ----------------------------------------------------------- */
+  const totals = await gitaTotals({ scope: "all", today });
+
+  check("only paid rows are registrations", totals.count, 7);
+  check("every attempt is counted", totals.attempts, 9);
+  check("a pending row is pending", totals.pending.count, 1);
+  check("a failed row is failed", totals.failed, 1);
+  check("the success rate is paid over attempted", totals.successRate, Math.round((7 / 9) * 100));
+  /* Derived from the catalog, not written out: these still test something when
+     the prices are turned down to ₹1 for a gateway run. */
+  check("the money is the paid rows' own amounts", totals.amount, 5 * solo + 2 * combo);
+  check(
+    "the saving is what the combos gave away",
+    totals.saved,
+    2 * (comboFull - combo),
+  );
+  check("both-event rows are counted as combos", totals.combo, 2);
+  check("one paid row per phone", totals.peopleCount, 7);
+  check("a sent confirmation is counted", totals.emailed, 1);
+  check("nothing is flagged as a mismatch", totals.mismatched, 0);
+  check("somebody was admitted today", totals.hereToday, 1);
+
+  /* Everything was created in this process, so "today" must see all of it —
+     the one check that the IST day key is derived and not drifting. */
+  const todayTotals = await gitaTotals({ scope: "today", today });
+  check("today's window holds rows created now", todayTotals.count, 7);
+
+  /* -- the event split -------------------------------------------------- */
+  const events = await gitaByEvent({ scope: "all", today });
+  const quiz = events.find((event) => event.key === QUIZ);
+  const mahotsav = events.find((event) => event.key === MAHOTSAV);
+
+  check("every catalog event has a row", events.length, EVENT_KEYS.length);
+  check("the quiz counts its combos too", quiz.registrations, 5);
+  check("the mahotsav counts its combos too", mahotsav.registrations, 4);
+  checkTrue(
+    "the split deliberately sums past the registration count",
+    quiz.registrations + mahotsav.registrations > totals.count,
+  );
+  check("only-this-one is counted apart", quiz.solo, 3);
+  check("...for the mahotsav as well", mahotsav.solo, 2);
+
+  /* The two-axis check. One row, two marks, two different days. */
+  check("the mahotsav saw somebody today", mahotsav.attendedToday, 1);
+  check("the quiz did not", quiz.attendedToday, 0);
+  check("but the quiz has admitted them once", quiz.attendedEver, 1);
+  check("...and so has the mahotsav", mahotsav.attendedEver, 1);
+
+  /* -- the daily series ------------------------------------------------- */
+  const series = await gitaDaily({ from: today, to: today });
+  check("one day asked for is one day returned", series.length, 1);
+  check("the day's paid rows", series[0].paid, 7);
+  check("the day's abandoned rows", series[0].abandoned, 2);
+  check("the day's money is only the paid rows'", series[0].amount, 5 * solo + 2 * combo);
+
+  const week = await gitaDaily({ from: "2019-01-01", to: "2019-01-07" });
+  check("an empty window is still dense", week.length, 7);
+  check("...with zeros, not gaps", week[3].paid, 0);
+
+  /* -- who is registering ----------------------------------------------- */
+  const who = await gitaDemographics({ scope: "all", today });
+  const at = (rows, key) => rows.find((row) => row.key === key)?.count ?? 0;
+
+  check("students are counted", at(who.occupation, "student"), 4);
+  check("working people are counted", at(who.occupation, "working"), 2);
+  check("every paid row lands in an occupation", who.occupation.reduce((n, r) => n + r.count, 0), 7);
+  check("gender is counted", at(who.gender, "male"), 4);
+  check("...both ways", at(who.gender, "female"), 3);
+  check("an age under 18 is its own band", at(who.age, "u18"), 1);
+  check("two rows share the 18-24 band", at(who.age, "18_24"), 2);
+  check("the oldest band catches 55", at(who.age, "50_plus"), 1);
+  /* A row with no age is kept, not dropped: a breakdown that excluded it would
+     be showing shares of a denominator that is not the registration count. */
+  check("a row with no age is its own band", at(who.age, "unknown"), 1);
+  check("every paid row lands in an age band", who.age.reduce((n, r) => n + r.count, 0), 7);
+  checkTrue(
+    "age bands read youngest first",
+    who.age.findIndex((row) => row.key === "u18") <
+      who.age.findIndex((row) => row.key === "50_plus"),
+  );
+
+  /* -- reach ------------------------------------------------------------ */
+  const referrals = await gitaReferrals({ scope: "all", today });
+  check("spellings of one name are one row", referrals.length, 2);
+  check("...and the biggest is first", referrals[0].count, 3);
+  check("the label is one of the spellings given", referrals[0].label.trim().toLowerCase(), "rohit");
+  check("the second referrer's two rows are one", referrals[1].count, 2);
+  check(
+    "...with its double space collapsed",
+    referrals[1].label.trim().toLowerCase().replace(/\s+/g, " "),
+    "gopal das",
+  );
+
+  const institutions = await gitaInstitutions({ scope: "all", today });
+  check("one institution, however it was typed", institutions.length, 1);
+  check("...with all three rows under it", institutions[0].count, 3);
+
+  const coverage = await gitaReferralCoverage({ scope: "all", today });
+  check("coverage counts the paid rows", coverage.count, 7);
+  check("...and how many named a referrer", coverage.withReferral, 5);
+  check("...and how many named an institution", coverage.withInstitution, 3);
+
+  /* -- the live feed ---------------------------------------------------- */
+  const recent = await gitaRecent({ limit: 8 });
+  check("the feed is capped", recent.length, 8);
+  checkTrue(
+    "the feed shows unpaid rows too",
+    recent.some((row) => row.status !== "success"),
+  );
+  checkTrue(
+    "the feed is newest first",
+    recent.every((row, index) => index === 0 || row.createdAt <= recent[index - 1].createdAt),
+  );
+}
+
 /* ---- Run ---------------------------------------------------------------- */
 
 const mongod = await MongoMemoryServer.create();
@@ -507,6 +759,7 @@ try {
   verifyRouting();
   await verifyRegister();
   await verifyDocuments();
+  await verifyDashboard();
 
   console.log(
     failures === 0

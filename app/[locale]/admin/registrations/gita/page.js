@@ -1,5 +1,5 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { ScanLine } from "lucide-react";
+import { LineChart, ScanLine } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { clerkConfigured, getAdminUser, redirectSignedOut } from "@/lib/auth-config";
 import { dbConnect } from "@/lib/db/connect";
@@ -134,13 +134,25 @@ export default async function GitaRegistrationsPage({ params }) {
             {t("gita_reg_subtitle", { festival: festival.title[locale] || festival.title.en })}
           </p>
         </div>
-        <Link
-          href="/admin/registrations/scan"
-          className="inline-flex h-11 items-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
-        >
-          <ScanLine className="size-4" aria-hidden="true" />
-          {t("reg_scan_cta")}
-        </Link>
+        {/* The dashboard beside the register, because the two answer different
+            questions about the same rows and neither is discoverable from the
+            admin index on its own. */}
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href="/admin/registrations/gita/overview"
+            className="inline-flex h-11 items-center gap-2 rounded-full border border-border px-5 text-sm font-semibold text-foreground transition-colors hover:border-primary/40"
+          >
+            <LineChart className="size-4" aria-hidden="true" />
+            {t("gita_ov_open_overview")}
+          </Link>
+          <Link
+            href="/admin/registrations/scan"
+            className="inline-flex h-11 items-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
+          >
+            <ScanLine className="size-4" aria-hidden="true" />
+            {t("reg_scan_cta")}
+          </Link>
+        </div>
       </div>
 
       <RegistrationTabs
