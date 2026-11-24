@@ -104,6 +104,14 @@ const GitaRegistrationSchema = new mongoose.Schema(
     email: { type: String, required: true, trim: true, lowercase: true },
     /** Ten digits, no +91 — normalised before it is stored. */
     phone: { type: String, required: true, trim: true },
+    /* What the form asks for. Stored as a date rather than the age it implies
+       so a row registered in November is still right in March. */
+    dob: { type: Date, default: null },
+    /* Derived from `dob` when the row is written, and kept because every
+       report and export reads it: the admin register sorts on it and the
+       festival dashboard bands it in the database, neither of which can do
+       calendar arithmetic on a birthday. Rows written while the form asked for
+       an age outright have this and no `dob`. */
     age: { type: Number },
     occupation: { type: String, enum: ["student", "working", "other"] },
     /* Asked on the form because the mahotsav is seated separately and the

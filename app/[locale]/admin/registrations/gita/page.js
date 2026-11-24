@@ -43,6 +43,9 @@ function toRow(doc) {
     name: doc.name,
     email: doc.email,
     phone: doc.phone,
+    /* The day alone — the time on a birthday is an artefact of storing it as
+        a date, and sending the timestamp would invite a timezone to shift it. */
+    dob: doc.dob ? new Date(doc.dob).toISOString().slice(0, 10) : null,
     age: doc.age ?? null,
     occupation: doc.occupation || null,
     gender: doc.gender || null,

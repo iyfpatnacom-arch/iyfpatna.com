@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { normalizePhone, PHONE_PATTERN } from "@/lib/courses/phone";
+import { ageFromDob, dobRange, isAcceptableDob } from "@/lib/dob";
 import { startPayment } from "@/lib/payments/redirect";
 import posthog from "posthog-js";
 
@@ -45,6 +46,10 @@ import posthog from "posthog-js";
  * prasadam count and the two groups are planned from. There is no address box
  * — nothing is posted to anybody, and a nine-line form is the single biggest
  * reason somebody who meant to register does not.
+ *
+ * The one date on it is a birthday, not an age: a date box is one tap on a
+ * phone where a number box is a guess that is wrong by the next festival, and
+ * the age bands the quiz is set by are then derived rather than remembered.
  */
 
 const OCCUPATIONS = ["student", "working", "other"];
@@ -66,7 +71,7 @@ const PROFILE_KEY = "iyf:checkout-profile";
 /* The same key the course checkout writes, and deliberately so: somebody who
    has already paid for anything on this site should not retype their name. Only
    the fields both forms genuinely share are read back. */
-const PROFILE_FIELDS = ["name", "phone", "email", "age", "occupation", "gender"];
+const PROFILE_FIELDS = ["name", "phone", "email", "dob", "occupation", "gender"];
 
 /**
  * The form's rules, built around whichever events the catalog is offering.
@@ -87,13 +92,13 @@ const buildSchema = (eventKeys) =>
       name: z.string().trim().min(2, "name"),
       phone: z.string().refine((v) => PHONE_PATTERN.test(normalizePhone(v)), "phone"),
       email: z.string().trim().email("email"),
-      age: z
+      /* Optional, as the age was. Anything typed has to be a real day inside
+         the window the route accepts — checked by the same helper, so the
+         browser rejects exactly what the server would. */
+      dob: z
         .string()
         .trim()
-        .refine(
-          (v) => v === "" || (/^\d{1,2}$/.test(v) && Number(v) >= 5 && Number(v) <= 99),
-          "age",
-        ),
+        .refine((v) => v === "" || isAcceptableDob(v), "dob"),
       occupation: z.enum(OCCUPATIONS, { message: "occupation" }),
       gender: z.enum(GENDERS, { message: "gender" }),
       institution: z.string().trim().max(120, "institution"),
@@ -147,6 +152,12 @@ export function GitaRegisterForm({
      the server — so a resolver captured once at init is the whole story. */
   const resolver = useMemo(() => zodResolver(buildSchema(eventFields)), [eventFields]);
 
+  /* The oldest and youngest birthday the festival takes, for the date box.
+     Computed once: nobody fills this form across midnight in Patna, and a
+     fresh value every render would be a new pair of attributes every keystroke
+     in the referral box. */
+  const dobLimits = useMemo(() => dobRange(), []);
+
   const {
     register,
     handleSubmit,
@@ -163,7 +174,7 @@ export function GitaRegisterForm({
       name: "",
       phone: "",
       email: "",
-      age: "",
+      dob: "",
       occupation: "student",
       /* No default. Gender is the one field here with no safe guess, and a
          pre-ticked box is how a form quietly records the wrong answer. */
@@ -218,6 +229,10 @@ export function GitaRegisterForm({
   function remember(values) {
     try {
       const profile = Object.fromEntries(PROFILE_FIELDS.map((f) => [f, values[f] ?? ""]));
+      /* The course checkout reads `age` out of this same profile and has a
+         number box, not a date box. Leave one there for it rather than making
+         somebody who registered here retype it. */
+      profile.age = values.dob ? String(ageFromDob(values.dob) ?? "") : "";
       localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
     } catch {
       /* Nothing to do — next time they type it again. */
@@ -241,7 +256,7 @@ export function GitaRegisterForm({
           name: values.name,
           phone: normalizePhone(values.phone),
           email: values.email,
-          age: values.age,
+          dob: values.dob,
           occupation: values.occupation,
           gender: values.gender,
           institution: values.institution,
@@ -472,19 +487,23 @@ export function GitaRegisterForm({
           />
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-[6.5rem_1fr]">
+        <div className="grid gap-4 sm:grid-cols-[11rem_1fr]">
           <Field
-            id={id("age")}
-            label={<Optional label={t("age")} t={t} />}
-            error={fieldError("age")}
+            id={id("dob")}
+            label={<Optional label={t("dob")} t={t} />}
+            error={fieldError("dob")}
           >
             <Input
-              id={id("age")}
-              inputMode="numeric"
-              maxLength={2}
-              aria-invalid={Boolean(errors.age)}
+              id={id("dob")}
+              type="date"
+              autoComplete="bday"
+              /* The picker is given the same window the resolver enforces, so
+                 tomorrow is not offered in the first place. */
+              min={dobLimits.min}
+              max={dobLimits.max}
+              aria-invalid={Boolean(errors.dob)}
               className="h-11"
-              {...register("age")}
+              {...register("dob")}
             />
           </Field>
 

@@ -14,6 +14,7 @@ import {
   priceFor,
 } from "@/lib/gita-event/catalog";
 import { normalizePhone, PHONE_PATTERN } from "@/lib/courses/phone";
+import { ageFromDob, isAcceptableDob } from "@/lib/dob";
 import { generateOrderId } from "@/lib/payments/order-id";
 import { gitaStatusPath, orderToken } from "@/lib/payments/order-link";
 import { paymentMode } from "@/lib/payments/gateways";
@@ -35,9 +36,24 @@ import { check, clientKey } from "@/lib/rate-limit";
  * set, so there is no discount for a client to claim and no coupon to forge.
  */
 
-const optionalAge = z.preprocess(
-  (value) => (value === "" || value == null ? undefined : Number(value)),
-  z.number().int().min(5).max(99).optional(),
+/**
+ * The birthday, as `YYYY-MM-DD`, and still optional.
+ *
+ * The age is not taken from the request at all — it is derived from this below,
+ * by the same helper the form validates with, so the two can never disagree
+ * and a browser cannot claim to be twelve while holding a 1990 birthday.
+ */
+const optionalDob = z.preprocess(
+  (value) => {
+    const text = String(value ?? "").trim();
+    /* A date box can hand back a full timestamp if something upstream has
+       widened it; only the day part has ever been asked for. */
+    return text === "" ? undefined : text.slice(0, 10);
+  },
+  z
+    .string()
+    .refine((value) => isAcceptableDob(value))
+    .optional(),
 );
 
 const optionalText = (max) =>
@@ -62,7 +78,7 @@ const bodySchema = z.object({
     .string()
     .transform(normalizePhone)
     .refine((v) => PHONE_PATTERN.test(v)),
-  age: optionalAge,
+  dob: optionalDob,
   occupation: z.enum(["student", "working", "other"]),
   /* Asked for, and required: the mahotsav is seated separately and the two
      WhatsApp groups are split the same way, so a blank here is a row somebody
@@ -139,7 +155,13 @@ export async function POST(request) {
       locale: data.locale,
       meta: { userAgent: request.headers.get("user-agent")?.slice(0, 300) || null },
     };
-    if (data.age !== undefined) details.age = data.age;
+    /* Both, deliberately. The birthday is what was given; the age is what the
+       register sorts on and what the festival dashboard bands in the database,
+       neither of which can do calendar arithmetic on a date of birth. */
+    if (data.dob !== undefined) {
+      details.dob = new Date(`${data.dob}T00:00:00.000Z`);
+      details.age = ageFromDob(data.dob);
+    }
     if (userId) details.clerkId = userId;
 
     /* An unpaid attempt for the same phone is picked up again rather than left

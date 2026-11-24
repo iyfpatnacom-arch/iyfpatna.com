@@ -23,6 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Panel } from "@/components/site/Panel";
 import { cn } from "@/lib/utils";
+import { ageFromDob, formatDob } from "@/lib/dob";
 import { toggleGitaAttendance } from "@/app/[locale]/admin/registrations/actions";
 
 /**
@@ -132,6 +133,7 @@ function buildCsv(rows, columns, events, labelOf) {
     "Name",
     "Email",
     "Phone",
+    "Date of birth",
     "Age",
     "Occupation",
     "Gender",
@@ -169,7 +171,10 @@ function buildCsv(rows, columns, events, labelOf) {
       row.name,
       row.email,
       row.phone,
-      row.age,
+      row.dob,
+      /* Recomputed from the birthday so a row registered last festival does
+         not export the age it was then. */
+      ageFromDob(row.dob) ?? row.age,
       row.occupation,
       row.gender,
       row.institution,
@@ -897,7 +902,11 @@ export function GitaRegistrationsDashboard({
                         <td colSpan={columnCount} className="px-4 py-4 sm:px-12">
                           <dl className="grid gap-x-6 gap-y-3 sm:grid-cols-2 lg:grid-cols-4">
                             <Detail label={t("reg_col_email")} value={row.email} />
-                            <Detail label={t("reg_d_age")} value={row.age} />
+                            <Detail label={t("gita_d_dob")} value={formatDob(row.dob)} />
+                            <Detail
+                              label={t("reg_d_age")}
+                              value={ageFromDob(row.dob) ?? row.age}
+                            />
                             <Detail
                               label={t("reg_d_occupation")}
                               value={row.occupation ? t(`reg_occ_${row.occupation}`) : null}
